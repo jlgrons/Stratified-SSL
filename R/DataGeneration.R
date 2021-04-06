@@ -154,7 +154,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     incorrect_signal = c(-2, rep(0,3), -3, -3, 0, 0, rep(0,2))
     Y0 = (lin_pred + covariates[,1]^2 + covariates[,3]^2) * strat_var +
       (0.8 * lin_pred - 5)* (1 - strat_var) +
-      rgumbel(N, -2, 0.3)*exp(c(covariates%*% incorrect_signal));
+      rgumbel(N, -2, 0.3)*exp(c(covariates%*% incorrect_signal))
     Y = I(Y0 > 1)
   }
 
@@ -195,105 +195,105 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
   if (num_strata == 2){
 
     # Stratum 1,
-    stratum_1 <- which(strat_var == 1);
-    ind_1 <- sample(stratum_1, size = n_each);
+    stratum_1 <- which(strat_var == 1)
+    ind_1 <- sample(stratum_1, size = n_each)
 
     # Stratum 2.
-    stratum_2 <- which(strat_var == 0);
-    ind_2 <- sample(stratum_2, size = n_each);
+    stratum_2 <- which(strat_var == 0)
+    ind_2 <- sample(stratum_2, size = n_each)
 
     # Indices of labeled and unlabeled data.
-    ind_lab <- c(ind_1, ind_2);
-    ind_unlab <- setdiff(1:N, ind_lab);
+    ind_lab <- c(ind_1, ind_2)
+    ind_unlab <- setdiff(1:N, ind_lab)
 
     # Full data.
-    dat_full <- cbind(Y, covariates);
+    dat_full <- cbind(Y, covariates)
 
     # Name labeled and unlabeled data sets.
-    dat_lab <- dat_full[ind_lab, ];
+    dat_lab <- dat_full[ind_lab, ]
     S_lab <- strat_var[ind_lab]
-    dat_unlab <- dat_full[ind_unlab, ];
+    dat_unlab <- dat_full[ind_unlab, ]
     S_unlab <- strat_var[ind_unlab]
     S_full <- c(S_lab, S_unlab)
 
     # Random sampling (only used under setting in Section S4).
     dat_random_samp <- dat_full[1:n_lab, ]
-    Y_random_samp <- dat_random_samp[,1];
-    covariates_random_samp <- dat_random_samp[,-1];
-    covariates_unlab_random_samp <- dat_full[-c(1:n_lab), -1];
+    Y_random_samp <- dat_random_samp[,1]
+    covariates_random_samp <- dat_random_samp[,-1]
+    covariates_unlab_random_samp <- dat_full[-c(1:n_lab), -1]
 
     # Relevant labeled data.
-    Y_lab <- dat_lab[,1];
-    covariates_lab <- dat_lab[,-1];
+    Y_lab <- dat_lab[,1]
+    covariates_lab <- dat_lab[,-1]
 
     # Relevant unlabeled data.
-    covariates_unlab <- dat_unlab[,-1];
+    covariates_unlab <- dat_unlab[,-1]
 
     # Sampling probabilities.
-    ind_S1_unlab <- (which(strat_var > 0));
-    ind_S2_unlab  <- (which(strat_var <= 0));
+    ind_S1_unlab <- (which(strat_var > 0))
+    ind_S2_unlab  <- (which(strat_var <= 0))
     N_1 <- length(ind_S1_unlab)
     N_2 <- length(ind_S2_unlab)
-    samp_prob = c(rep(n_each/N_1, n_each), rep(n_each/N_2, n_each));
+    samp_prob = c(rep(n_each/N_1, n_each), rep(n_each/N_2, n_each))
   }
 
   if (num_strata == 4){
 
     # Stratum 1.
-    stratum_1 <- which(strat_var == 0);
-    ind_1 <- sample(stratum_1, size = n_each);
+    stratum_1 <- which(strat_var == 0)
+    ind_1 <- sample(stratum_1, size = n_each)
 
     # Stratum 2.
-    stratum_2 <- which(strat_var == 1);
-    ind_2 <- sample(stratum_2, size = n_each);
+    stratum_2 <- which(strat_var == 1)
+    ind_2 <- sample(stratum_2, size = n_each)
 
     # Stratum 3.
-    stratum_3 <- which(strat_var == 2);
-    ind_3 <- sample(stratum_3, size = n_each);
+    stratum_3 <- which(strat_var == 2)
+    ind_3 <- sample(stratum_3, size = n_each)
 
     # Stratum 4.
-    stratum_4 <- which(strat_var == 3);
-    ind_4 <- sample(stratum_4, size = n_each);
+    stratum_4 <- which(strat_var == 3)
+    ind_4 <- sample(stratum_4, size = n_each)
 
-    # Indices of labeled and unlabled data
-    ind_lab = c(ind_1, ind_2, ind_3, ind_4);
-    ind_unlab = setdiff(1:N, ind_lab);
+    # Indices of labeled and unlabeled data.
+    ind_lab <- c(ind_1, ind_2, ind_3, ind_4)
+    ind_unlab <- setdiff(1:N, ind_lab)
 
-    # Full data
-    dat_full = cbind(Y, Covariates);
+    # Full data.
+    dat_full = cbind(Y, covariates)
 
-    # Labeled and Unlabed data sets
-    dat_lab = dat_full[ind_lab, ];
+    # Labeled and Unlabeled data sets.
+    dat_lab = dat_full[ind_lab, ]
     S_lab = strat_var[ind_lab]
-    dat_unlab = dat_full[ind_unlab, ];
+    dat_unlab = dat_full[ind_unlab, ]
     S_unlab = strat_var[ind_unlab]
-    S_all = c(S_lab, S_unlab)
+    S_full = c(S_lab, S_unlab)
 
     ## Random sampling (only used under our settings in Section S4)
 
     dat_random_samp = dat_full[1:n_lab, ]
-    Yr = dat_random_samp[,1];
-    Xr = dat_random_samp[,-1];
-    Xvr = dat_full[-c(1:n_lab), -1];
+    Yr = dat_random_samp[,1]
+    Xr = dat_random_samp[,-1]
+    Xvr = dat_full[-c(1:n_lab), -1]
 
     # Relevant labeled data
-    Yt = dat_lab[,1];
-    Xt = dat_lab[,-1];
+    Yt = dat_lab[,1]
+    Xt = dat_lab[,-1]
 
     # Relevant unlabeled data
-    Xv = dat_unlab[,-1];
+    Xv = dat_unlab[,-1]
 
     # Sampling probabilities
-    ind.S1_unlab = (which(strat_var == 0));
-    ind.S2_unlab  = (which(strat_var == 1));
-    ind.S3_unlab = (which(strat_var == 2));
-    ind.S4_unlab  = (which(strat_var == 3));
+    ind.S1_unlab = (which(strat_var == 0))
+    ind.S2_unlab  = (which(strat_var == 1))
+    ind.S3_unlab = (which(strat_var == 2))
+    ind.S4_unlab  = (which(strat_var == 3))
     N_1 = length(ind.S1_unlab)
     N_2 = length(ind.S2_unlab)
     N_3 = length(ind.S3_unlab)
     N_4 = length(ind.S4_unlab)
     samp.prob = c(rep(n_each/N_1, n_each), rep(n_each/N_2, n_each),
-                  rep(n_each/N_3, n_each), rep(n_each/N_4, n_each));
+                  rep(n_each/N_3, n_each), rep(n_each/N_4, n_each))
 
   }
 
