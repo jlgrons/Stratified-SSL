@@ -108,12 +108,12 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     if (num_strata == 2){
       gamma.coef <- c(signal, c(0.5, 0, 0, 0.5),
                       rep(0, 8), - 0.5,rep(0, 4), -0.5)
-      basis <- ns.basis(covariates, strat_var, 3, basis_labype = 'interact')
+      basis <- ns.basis(covariates, strat_var, 3, basis_type = 'interact')
     }
     if (num_strata == 4){
       gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
                       -0.5, rep(0, 4), -0.5, 0, 0)
-      basis <- ns.basis(covariates, strat_var, 3, basis_labype = 'interact')
+      basis <- ns.basis(covariates, strat_var, 3, basis_type = 'interact')
     }
 
     Y = I(c(basis %*% gamma.coef) + rlogis(N) > C)
@@ -136,7 +136,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
 
     gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
                     -0.5, rep(0, 4), -0.5)
-    basis <- ns.basis(covariates, strat_var, 3, basis_labype = 'interact')
+    basis <- ns.basis(covariates, strat_var, 3, basis_type = 'interact')
 
     Y0 = cbind(1, basis) %*% gamma.coef * strat_var +
       (0.8 * cbind(1, basis) %*% gamma.coef - 5) * (1 - strat_var) + rlogis(N)
@@ -216,7 +216,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     S_unlab <- strat_var[ind_unlab]
     S_full <- c(S_lab, S_unlab)
 
-    # Random sampling (only used under setting in Section S4).
+    # Random sampling (only used in Section S4).
     dat_random_samp <- dat_full[1:n_lab, ]
     Y_random_samp <- dat_random_samp[,1]
     covariates_random_samp <- dat_random_samp[,-1]
@@ -234,7 +234,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     ind_S2_unlab  <- (which(strat_var <= 0))
     N_1 <- length(ind_S1_unlab)
     N_2 <- length(ind_S2_unlab)
-    samp_prob = c(rep(n_each/N_1, n_each), rep(n_each/N_2, n_each))
+    samp_prob <- c(rep(n_each/N_1, n_each), rep(n_each/N_2, n_each))
   }
 
   if (num_strata == 4){
@@ -260,45 +260,49 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     ind_unlab <- setdiff(1:N, ind_lab)
 
     # Full data.
-    dat_full = cbind(Y, covariates)
+    dat_full <- cbind(Y, covariates)
 
     # Labeled and Unlabeled data sets.
-    dat_lab = dat_full[ind_lab, ]
-    S_lab = strat_var[ind_lab]
-    dat_unlab = dat_full[ind_unlab, ]
-    S_unlab = strat_var[ind_unlab]
-    S_full = c(S_lab, S_unlab)
+    dat_lab <- dat_full[ind_lab, ]
+    S_lab <- strat_var[ind_lab]
+    dat_unlab <- dat_full[ind_unlab, ]
+    S_unlab <- strat_var[ind_unlab]
+    S_full <- c(S_lab, S_unlab)
 
-    ## Random sampling (only used under our settings in Section S4)
+    # Random sampling (only used in Section S4).
+    dat_random_samp <- dat_full[1:n_lab, ]
+    Y_random_samp <- dat_random_samp[,1]
+    X_random_samp <- dat_random_samp[,-1]
+    X_unlab_random_samp <- dat_full[-c(1:n_lab), -1]
 
-    dat_random_samp = dat_full[1:n_lab, ]
-    Yr = dat_random_samp[,1]
-    Xr = dat_random_samp[,-1]
-    Xvr = dat_full[-c(1:n_lab), -1]
+    # Relevant labeled data.
+    Y_lab <- dat_lab[,1]
+    X_lab <- dat_lab[,-1]
 
-    # Relevant labeled data
-    Yt = dat_lab[,1]
-    Xt = dat_lab[,-1]
+    # Relevant unlabeled data.
+    X_unlab <- dat_unlab[,-1]
 
-    # Relevant unlabeled data
-    Xv = dat_unlab[,-1]
+    # Sampling probabilities.
+    ind_S1_unlab <- (which(strat_var == 0))
+    ind_S2_unlab  <- (which(strat_var == 1))
+    ind_S3_unlab <- (which(strat_var == 2))
+    ind_S4_unlab  <- (which(strat_var == 3))
 
-    # Sampling probabilities
-    ind.S1_unlab = (which(strat_var == 0))
-    ind.S2_unlab  = (which(strat_var == 1))
-    ind.S3_unlab = (which(strat_var == 2))
-    ind.S4_unlab  = (which(strat_var == 3))
-    N_1 = length(ind.S1_unlab)
-    N_2 = length(ind.S2_unlab)
-    N_3 = length(ind.S3_unlab)
-    N_4 = length(ind.S4_unlab)
-    samp.prob = c(rep(n_each/N_1, n_each), rep(n_each/N_2, n_each),
+    N_1 <- length(ind.S1_unlab)
+    N_2 <- length(ind.S2_unlab)
+    N_3 <- length(ind.S3_unlab)
+    N_4 <- length(ind.S4_unlab)
+
+    samp_prob = c(rep(n_each/N_1, n_each), rep(n_each/N_2, n_each),
                   rep(n_each/N_3, n_each), rep(n_each/N_4, n_each))
 
   }
 
-  return(list(Covariates = Covariates, Y = Y, strat_var = S_all, St = S_lab, Sv = S_unlab, Xt = Xt,
-              Xv = Xv, Yt = Yt, samp.prob = samp.prob, signal = signal,
-              Xr = Xr, Yr = Yr, Sr = strat_var, Xvr = Xvr))
-
+  return(list(covariates = covariates, Y = Y, strat_var = S_full,
+              S_lab = S_lab, S_unlab = S_unlab, X_lab = X_lab,
+              X_unlab = X_unlab, Y_lab = Y_lab,
+              samp_prob = samp_prob, signal = signal,
+              X_random_samp = X_random_samp, Y_random_samp = Y_random_samp,
+              S_random_samp = strat_var,
+              X_unlab_random_samp = X_unlab_random_samp))
 }
