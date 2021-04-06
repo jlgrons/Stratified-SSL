@@ -4,7 +4,7 @@
 \alias{CovariateGen}
 \title{Generate data from a multivariate normal}
 \usage{
-CovariateGen(n, mu, Sigma)
+CovariateGen(n, mu, sigma)
 }
 \arguments{
 \item{n}{Size of data set.}
