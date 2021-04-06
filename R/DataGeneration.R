@@ -146,8 +146,6 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
   }
 
   if (model_specification == 'outcome_incorrect_imputation_incorrect_supp'){
-    B = 1.5
-    C = 5
 
     strat_var_1 <- I(covariates[,1] + covariates[,2] + rnorm(N) > 1.5)
     strat_var <- ifelse(strat_var_1, 1, 0)
