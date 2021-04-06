@@ -1,3 +1,5 @@
+library(MASS)
+
 #' Generate data from a multivariate normal
 #'
 #' @param n Size of data set.
@@ -5,8 +7,6 @@
 #' @param Sigma Covariance matrix.
 #' @export
 #' @return A matrix of multivariate normal data.
-
-
 CovariateGen <- function(n, mu, Sigma){
 
   return(mvrnorm(n, mu, Sigma))
@@ -34,53 +34,45 @@ ARoneCovMat <- function(p, rho){
 #' @param n_unlab Size of unlabeled data.
 #' @param p Number of covariates.
 #' @param rho Covariance parameter for AR-1 covariance structure for covariates.
+#' @param signal Values of nonzero regression parameters.
 #' @param model_specification Choice of model specification.
 #' @param num_strat Number of strata for stratified sampling.
 #' @export
 #' @return List of relevant data objects.
-data_gen <- function(n_lab, n_unlab, p, rho,
+DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.,5),
                      model_specification = 'CC', num_strata = 2){
 
-  ## n_lab: labeled data size
-  ## n_unlab: unlabeled data size
-  ## p: covariate dimension
-  ## rho: correlation for covariates
-
-  ## model_specification: model specification
-  ## (both correct in Section 7 = 'CC',
-  ## outcome model wrong, imputation model correct in Section 7 = 'IC',
-  ## both wrong in Section 7 = 'II',
-  ## outcome model wrong, imputation model correct in Section S4 = 'IC1',
-  ## both wrong in Section S4 = 'II1',
+  ## model_specification:
+  ## 'outcome_correct_imp_correct'  = 'CC'
+  ## 'outcome_wrong_imp_correct'  = 'IC'
+  ## 'outcome_wrong_imp_wrong'  = 'II'
+  ## Supplement:
+  ## 'outcome_wrong_imp_correct'  = 'IC1'
+  ## 'outcome_wrong_imp_wrong'  = 'II1'
   ## Gaussian mixture (GM) setting in Section S5 = 'GM')
 
-  ## num_strata: number of stratum
-
-
-  # Total data size
+  # Total data size.
   N = n_lab + n_unlab
 
-  # Regression parameter
-  b0 = c(1, 1, 0.5, 0.5); b0 = c(0, b0, rep(0, p - length(b0)));
+  # Regression parameter.
+  signal = c(0, signal, rep(0, p - length(signal)));
 
-  # Covariance for covariates
-  Sigma0 = 3*autocorr.mat(p = p, rho = rho)
+  # Covariance for covariates.
+  Sigma = 3*ARoneCovMat(p = p, rho = rho)
 
-  ### Generate Covariates X0, Outcome Y, and Stratification variable S ###
-
-  # Covariates
-  X0 = CovariateGen(N,Sigma = Sigma0);
+  # Covariates.
+  Covariates = CovariateGen(N, mu = rep(0, p), Sigma);
 
   # Linear predictor
-  lin.pred = c(cbind(1,X0) %*% b0);
+  lin.pred = c(cbind(1,Covariates) %*% signal);
 
   # Outcome - Correct 'C' or Mis-specified Model otherwise
   if (model_specification == 'CC'){
     B = 0.5
     C = 0
 
-    S1 <- I(X0[,1] + rnorm(N, 0, 1) < B)
-    S3 <- I(X0[,3] + rnorm(N, 0, 1) < B)
+    S1 <- I(Covariates[,1] + rnorm(N, 0, 1) < B)
+    S3 <- I(Covariates[,3] + rnorm(N, 0, 1) < B)
 
     if (num_strata == 2){
       S <- ifelse(S1, 1, 0)
@@ -101,8 +93,8 @@ data_gen <- function(n_lab, n_unlab, p, rho,
     B = 0.5
     C = 0
 
-    S1 <- I(X0[,1] + rnorm(N, 0, 1) < B)
-    S3 <- I(X0[,3] + rnorm(N, 0, 1) < B)
+    S1 <- I(Covariates[,1] + rnorm(N, 0, 1) < B)
+    S3 <- I(Covariates[,3] + rnorm(N, 0, 1) < B)
 
     if (num_strata == 2){
       S <- ifelse(S1, 1, 0)
@@ -116,12 +108,12 @@ data_gen <- function(n_lab, n_unlab, p, rho,
     }
 
     if (num_strata == 2){
-      gamma.coef <- c(b0, c(0.5, 0, 0, 0.5), rep(0, 8), - 0.5, rep(0, 4), - 0.5)
-      basis <- ns.basis(X0, S, 3, basis.type = 'interact')
+      gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8), - 0.5, rep(0, 4), - 0.5)
+      basis <- ns.basis(Covariates, S, 3, basis.type = 'interact')
     }
     if (num_strata == 4){
-      gamma.coef <- c(b0, c(0.5, 0, 0, 0.5), rep(0, 8), - 0.5, rep(0, 4), - 0.5, 0, 0)
-      basis <- ns.basis(X0, S, 3, basis.type = 'interact')
+      gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8), - 0.5, rep(0, 4), - 0.5, 0, 0)
+      basis <- ns.basis(Covariates, S, 3, basis.type = 'interact')
     }
 
     Y0 = cbind(1, basis) %*% gamma.coef + rlogis(N);
@@ -133,8 +125,8 @@ data_gen <- function(n_lab, n_unlab, p, rho,
     B = 0.5
     C = 0
 
-    S1 <- I(X0[,1] + rnorm(N, 0, 1) < B)
-    S3 <- I(X0[,3] + rnorm(N, 0, 1) < B)
+    S1 <- I(Covariates[,1] + rnorm(N, 0, 1) < B)
+    S3 <- I(Covariates[,3] + rnorm(N, 0, 1) < B)
 
     if (num_strata == 2){
       S <- ifelse(S1, 1, 0)
@@ -147,7 +139,7 @@ data_gen <- function(n_lab, n_unlab, p, rho,
       S[intersect(which(S1 == 0), which(S3 == 1))] <- 3
     }
     c0 = c(0, -2, rep(0,3), -3, -3, 0, 0, rep(0,2))
-    Y0 = lin.pred + X0[,1]^2 + X0[,3]^2 + rgumbel(N, -2, 0.3)*exp(cbind(1,X0)%*% c0);
+    Y0 = lin.pred + Covariates[,1]^2 + Covariates[,3]^2 + rgumbel(N, -2, 0.3)*exp(cbind(1,Covariates)%*% c0);
     Y = I(Y0 > C)
   }
 
@@ -155,13 +147,13 @@ data_gen <- function(n_lab, n_unlab, p, rho,
     B = 1.5
     C = 5
 
-    S1 <- I(X0[,1] + X0[,2] + rnorm(N, 0, 1) > B)
+    S1 <- I(Covariates[,1] + Covariates[,2] + rnorm(N, 0, 1) > B)
     if (num_strata == 2){
       S <- ifelse(S1, 1, 0)
     }
 
-    gamma.coef <- c(b0, c(0.5, 0, 0, 0.5), rep(0, 8), - 0.5, rep(0, 4), - 0.5)
-    basis <- ns.basis(X0, S, 3, basis.type = 'interact')
+    gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8), - 0.5, rep(0, 4), - 0.5)
+    basis <- ns.basis(Covariates, S, 3, basis.type = 'interact')
 
     Y0 = cbind(1, basis) %*% gamma.coef * S +
       (0.8 * cbind(1, basis) %*% gamma.coef - C) * (1 - S) + rlogis(N);
@@ -172,14 +164,14 @@ data_gen <- function(n_lab, n_unlab, p, rho,
     B = 1.5
     C = 5
 
-    S1 <- I(X0[,1] + X0[,2] + rnorm(N, 0, 1) > B)
+    S1 <- I(Covariates[,1] + Covariates[,2] + rnorm(N, 0, 1) > B)
     if (num_strata == 2){
       S <- ifelse(S1, 1, 0)
     }
 
     c0 = c(0, -2, rep(0,3), -3, -3, 0, 0, rep(0,2))
-    Y0 = (lin.pred + X0[,1]^2 + X0[,3]^2) * S + (0.8 * lin.pred - C)* (1 - S) +
-      rgumbel(N, -2, 0.3)*exp(cbind(1,X0)%*% c0);
+    Y0 = (lin.pred + Covariates[,1]^2 + Covariates[,3]^2) * S + (0.8 * lin.pred - C)* (1 - S) +
+      rgumbel(N, -2, 0.3)*exp(cbind(1,Covariates)%*% c0);
     Y = I(Y0 > 1)
   }
 
@@ -189,8 +181,8 @@ data_gen <- function(n_lab, n_unlab, p, rho,
     mu_diff <- c(0.2, -0.2, 0.2, -0.2, 0.2, -0.2, 0.1, -0.1, rep(0, p - 8))
     Sigma_diff <- autocorr.mat(p, rho = 0.3) - diag(rep(0.4, p)) + matrix(0.2, p, p)
 
-    S1 <- I(X0[,1] + rnorm(N, 0, 1) < B)
-    S3 <- I(X0[,3] + rnorm(N, 0, 1) < B)
+    S1 <- I(Covariates[,1] + rnorm(N, 0, 1) < B)
+    S3 <- I(Covariates[,3] + rnorm(N, 0, 1) < B)
 
     if (num_strata == 2){
       S <- ifelse(S1, 1, 0)
@@ -204,18 +196,18 @@ data_gen <- function(n_lab, n_unlab, p, rho,
     }
 
     Y = rbinom(N, 1, 0.5)
-    X0 = matrix(0, N, p)
+    Covariates = matrix(0, N, p)
 
     mu1 = rep(0, p)
     Sigma1 = autocorr.mat(p = p, rho = rho)
-    X0[which(Y == 0), ] = CovariateGen(length(which(Y == 0)), mu1, Sigma1)
+    Covariates[which(Y == 0), ] = CovariateGen(length(which(Y == 0)), mu1, Sigma1)
 
     mu2 = mu1 + mu_diff
     Sigma2 = Sigma1 + Sigma_diff
-    X0[which(Y == 1), ] = CovariateGen(length(which(Y == 1)), mu2, Sigma2)
+    Covariates[which(Y == 1), ] = CovariateGen(length(which(Y == 1)), mu2, Sigma2)
 
-    S1 <- I(X0[,1] + rnorm(N, 0, 1) < B)
-    S3 <- I(X0[,3] + X0[,4] + rnorm(N, 0, 1) > B)
+    S1 <- I(Covariates[,1] + rnorm(N, 0, 1) < B)
+    S3 <- I(Covariates[,3] + Covariates[,4] + rnorm(N, 0, 1) > B)
 
     if (num_strata == 2){
       S <- ifelse(S1, 1, 0)
@@ -227,11 +219,11 @@ data_gen <- function(n_lab, n_unlab, p, rho,
       S[intersect(which(S1 == 1), which(S3 == 0))] <- 2
       S[intersect(which(S1 == 0), which(S3 == 1))] <- 3
     }
-    X0[which(Y == 1), 3] <- X0[which(Y == 1), 3] + 0.12 * X0[which(Y == 1), 3]^3
-    X0[which(Y == 1), 4] <- X0[which(Y == 1), 4] + 0.12 * X0[which(Y == 1), 4]^3
+    Covariates[which(Y == 1), 3] <- Covariates[which(Y == 1), 3] + 0.12 * Covariates[which(Y == 1), 3]^3
+    Covariates[which(Y == 1), 4] <- Covariates[which(Y == 1), 4] + 0.12 * Covariates[which(Y == 1), 4]^3
 
-    X0[which(Y == 1), 7] <- X0[which(Y == 1), 7] + 0.12 * X0[which(Y == 1), 7]^3
-    X0[which(Y == 1), 8] <- X0[which(Y == 1), 8] + 0.12 * X0[which(Y == 1), 8]^3
+    Covariates[which(Y == 1), 7] <- Covariates[which(Y == 1), 7] + 0.12 * Covariates[which(Y == 1), 7]^3
+    Covariates[which(Y == 1), 8] <- Covariates[which(Y == 1), 8] + 0.12 * Covariates[which(Y == 1), 8]^3
 
   }
 
@@ -258,7 +250,7 @@ data_gen <- function(n_lab, n_unlab, p, rho,
     ind.v = setdiff(1:N, ind.t);
 
     # Full data
-    dat.N = cbind(Y, X0);
+    dat.N = cbind(Y, Covariates);
 
     # Labeled and Unlabed data sets
 
@@ -317,7 +309,7 @@ data_gen <- function(n_lab, n_unlab, p, rho,
     ind.v = setdiff(1:N, ind.t);
 
     # Full data
-    dat.N = cbind(Y, X0);
+    dat.N = cbind(Y, Covariates);
 
     # Labeled and Unlabed data sets
     dat.t = dat.N[ind.t, ];
@@ -354,8 +346,8 @@ data_gen <- function(n_lab, n_unlab, p, rho,
 
   }
 
-  return(list(X0 = X0, Y = Y, S = S.all, St = S.t, Sv = S.v, Xt = Xt,
-              Xv = Xv, Yt = Yt, samp.prob = samp.prob, b0 = b0,
+  return(list(Covariates = Covariates, Y = Y, S = S.all, St = S.t, Sv = S.v, Xt = Xt,
+              Xv = Xv, Yt = Yt, samp.prob = samp.prob, signal = signal,
               Xr = Xr, Yr = Yr, Sr = S, Xvr = Xvr))
 
 }
