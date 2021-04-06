@@ -32,10 +32,10 @@ ARoneCovMat <- function(p, rho){
 #' Generate Stratification Variable
 #'
 #' @param covariates Covariate matrix.
-#' @param num_stratum Number of stratum.
+#' @param num_strata Number of stratum.
 #' @export
 #' @return A stratification variable
-StratificationVar <- function(covariates, num_stratum = 2){
+StratificationVar <- function(covariates, num_strata = 2){
   strat_var_1 <- I(covariates[,1] + rnorm(N) < 0.5)
   strat_var_3 <- I(covariates[,3] + rnorm(N) < 0.5)
 
@@ -63,7 +63,7 @@ StratificationVar <- function(covariates, num_stratum = 2){
 #' @param rho Covariance parameter for AR-1 covariance structure for covariates.
 #' @param signal Values of nonzero regression parameters.
 #' @param model_specification Choice of model specification.
-#' @param num_strat Number of strata for stratified sampling.
+#' @param num_strata Number of strata for stratified sampling.
 #' @export
 #' @return List of relevant data objects.
 DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
@@ -96,14 +96,14 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
   # Outcome and stratification variable.
   if (model_specification == 'outcome_correct_imputation_correct'){
 
-    strat_var <- StratificationVar(covariates, num_stratum = num_stratum)
+    strat_var <- StratificationVar(covariates, num_strata = num_strata)
     Y <- I(lin_pred + rlogis(N) > 0)
 
   }
 
   if (model_specification == 'outcome_incorrect_imputation_correct'){
 
-    strat_var <- StratificationVar(covariates, num_stratum = num_stratum)
+    strat_var <- StratificationVar(covariates, num_strata = num_strata)
 
     if (num_strata == 2){
       gamma.coef <- c(signal, c(0.5, 0, 0, 0.5),
@@ -122,7 +122,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
 
   if (model_specification == 'outcome_incorrect_imputation_incorrect'){
 
-    strat_var <- StratificationVar(covariates, num_stratum = num_stratum)
+    strat_var <- StratificationVar(covariates, num_strata = num_strata)
     incorrect_signal <- c(-2, rep(0,3), -3, -3, 0, 0, rep(0,2))
     Y0 <- lin_pred + covariates[,1]^2 + covariates[,3]^2 +
       rgumbel(N, -2, 0.3)*exp(covariates%*% incorrect_signal)
@@ -161,7 +161,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
 
   if (model_specification == 'gaussian_mixture'){
 
-    strat_var <- StratificationVar(covariates, num_stratum = num_stratum)
+    strat_var <- StratificationVar(covariates, num_strata = num_strata)
 
     mu_diff <- c(0.2, -0.2, 0.2, -0.2, 0.2, -0.2, 0.1, -0.1, rep(0, p - 8))
     sigma_diff <- autocorr.mat(p, rho = 0.3) - diag(rep(0.4, p)) +
@@ -181,11 +181,15 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     covariates[which(Y == 1), ] <- CovariateGen(length(which(Y == 1)), mu2, sigma2)
 
 
-    covariates[which(Y == 1), 3] <- covariates[which(Y == 1), 3] + 0.12 * covariates[which(Y == 1), 3]^3
-    covariates[which(Y == 1), 4] <- covariates[which(Y == 1), 4] + 0.12 * covariates[which(Y == 1), 4]^3
+    covariates[which(Y == 1), 3] <- covariates[which(Y == 1), 3] +
+      0.12 * covariates[which(Y == 1), 3]^3
+    covariates[which(Y == 1), 4] <- covariates[which(Y == 1), 4] +
+      0.12 * covariates[which(Y == 1), 4]^3
 
-    covariates[which(Y == 1), 7] <- covariates[which(Y == 1), 7] + 0.12 * covariates[which(Y == 1), 7]^3
-    covariates[which(Y == 1), 8] <- covariates[which(Y == 1), 8] + 0.12 * covariates[which(Y == 1), 8]^3
+    covariates[which(Y == 1), 7] <- covariates[which(Y == 1), 7] +
+      0.12 * covariates[which(Y == 1), 7]^3
+    covariates[which(Y == 1), 8] <- covariates[which(Y == 1), 8] +
+      0.12 * covariates[which(Y == 1), 8]^3
 
   }
 
