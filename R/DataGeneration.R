@@ -7,9 +7,9 @@ library(MASS)
 #' @param Sigma Covariance matrix.
 #' @export
 #' @return A matrix of multivariate normal data.
-CovariateGen <- function(n, mu, Sigma){
+CovariateGen <- function(n, mu, sigma){
 
-  return(mvrnorm(n, mu, Sigma))
+  return(mvrnorm(n, mu, sigma))
 }
 
 
@@ -28,6 +28,33 @@ ARoneCovMat <- function(p, rho){
 }
 
 
+
+#' Generate Stratification Variable
+#'
+#' @param covariates Covariate matrix.
+#' @param num_stratum Number of stratum.
+#' @export
+#' @return A stratification variable
+StratificationVar <- function(covariates, num_stratum = 2){
+  strat_var_1 <- I(covariates[,1] + rnorm(N) < 0.5)
+  strat_var_3 <- I(covariates[,3] + rnorm(N) < 0.5)
+
+  if (num_strata == 2){
+    strat_var <- ifelse(strat_var_1, 1, 0)
+  }
+
+  if (num_strata == 4){
+    strat_var <- rep(0, N)
+    strat_var[intersect(which(strat_var_1 == 1), which(strat_var_3 == 1))] <- 1
+    strat_var[intersect(which(strat_var_1 == 1), which(strat_var_3 == 0))] <- 2
+    strat_var[intersect(which(strat_var_1 == 0), which(strat_var_3 == 1))] <- 3
+  }
+
+  return(strat_var)
+}
+
+
+
 #' Generate AR-1 Covariance Matrix
 #'
 #' @param n_lab Size of labeled data.
@@ -39,7 +66,7 @@ ARoneCovMat <- function(p, rho){
 #' @param num_strat Number of strata for stratified sampling.
 #' @export
 #' @return List of relevant data objects.
-DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.,5),
+DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
                      model_specification = 'CC', num_strata = 2){
 
   ## model_specification:
@@ -55,193 +82,127 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.,5),
   N = n_lab + n_unlab
 
   # Regression parameter.
-  signal = c(0, signal, rep(0, p - length(signal)));
+  signal = c(signal, rep(0, p - length(signal)))
 
   # Covariance for covariates.
-  Sigma = 3*ARoneCovMat(p = p, rho = rho)
+  sigma = 3*ARoneCovMat(p = p, rho = rho)
 
   # Covariates.
-  Covariates = CovariateGen(N, mu = rep(0, p), Sigma);
+  covariates = CovariateGen(N, mu = rep(0, p), sigma)
 
-  # Linear predictor
-  lin.pred = c(cbind(1,Covariates) %*% signal);
+  # Linear predictor.
+  lin_pred = c(covariates %*% signal)
 
-  # Outcome - Correct 'C' or Mis-specified Model otherwise
-  if (model_specification == 'CC'){
-    B = 0.5
-    C = 0
+  # Outcome and stratification variable.
+  if (model_specification == 'outcome_correct_imputation_correct'){
 
-    S1 <- I(Covariates[,1] + rnorm(N, 0, 1) < B)
-    S3 <- I(Covariates[,3] + rnorm(N, 0, 1) < B)
+    strat_var <- StratificationVar(covariates, num_stratum = num_stratum)
+    Y <- I(lin_pred + rlogis(N) > 0)
 
-    if (num_strata == 2){
-      S <- ifelse(S1, 1, 0)
-    }
-
-    if (num_strata == 4){
-      S <- rep(0, N)
-      S[intersect(which(S1 == 1), which(S3 == 1))] <- 1
-      S[intersect(which(S1 == 1), which(S3 == 0))] <- 2
-      S[intersect(which(S1 == 0), which(S3 == 1))] <- 3
-    }
-    Y0 = lin.pred + rlogis(N)
-    Y = I(Y0 > C)
   }
 
-  if (model_specification == 'IC'){
+  if (model_specification == 'outcome_incorrect_imputation_correct'){
 
-    B = 0.5
-    C = 0
-
-    S1 <- I(Covariates[,1] + rnorm(N, 0, 1) < B)
-    S3 <- I(Covariates[,3] + rnorm(N, 0, 1) < B)
+    strat_var <- StratificationVar(covariates, num_stratum = num_stratum)
 
     if (num_strata == 2){
-      S <- ifelse(S1, 1, 0)
-    }
-
-    if (num_strata == 4){
-      S <- rep(0, N)
-      S[intersect(which(S1 == 1), which(S3 == 1))] <- 1
-      S[intersect(which(S1 == 1), which(S3 == 0))] <- 2
-      S[intersect(which(S1 == 0), which(S3 == 1))] <- 3
-    }
-
-    if (num_strata == 2){
-      gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8), - 0.5, rep(0, 4), - 0.5)
-      basis <- ns.basis(Covariates, S, 3, basis.type = 'interact')
+      gamma.coef <- c(signal, c(0.5, 0, 0, 0.5),
+                      rep(0, 8), - 0.5,rep(0, 4), -0.5)
+      basis <- ns.basis(covariates, S, 3, basis.type = 'interact')
     }
     if (num_strata == 4){
-      gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8), - 0.5, rep(0, 4), - 0.5, 0, 0)
-      basis <- ns.basis(Covariates, S, 3, basis.type = 'interact')
+      gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
+                      -0.5, rep(0, 4), -0.5, 0, 0)
+      basis <- ns.basis(covariates, S, 3, basis.type = 'interact')
     }
 
-    Y0 = cbind(1, basis) %*% gamma.coef + rlogis(N);
-    Y = I(Y0 > C)
+    Y = I(c(basis %*% gamma.coef) + rlogis(N) > C)
   }
 
 
-  if (model_specification == 'II'){
-    B = 0.5
-    C = 0
+  if (model_specification == 'outcome_incorrect_imputation_incorrect'){
 
-    S1 <- I(Covariates[,1] + rnorm(N, 0, 1) < B)
-    S3 <- I(Covariates[,3] + rnorm(N, 0, 1) < B)
-
-    if (num_strata == 2){
-      S <- ifelse(S1, 1, 0)
-    }
-
-    if (num_strata == 4){
-      S <- rep(0, N)
-      S[intersect(which(S1 == 1), which(S3 == 1))] <- 1
-      S[intersect(which(S1 == 1), which(S3 == 0))] <- 2
-      S[intersect(which(S1 == 0), which(S3 == 1))] <- 3
-    }
-    c0 = c(0, -2, rep(0,3), -3, -3, 0, 0, rep(0,2))
-    Y0 = lin.pred + Covariates[,1]^2 + Covariates[,3]^2 + rgumbel(N, -2, 0.3)*exp(cbind(1,Covariates)%*% c0);
-    Y = I(Y0 > C)
+    strat_var <- StratificationVar(covariates, num_stratum = num_stratum)
+    incorrect_signal <- c(-2, rep(0,3), -3, -3, 0, 0, rep(0,2))
+    Y0 <- lin_pred + covariates[,1]^2 + covariates[,3]^2 +
+      rgumbel(N, -2, 0.3)*exp(covariates%*% incorrect_signal)
+    Y <- I(Y0 > 0)
   }
 
-  if (model_specification == 'IC1'){
-    B = 1.5
-    C = 5
+  if (model_specification == 'outcome_incorrect_imputation_correct_supp'){
 
-    S1 <- I(Covariates[,1] + Covariates[,2] + rnorm(N, 0, 1) > B)
-    if (num_strata == 2){
-      S <- ifelse(S1, 1, 0)
-    }
+    strat_var_1 <- I(covariates[,1] + covariates[,2] + rnorm(N) > 1.5)
+    strat_var <- ifelse(strat_var_1, 1, 0)
 
-    gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8), - 0.5, rep(0, 4), - 0.5)
-    basis <- ns.basis(Covariates, S, 3, basis.type = 'interact')
+    gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
+                    -0.5, rep(0, 4), -0.5)
+    basis <- ns.basis(covariates, strat_var, 3, basis.type = 'interact')
 
-    Y0 = cbind(1, basis) %*% gamma.coef * S +
-      (0.8 * cbind(1, basis) %*% gamma.coef - C) * (1 - S) + rlogis(N);
+    Y0 = cbind(1, basis) %*% gamma.coef * strat_var +
+      (0.8 * cbind(1, basis) %*% gamma.coef - 5) * (1 - strat_var) + rlogis(N)
     Y = I(Y0 > 1)
+
   }
 
-  if (model_specification == 'II1'){
+  if (model_specification == 'outcome_incorrect_imputation_incorrect_supp'){
     B = 1.5
     C = 5
 
-    S1 <- I(Covariates[,1] + Covariates[,2] + rnorm(N, 0, 1) > B)
-    if (num_strata == 2){
-      S <- ifelse(S1, 1, 0)
-    }
+    strat_var_1 <- I(covariates[,1] + covariates[,2] + rnorm(N) > 1.5)
+    strat_var <- ifelse(strat_var_1, 1, 0)
 
-    c0 = c(0, -2, rep(0,3), -3, -3, 0, 0, rep(0,2))
-    Y0 = (lin.pred + Covariates[,1]^2 + Covariates[,3]^2) * S + (0.8 * lin.pred - C)* (1 - S) +
-      rgumbel(N, -2, 0.3)*exp(cbind(1,Covariates)%*% c0);
+    incorrect_signal = c(-2, rep(0,3), -3, -3, 0, 0, rep(0,2))
+    Y0 = (lin_pred + covariates[,1]^2 + covariates[,3]^2) * strat_var +
+      (0.8 * lin_pred - 5)* (1 - strat_var) +
+      rgumbel(N, -2, 0.3)*exp(c(covariates%*% incorrect_signal));
     Y = I(Y0 > 1)
   }
 
 
-  if (model_specification == 'GM'){
-    B = 0.5
+  if (model_specification == 'gaussian_mixture'){
+
+    strat_var <- StratificationVar(covariates, num_stratum = num_stratum)
+
     mu_diff <- c(0.2, -0.2, 0.2, -0.2, 0.2, -0.2, 0.1, -0.1, rep(0, p - 8))
-    Sigma_diff <- autocorr.mat(p, rho = 0.3) - diag(rep(0.4, p)) + matrix(0.2, p, p)
+    sigma_diff <- autocorr.mat(p, rho = 0.3) - diag(rep(0.4, p)) +
+      matrix(0.2, p, p)
 
-    S1 <- I(Covariates[,1] + rnorm(N, 0, 1) < B)
-    S3 <- I(Covariates[,3] + rnorm(N, 0, 1) < B)
 
-    if (num_strata == 2){
-      S <- ifelse(S1, 1, 0)
-    }
-
-    if (num_strata == 4){
-      S <- rep(0, N)
-      S[intersect(which(S1 == 1), which(S3 == 1))] <- 1
-      S[intersect(which(S1 == 1), which(S3 == 0))] <- 2
-      S[intersect(which(S1 == 0), which(S3 == 1))] <- 3
-    }
 
     Y = rbinom(N, 1, 0.5)
-    Covariates = matrix(0, N, p)
+    covariates = matrix(0, N, p)
 
     mu1 = rep(0, p)
-    Sigma1 = autocorr.mat(p = p, rho = rho)
-    Covariates[which(Y == 0), ] = CovariateGen(length(which(Y == 0)), mu1, Sigma1)
+    sigma1 = autocorr.mat(p = p, rho = rho)
+    covariates[which(Y == 0), ] = CovariateGen(length(which(Y == 0)), mu1, sigma1)
 
     mu2 = mu1 + mu_diff
-    Sigma2 = Sigma1 + Sigma_diff
-    Covariates[which(Y == 1), ] = CovariateGen(length(which(Y == 1)), mu2, Sigma2)
+    sigma2 = Sigma1 + Sigma_diff
+    covariates[which(Y == 1), ] = CovariateGen(length(which(Y == 1)), mu2, sigma2)
 
-    S1 <- I(Covariates[,1] + rnorm(N, 0, 1) < B)
-    S3 <- I(Covariates[,3] + Covariates[,4] + rnorm(N, 0, 1) > B)
 
-    if (num_strata == 2){
-      S <- ifelse(S1, 1, 0)
-    }
+    covariates[which(Y == 1), 3] <- covariates[which(Y == 1), 3] + 0.12 * covariates[which(Y == 1), 3]^3
+    covariates[which(Y == 1), 4] <- covariates[which(Y == 1), 4] + 0.12 * covariates[which(Y == 1), 4]^3
 
-    if (num_strata == 4){
-      S <- rep(0, N)
-      S[intersect(which(S1 == 1), which(S3 == 1))] <- 1
-      S[intersect(which(S1 == 1), which(S3 == 0))] <- 2
-      S[intersect(which(S1 == 0), which(S3 == 1))] <- 3
-    }
-    Covariates[which(Y == 1), 3] <- Covariates[which(Y == 1), 3] + 0.12 * Covariates[which(Y == 1), 3]^3
-    Covariates[which(Y == 1), 4] <- Covariates[which(Y == 1), 4] + 0.12 * Covariates[which(Y == 1), 4]^3
-
-    Covariates[which(Y == 1), 7] <- Covariates[which(Y == 1), 7] + 0.12 * Covariates[which(Y == 1), 7]^3
-    Covariates[which(Y == 1), 8] <- Covariates[which(Y == 1), 8] + 0.12 * Covariates[which(Y == 1), 8]^3
+    covariates[which(Y == 1), 7] <- covariates[which(Y == 1), 7] + 0.12 * covariates[which(Y == 1), 7]^3
+    covariates[which(Y == 1), 8] <- covariates[which(Y == 1), 8] + 0.12 * covariates[which(Y == 1), 8]^3
 
   }
 
   # Size of strata
-
-  n.each <- n_lab / num_strata
+  n_each <- n_lab / num_strata
 
   ##ind_lst <- vector('list', num_strata)
 
   if (num_strata == 2){
 
     # Stratum 1
-    stratum.1 = which(S == 1);
-    ind.1 = sample(stratum.1, size = n.each);
+    stratum_1 = which(S == 1);
+    ind.1 = sample(stratum_1, size = n_each);
 
     # Stratum 2
-    stratum.2 = which(S == 0);
-    ind.2 = sample(stratum.2, size = n.each);
+    stratum_2 = which(S == 0);
+    ind.2 = sample(stratum_2, size = n_each);
 
     ### Labeled L & Unlabeled U datasets ###
 
@@ -281,26 +242,26 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.,5),
     ind.S2.v  = (which(S <= 0));
     N.1 = length(ind.S1.v)
     N.2 = length(ind.S2.v)
-    samp.prob = c(rep(n.each / N.1, n.each), rep(n.each / N.2, n.each));
+    samp.prob = c(rep(n_each / N.1, n_each), rep(n_each / N.2, n_each));
   }
 
   if (num_strata == 4){
 
     # Stratum 1
-    stratum.1 = which(S == 0);
-    ind.1 = sample(stratum.1, size = n.each);
+    stratum_1 = which(S == 0);
+    ind.1 = sample(stratum_1, size = n_each);
 
     # Stratum 2
-    stratum.2 = which(S == 1);
-    ind.2 = sample(stratum.2, size = n.each);
+    stratum_2 = which(S == 1);
+    ind.2 = sample(stratum_2, size = n_each);
 
     # Stratum 3
-    stratum.3 = which(S == 2);
-    ind.3 = sample(stratum.3, size = n.each);
+    stratum_3 = which(S == 2);
+    ind.3 = sample(stratum_3, size = n_each);
 
     # Stratum 4
-    stratum.4 = which(S == 3);
-    ind.4 = sample(stratum.4, size = n.each);
+    stratum_4 = which(S == 3);
+    ind.4 = sample(stratum_4, size = n_each);
 
     ### Labeled L & Unlabeled U datasets ###
 
@@ -341,13 +302,13 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.,5),
     N.2 = length(ind.S2.v)
     N.3 = length(ind.S3.v)
     N.4 = length(ind.S4.v)
-    samp.prob = c(rep(n.each/N.1, n.each), rep(n.each/N.2, n.each),
-                  rep(n.each/N.3, n.each), rep(n.each/N.4, n.each));
+    samp.prob = c(rep(n_each/N.1, n_each), rep(n_each/N.2, n_each),
+                  rep(n_each/N.3, n_each), rep(n_each/N.4, n_each));
 
   }
 
   return(list(Covariates = Covariates, Y = Y, S = S.all, St = S.t, Sv = S.v, Xt = Xt,
               Xv = Xv, Yt = Yt, samp.prob = samp.prob, signal = signal,
-              Xr = Xr, Yr = Yr, Sr = S, Xvr = Xvr))
+              Xr = Xr, Yr = Yr, Sr = strat_var, Xvr = Xvr))
 
 }
