@@ -108,12 +108,12 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     if (num_strata == 2){
       gamma.coef <- c(signal, c(0.5, 0, 0, 0.5),
                       rep(0, 8), - 0.5,rep(0, 4), -0.5)
-      basis <- ns.basis(covariates, S, 3, basis_labype = 'interact')
+      basis <- ns.basis(covariates, strat_var, 3, basis_labype = 'interact')
     }
     if (num_strata == 4){
       gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
                       -0.5, rep(0, 4), -0.5, 0, 0)
-      basis <- ns.basis(covariates, S, 3, basis_labype = 'interact')
+      basis <- ns.basis(covariates, strat_var, 3, basis_labype = 'interact')
     }
 
     Y = I(c(basis %*% gamma.coef) + rlogis(N) > C)
@@ -154,7 +154,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     incorrect_signal = c(-2, rep(0,3), -3, -3, 0, 0, rep(0,2))
     Y0 = (lin_pred + covariates[,1]^2 + covariates[,3]^2) * strat_var +
       (0.8 * lin_pred - 5)* (1 - strat_var) +
-      rgumbel(N, -2, 0_3)*exp(c(covariates%*% incorrect_signal));
+      rgumbel(N, -2, 0.3)*exp(c(covariates%*% incorrect_signal));
     Y = I(Y0 > 1)
   }
 
@@ -163,9 +163,9 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
 
     strat_var <- StratificationVar(covariates, num_stratum = num_stratum)
 
-    mu_diff <- c(0_2, -0_2, 0_2, -0_2, 0_2, -0_2, 0_1, -0_1, rep(0, p - 8))
-    sigma_diff <- autocorr.mat(p, rho = 0_3) - diag(rep(0_4, p)) +
-      matrix(0_2, p, p)
+    mu_diff <- c(0.2, -0.2, 0.2, -0.2, 0.2, -0.2, 0.1, -0.1, rep(0, p - 8))
+    sigma_diff <- autocorr.mat(p, rho = 0.3) - diag(rep(0.4, p)) +
+      matrix(0.2, p, p)
 
 
 
@@ -181,11 +181,11 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     covariates[which(Y == 1), ] = CovariateGen(length(which(Y == 1)), mu2, sigma2)
 
 
-    covariates[which(Y == 1), 3] <- covariates[which(Y == 1), 3] + 0_12 * covariates[which(Y == 1), 3]^3
-    covariates[which(Y == 1), 4] <- covariates[which(Y == 1), 4] + 0_12 * covariates[which(Y == 1), 4]^3
+    covariates[which(Y == 1), 3] <- covariates[which(Y == 1), 3] + 0.12 * covariates[which(Y == 1), 3]^3
+    covariates[which(Y == 1), 4] <- covariates[which(Y == 1), 4] + 0.12 * covariates[which(Y == 1), 4]^3
 
-    covariates[which(Y == 1), 7] <- covariates[which(Y == 1), 7] + 0_12 * covariates[which(Y == 1), 7]^3
-    covariates[which(Y == 1), 8] <- covariates[which(Y == 1), 8] + 0_12 * covariates[which(Y == 1), 8]^3
+    covariates[which(Y == 1), 7] <- covariates[which(Y == 1), 7] + 0.12 * covariates[which(Y == 1), 7]^3
+    covariates[which(Y == 1), 8] <- covariates[which(Y == 1), 8] + 0.12 * covariates[which(Y == 1), 8]^3
 
   }
 
@@ -195,11 +195,11 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
   if (num_strata == 2){
 
     # Stratum 1
-    stratum_1 = which(S == 1);
+    stratum_1 = which(strat_var == 1);
     ind_1 = sample(stratum_1, size = n_each);
 
     # Stratum 2
-    stratum_2 = which(S == 0);
+    stratum_2 = which(strat_var == 0);
     ind_2 = sample(stratum_2, size = n_each);
 
     ### Labeled L & Unlabeled U datasets ###
@@ -216,9 +216,9 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     ## Stratified sampling
 
     dat_lab = dat_full[ind_lab, ];
-    S_lab = S[ind_lab]
+    S_lab = strat_var[ind_lab]
     dat_unlab = dat_full[ind_unlab, ];
-    S_unlab = S[ind_unlab]
+    S_unlab = strat_var[ind_unlab]
     S_all = c(S_lab, S_unlab)
 
     ## Random sampling (only used under our settings in Section S4)
@@ -236,8 +236,8 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     Xv = dat_unlab[,-1];
 
     # Sampling probabilities
-    ind.S1_unlab = (which(S > 0));
-    ind.S2_unlab  = (which(S <= 0));
+    ind.S1_unlab = (which(strat_var > 0));
+    ind.S2_unlab  = (which(strat_var <= 0));
     N_1 = length(ind.S1_unlab)
     N_2 = length(ind.S2_unlab)
     samp.prob = c(rep(n_each / N_1, n_each), rep(n_each / N_2, n_each));
@@ -246,19 +246,19 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
   if (num_strata == 4){
 
     # Stratum 1
-    stratum_1 = which(S == 0);
+    stratum_1 = which(strat_var == 0);
     ind_1 = sample(stratum_1, size = n_each);
 
     # Stratum 2
-    stratum_2 = which(S == 1);
+    stratum_2 = which(strat_var == 1);
     ind_2 = sample(stratum_2, size = n_each);
 
     # Stratum 3
-    stratum_3 = which(S == 2);
+    stratum_3 = which(strat_var == 2);
     ind_3 = sample(stratum_3, size = n_each);
 
     # Stratum 4
-    stratum_4 = which(S == 3);
+    stratum_4 = which(strat_var == 3);
     ind_4 = sample(stratum_4, size = n_each);
 
     ### Labeled L & Unlabeled U datasets ###
@@ -272,9 +272,9 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
 
     # Labeled and Unlabed data sets
     dat_lab = dat_full[ind_lab, ];
-    S_lab = S[ind_lab]
+    S_lab = strat_var[ind_lab]
     dat_unlab = dat_full[ind_unlab, ];
-    S_unlab = S[ind_unlab]
+    S_unlab = strat_var[ind_unlab]
     S_all = c(S_lab, S_unlab)
 
     ## Random sampling (only used under our settings in Section S4)
@@ -292,10 +292,10 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     Xv = dat_unlab[,-1];
 
     # Sampling probabilities
-    ind.S1_unlab = (which(S == 0));
-    ind.S2_unlab  = (which(S == 1));
-    ind.S3_unlab = (which(S == 2));
-    ind.S4_unlab  = (which(S == 3));
+    ind.S1_unlab = (which(strat_var == 0));
+    ind.S2_unlab  = (which(strat_var == 1));
+    ind.S3_unlab = (which(strat_var == 2));
+    ind.S4_unlab  = (which(strat_var == 3));
     N_1 = length(ind.S1_unlab)
     N_2 = length(ind.S2_unlab)
     N_3 = length(ind.S3_unlab)
@@ -305,7 +305,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
 
   }
 
-  return(list(Covariates = Covariates, Y = Y, S = S_all, St = S_lab, Sv = S_unlab, Xt = Xt,
+  return(list(Covariates = Covariates, Y = Y, strat_var = S_all, St = S_lab, Sv = S_unlab, Xt = Xt,
               Xv = Xv, Yt = Yt, samp.prob = samp.prob, signal = signal,
               Xr = Xr, Yr = Yr, Sr = strat_var, Xvr = Xvr))
 
