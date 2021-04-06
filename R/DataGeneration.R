@@ -67,7 +67,8 @@ StratificationVar <- function(covariates, num_strata = 2){
 #' @export
 #' @return List of relevant data objects.
 DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
-                     model_specification = 'CC', num_strata = 2){
+                     model_specification = 'outcome_correct_imputation_correct',
+                     num_strata = 2){
 
   ## model_specification:
   ## 'outcome_correct_imp_correct'  = 'CC'
@@ -76,7 +77,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
   ## Supplement:
   ## 'outcome_wrong_imp_correct'  = 'IC1'
   ## 'outcome_wrong_imp_wrong'  = 'II1'
-  ## Gaussian mixture (GM) setting in Section S5 = 'GM')
+  ## Gaussian mixture
 
   # Total data size.
   N = n_lab + n_unlab
@@ -116,7 +117,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
       basis <- ns.basis(covariates, strat_var, 3, basis_type = 'interact')
     }
 
-    Y = I(c(basis %*% gamma.coef) + rlogis(N) > C)
+    Y = I(c(basis %*% gamma.coef) + rlogis(N) > 0)
   }
 
 
@@ -138,9 +139,9 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
                     -0.5, rep(0, 4), -0.5)
     basis <- ns.basis(covariates, strat_var, 3, basis_type = 'interact')
 
-    Y0 = cbind(1, basis) %*% gamma.coef * strat_var +
+    Y0 <- cbind(1, basis) %*% gamma.coef * strat_var +
       (0.8 * cbind(1, basis) %*% gamma.coef - 5) * (1 - strat_var) + rlogis(N)
-    Y = I(Y0 > 1)
+    Y <- I(Y0 > 1)
 
   }
 
@@ -292,10 +293,10 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     ind_S3_unlab <- (which(strat_var == 2))
     ind_S4_unlab  <- (which(strat_var == 3))
 
-    N_1 <- length(ind.S1_unlab)
-    N_2 <- length(ind.S2_unlab)
-    N_3 <- length(ind.S3_unlab)
-    N_4 <- length(ind.S4_unlab)
+    N_1 <- length(ind_S1_unlab)
+    N_2 <- length(ind_S2_unlab)
+    N_3 <- length(ind_S3_unlab)
+    N_4 <- length(ind_S4_unlab)
 
     samp_prob = c(rep(n_each/N_1, n_each), rep(n_each/N_2, n_each),
                   rep(n_each/N_3, n_each), rep(n_each/N_4, n_each))
@@ -303,10 +304,11 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
   }
 
   return(list(covariates = covariates, Y = Y, strat_var = S_full,
-              S_lab = S_lab, S_unlab = S_unlab, X_lab = X_lab,
-              X_unlab = X_unlab, Y_lab = Y_lab,
+              S_lab = S_lab, S_unlab = S_unlab, covariates_lab = covariates_lab,
+              covariates_unlab = covariates_unlab, Y_lab = Y_lab,
               samp_prob = samp_prob, signal = signal,
-              X_random_samp = X_random_samp, Y_random_samp = Y_random_samp,
+              covariates_random_samp = covariates_random_samp,
+              Y_random_samp = Y_random_samp,
               S_random_samp = strat_var,
-              X_unlab_random_samp = X_unlab_random_samp))
+              covariates_unlab_random_samp = covariates_unlab_random_samp))
 }
