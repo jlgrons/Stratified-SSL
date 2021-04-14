@@ -1,3 +1,5 @@
+#need to change to dg.logit!
+
 # Computes cross-validated (CV) residuals based on supervised and SS ests of the regression parameter
 # as well as the regression parameter from the imputation model
 resids.cv = function(basis.x, Xt, Xv, Yt, samp.prob, K.fold, lambda0 = NULL){
