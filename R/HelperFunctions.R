@@ -35,5 +35,15 @@ ExpitDerivative <- function(x, na_correction = F) {
   return(expit_deriv)
 }
 
+#' Truncated Cubic Function
+#'
+#' Calculates \eqn{((X > x)(X-x))^3}.
+#'
+#' @param X Numeric vector of interest.
+#' @param knot_location Knot location for truncation.
+#' @return Numeric vector.
+TruncatedCubic = function(X, knot_location){
+  return(((X > knot_location) * (X-knot_location))^3)
+}
 
 
