@@ -1,25 +1,37 @@
-########################
-### Helper Functions ###
-########################
-
-# Necessary packages
-library(matrixStats)
-library(stepPlr)
-library(evd)
-library(methods)
-library(MASS)
-library(glmnet)
-library(randomForest)
-
-
-
-# Useful functions for logistic model
-dg.logit = function(xx){
-  ddd <- exp(xx)/(exp(xx)+1)^2
-  ddd[which(is.na(ddd))] = 0
-  return(ddd)
+#' Logit Function
+#'
+#' Calculates \eqn{log(x) - log(1-x)}.
+#'
+#' @param x Numeric vector.
+#' @return Numeric vector.
+Logit <- function(x) {
+  return(log(x / (1 - x)))
 }
 
-logit = function(xx){log((xx)/(1-xx))};
+#' Expit Function
+#'
+#' Calculates \eqn{1 / (1 + exp(-x))}.
+#'
+#' @param x Numeric vector.
+#' @return Numeric vector.
+Expit <- function(x) {
+  return(1 / (1 + exp(-x)))
+}
 
-g.logit = function(xx){1/(exp(- xx) + 1)}
+#' Derivative of the Expit Function
+#'
+#' Calculates \eqn{exp(x) /  (1 + exp(x))^2}.
+#'
+#' @param x Numeric vector.
+#' @param na_correction Whether to convert NAs to zero.
+#' @return Numeric vector.
+ExpitDerivative <- function(x, na_correction = F) {
+  expit_deriv <- exp(x)/(1+exp(x))^2
+  if(na_correction){
+    expit_deriv[which(is.na(expit_deriv))] = 0
+  }
+  return(expit_deriv)
+}
+
+
+
