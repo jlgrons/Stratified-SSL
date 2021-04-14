@@ -1,3 +1,5 @@
+# Updated: 2021-04-14
+
 #' Logit Function
 #'
 #' Calculates \eqn{log(x) - log(1-x)}.
