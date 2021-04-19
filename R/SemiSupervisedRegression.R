@@ -13,7 +13,7 @@
 #' @return Vector containing regression coefficients.
 #'
 
-SemiSupervisedRegression <- function(basis_labeled, basis_unlabaled, X_labeled,
+SemiSupervisedRegression <- function(basis_labeled, basis_unlabeled, X_labeled,
                                      X_unlabeled, y, samp_prob, lambda = NULL){
 
   num_labeled <- length(y)

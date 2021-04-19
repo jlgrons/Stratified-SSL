@@ -13,18 +13,16 @@
 #' @return Vector containing regression coefficients.
 #'
 
-DensityRatioRegression <- function(basis_labeled, basis_unlabaled, X_labeled,
+DensityRatioRegression <- function(basis_labeled, basis_unlabeled, X_labeled,
                                      X_unlabeled, y, samp_prob, lambda = NULL){
-
-  # Fit the density ratio estimator
-
-  n.v <- length(basis.x[,1])
-  basis.phi <- cbind(rep(1, n.v), basis.x)
+  basis_all <- rbind(basis_labeled, basis_unlabeled)
+  n_all <- length(basis.x[,1])
+  basis.phi <- cbind(rep(1, n_all), basis.x)
   phi.t <- basis.phi[1:num_labeled, ]
   phi.v <- basis.phi[- c(1:num_labeled), ]
   dim.basis <- length(basis.phi[1, ])
 
-  phiT.phi <- t(basis.phi) %*% basis.phi / (num_labeled + n.v)
+  phiT.phi <- t(basis.phi) %*% basis.phi / (num_labeled + n_all)
   E.phi <- t(phi.t) %*% weights / num_labeled
   theta.ratio <- solve(phiT.phi + diag(rep(0.01, ncol(phiT.phi)))) %*% (rowMeans(t(phi.v)) - E.phi)
   density.ratio <- exp(phi.t %*% theta.ratio)
