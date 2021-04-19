@@ -64,8 +64,8 @@ OneHotEncoding <- function(s){
 
 #' Basis of Interaction Terms
 #'
-#' @param X Numeric vector of interest containing category for each observation.
-#' @return Numeric vectors with the corresponding one hot encoding.
+#' @param X Numeric matrix.
+#' @return Numeric matrix with basis containing interaction terms.
 InteractionBasis <- function(X){
 
   basis <- X
@@ -83,5 +83,19 @@ InteractionBasis <- function(X){
   return(basis)
 }
 
+#' Basis of Two-way Interaction Terms
+#'
+#' @param X Numeric matrix.
+#' @param S Numeric matrix.
+#' @return Numeric matrix with basis containing interaction terms.
+TwoWayInteractionBasis <- function(X, S){
 
+  basis <- S
+
+  for (k in 1:length(X[1, ])) {
+    basis <- cbind(basis, S * X[,k])
+  }
+
+  return(basis)
+}
 
