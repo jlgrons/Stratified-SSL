@@ -39,11 +39,31 @@ ExpitDerivative <- function(x, na_correction = F) {
 #'
 #' Calculates \eqn{((X > x)(X-x))^3}.
 #'
-#' @param X Numeric vector of interest.
+#' @param x Numeric vector of interest.
 #' @param knot_location Knot location for truncation.
 #' @return Numeric vector.
-TruncatedCubic = function(X, knot_location){
-  return(((X > knot_location) * (X-knot_location))^3)
+TruncatedCubic <- function(x, knot_location){
+  return(((x > knot_location) * (x-knot_location))^3)
 }
+
+#' One Hot Encoding
+#'
+#'
+#' @param s Numeric vector of interest containing category for each observation.
+#' @return Numeric vectors with the corresponding one hot encoding.
+OneHotEncoding <- function(s){
+
+  one_hot_encoding <- c()
+  num_categories <- length(unique(s))
+
+  for(k in 1:(num_categories - 1)){
+    one_hot_encoding <- cbind(one_hot_encoding, ifelse(s == (k - 1), 1, 0))
+  }
+
+  return(one_hot_encoding)
+}
+
+
+
 
 

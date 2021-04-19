@@ -41,14 +41,9 @@ NaturalSplineBasis <- function(X, S, num_knots){
   }
 
   # One hot encoding of stratification variable.
-  basis.S <- c()
+  basis.S <- OneHotEncoding(S)
 
-  for (k in 1:(length(unique(S)) - 1)) {
-
-    basis.S <- cbind(basis.S, ifelse(S == (k - 1), 1, 0))
-
-  }
-
+  # Return basis including everything.
   basis <- cbind(basis, basis.S)
 
   return(basis)
