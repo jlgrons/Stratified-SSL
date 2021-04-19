@@ -10,7 +10,7 @@
 #' @param X_unlabeled Covariate matrix for unlabeled data set.
 #' @param epsilon Small offset to help with numerical stability.
 #' @export
-#' @return List with parameter and SE est as well as estimated weights.
+#' @return List with parameter and SE est as well as estimated min_var_weights.
 #'
 
 SemiSupervisedMinVarRegression <- function(beta_SSL, beta_SL, resids_imp,
@@ -24,42 +24,54 @@ SemiSupervisedMinVarRegression <- function(beta_SSL, beta_SL, resids_imp,
   n_labeled <- nrow(X_labeled_int)
   ones <- c(1, 1)
   p <- ncol(X_labeled)
-  weight <- matrix(NA, p + 1, 2)
+  min_var_weight <- matrix(NA, p + 1, 2)
 
   if(is.null(epsilon)){epsilon = rep(0, p + 1)}
 
   # Compute the minimum variance estimator.
-  # Note: The residuals have been divided by mean of weights.
-  pred_prob_deriv <- c(ExpitDerivative(X_all %*% beta_SSL))
-  info_matrix <- solve(t(X_all) %*% (X_all * pred_prob_deriv))
-  scaled_info_matrix <- info_matrix * n_all
+  # Note: The residuals have been divided by mean of min_var_weights.
+  SSL_pred_prob_deriv <- c(ExpitDerivative(X_all %*% beta_SSL))
+  SSL_info_matrix <- solve(t(X_all) %*% (X_all * SSL_pred_prob_deriv))
+  SSL_scaled_info_matrix <- SSL_info_matrix * n_all
 
-  imp_IF <- scaled_info_matrix %*% t(X_labeled_int * c(resids_imp))
-  beta_SL_IF <- scaled_info_matrix %*% t(X_labeled_int * c(resids_beta_SL))
+  imp_IF <- SSL_scaled_info_matrix %*% t(X_labeled_int * c(resids_imp))
+  beta_SL_IF <- SSL_scaled_info_matrix %*% t(X_labeled_int * c(resids_beta_SL))
 
   for (i in 1:(p + 1)){
     comb_IF <- cbind(imp_IF[i,], beta_SL_IF[i,])
     cov <- solve(t(comb_IF)%*%comb_IF  + epsilon[i]*diag(2)) / n_labeled
     denominator <- t(ones) %*% cov %*% ones
     numerator <- t(ones) %*% cov
-    weight[i,] <- numerator / c(denominator)
+    min_var_weight[i,] <- numerator / c(denominator)
 
     # Check with Molei about this.
-    if (NA %in% weight[i,]){
-      weight[i,] <- c(1, 0)
+    if (NA %in% min_var_weight[i,]){
+      min_var_weight[i,] <- c(1, 0)
     }
   }
 
   # Componentwise minimum variance estimator.
-  beta_SSL.w <- beta_SSL*weight[,1] + weight[,2]*beta_SL
+  beta_SSL_min_var <- beta_SSL * min_var_weight[,1] +
+    beta_SL * min_var_weight[,2]
 
   # Standard error of minimum variance estimator.
-  A <- solve(t(X_all) %*% (X_all*c(dg.logit(X_all%*%beta_SSL.w))))*n_all;
-  w.beta_SSL <- diag(weight[,1]); w.beta_SL =  diag(weight[,2]);
-  resids.w <- (w.beta_SSL %*% t(X_labeled_int*c(resids_imp)) +
-                w.beta_SL %*% t(X_labeled_int*resids_beta_SL))/n_labeled
-  se.beta.w <- sqrt(diag(A %*% (resids.w %*% t(resids.w)) %*% A))
+  SSL_mv_pred_prob_deriv <- c(ExpitDerivative(X_all %*% beta_SSL_min_var))
+  SSL_mv_info_matrix <- solve(t(X_all) %*% (X_all * SSL_mv_pred_prob_deriv))
+  SSL_mv_scaled_info_matrix <- SSL_mv_info_matrix * n_all
 
-  return(list(beta = beta_SSL.w, weight = weight, se.est = se.beta.w))
+  beta_SSL_mv_weight <- diag(min_var_weight[,1])
+  beta_SL_mv_weight <-  diag(min_var_weight[,2])
+
+  resids_mv_weight <- beta_SSL_mv_weight %*% t(X_labeled_int*c(resids_imp)) +
+    beta_SL_mv_weight %*% t(X_labeled_int*c(resids_beta_SL))
+  scaled_resids_mv_weight <- resids_mv_weight / n_labeled
+
+  se.beta.w <- sqrt(diag(
+    SSL_mv_scaled_info_matrix %*%
+      (scaled_resids_mv_weight %*% t(scaled_resids_mv_weight)) %*%
+      SSL_mv_scaled_info_matrix))
+
+  return(list(beta_SSL_min_var = beta_SSL_min_var,
+              min_var_weight = min_var_weight, se.est = se.beta.w))
 }
 
