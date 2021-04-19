@@ -1,45 +1,44 @@
 # Updated: 2021-04-19
 
-#' Density ratio regression.
+#' Density ratio regression_
 #'
-#' @param basis_labeled Basis matrix for labeled data set.
-#' @param bais_unlabeled Basis matrix for unlabeled data set.
-#' @param X_labeled Covariate matrix for labeled data set.
-#' @param X_unlabeled Covariate matrix for unlabeled data set.
-#' @param y Numeric outcome vector.
-#' @param samp_prob Numeric vector of weights.
-#' @param lambda Penalization parameter for initial ridge estimator.
+#' @param basis_labeled Basis matrix for labeled data set_
+#' @param bais_unlabeled Basis matrix for unlabeled data set_
+#' @param X_labeled Covariate matrix for labeled data set_
+#' @param X_unlabeled Covariate matrix for unlabeled data set_
+#' @param y Numeric outcome vector_
+#' @param samp_prob Numeric vector of weights_
+#' @param lambda Penalization parameter for initial ridge estimator_
 #' @export
-#' @return Vector containing regression coefficients.
+#' @return Vector containing regression coefficients_
 #'
 
 DensityRatioRegression <- function(basis_labeled, basis_unlabeled, X_labeled,
                                      X_unlabeled, y, samp_prob, lambda = NULL){
+
+  num_labeled <- nrow(basis_labeled)
   basis_all <- rbind(basis_labeled, basis_unlabeled)
-  n_all <- length(basis.x[,1])
-  basis.phi <- cbind(rep(1, n_all), basis.x)
-  phi.t <- basis.phi[1:num_labeled, ]
-  phi.v <- basis.phi[- c(1:num_labeled), ]
-  dim.basis <- length(basis.phi[1, ])
+  n_all <- length(basis_x[,1])
 
-  phiT.phi <- t(basis.phi) %*% basis.phi / (num_labeled + n_all)
-  E.phi <- t(phi.t) %*% weights / num_labeled
-  theta.ratio <- solve(phiT.phi + diag(rep(0.01, ncol(phiT.phi)))) %*% (rowMeans(t(phi.v)) - E.phi)
-  density.ratio <- exp(phi.t %*% theta.ratio)
-  weights.dr <- density.ratio * weights
+  basis_phi <- cbind(rep(1, n_all), basis_all)
+  phi_labeled <- basis_phi[1:num_labeled, ]
+  phi_unlabeled <- basis_phi[-c(1:num_labeled), ]
+  dim_basis <- length(basis_phi[1, ])
 
-  beta.dr <- tryCatch(glm(y~X_labeled, family = 'binomial',
-                          weights = weights.dr)$coeff, error = function(e) rep(NA, p+1));
+  phiT_phi <- t(basis_phi) %*% basis_phi / (num_labeled + n_all)
+  E_phi <- t(phi_labeled) %*% weights / num_labeled
+  theta_ratio <- solve(phiT_phi + diag(rep(0.01, ncol(phiT_phi)))) %*% (rowMeans(t(phi_unlabeled)) - E_phi)
+  density_ratio <- exp(phi_labeled %*% theta_ratio)
+  weights_dr <- density_ratio * weights
 
-  u.dr <- diag(as.vector(y - g.logit(cbind(1, X_labeled) %*% beta.dr))) %*% cbind(1, X_labeled)
-  E.uT.phi <- t(u.dr) %*% diag(as.vector(weights)) %*% phi.t / sum(weights)
-  proj.coef.dr <- E.uT.phi %*% solve(phiT.phi + diag(rep(0.01, ncol(phiT.phi))))
-  proj.dr <- diag(as.vector(weights)) %*% phi.t %*% t(proj.coef.dr)
+  beta_dr <- tryCatch(glm(y~X_labeled, family = 'binomial',
+                          weights = weights_dr)$coeff, error = function(e) rep(NA, p+1));
+
+  u_dr <- diag(as_vector(y - g_logit(cbind(1, X_labeled) %*% beta_dr))) %*% cbind(1, X_labeled)
+  E_uT_phi <- t(u_dr) %*% diag(as_vector(weights)) %*% phi_labeled / sum(weights)
+  proj_coef_dr <- E_uT_phi %*% solve(phiT_phi + diag(rep(0.01, ncol(phiT_phi))))
+  proj_dr <- diag(as_vector(weights)) %*% phi_labeled %*% t(proj_coef_dr)
 
 
-  return(list(beta_SSL = beta_SSL, beta_SL = beta_SL,
-              beta_SL_unweighted = beta_SL_unweighted,
-              beta_imp = gamma,
-              beta.dr = beta.dr, proj.dr = proj.dr,
-              beta.naive = beta.naive))
+  return(list(beta_dr = beta_dr, proj_dr = proj_dr))
 }
