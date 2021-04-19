@@ -32,7 +32,7 @@ SemiSupervisedRegression <- function(basis_labeled, basis_unlabeled, X_labeled,
   # Step 2: Semi-supervised regression using the imputations from Step 1.
   basis_all <- rbind(basis_labeled, basis_unlabeled)
   X_all <- rbind(X_labeled, X_unlabeled)
-  basis_imps <- g.logit(cbind(1, basis_all) %*% beta_imp);
+  basis_imps <- Expit(cbind(1, basis_all) %*% beta_imp);
 
   beta_SSL <- tryCatch(glm(basis_imps ~ X_all,
                           family = 'binomial')$coeff,
