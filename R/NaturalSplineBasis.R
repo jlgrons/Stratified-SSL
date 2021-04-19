@@ -1,4 +1,4 @@
-# Updated: 2021-03-26
+# Updated: 2021-04-19
 
 #' Computes the natural spline basis.
 #'
@@ -9,7 +9,7 @@
 #' @return Matrix containing natural spline basis.
 #'
 
-NaturalSplineBasis = function(X, S, num_knots){
+NaturalSplineBasis <- function(X, S, num_knots){
 
   X <- as.matrix(X)
   basis.X <- c()
