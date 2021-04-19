@@ -38,11 +38,13 @@ SemiSupervisedMinVarRegression <- function(beta_SSL, beta_SL, resids_imp,
   beta_SL_IF <- scaled_info_matrix %*% t(X_labeled_int * c(resids_beta_SL))
 
   for (i in 1:(p + 1)){
-    mat <- cbind(imp_IF[i,], beta_SL_IF[i,])
-    cov <- solve(t(mat)%*%mat  + epsilon[i]*diag(2))/n_labeled
-    w2 <- t(ones) %*% cov %*% ones
-    w1 <- t(ones) %*% cov
-    weight[i,] <- w1/c(w2)
+    comb_IF <- cbind(imp_IF[i,], beta_SL_IF[i,])
+    cov <- solve(t(comb_IF)%*%comb_IF  + epsilon[i]*diag(2)) / n_labeled
+    denominator <- t(ones) %*% cov %*% ones
+    numerator <- t(ones) %*% cov
+    weight[i,] <- numerator / c(denominator)
+
+    # Check with Molei about this.
     if (NA %in% weight[i,]){
       weight[i,] <- c(1, 0)
     }
