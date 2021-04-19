@@ -1,4 +1,4 @@
-# Updated: 2021-04-14
+# Updated: 2021-04-19
 
 #' Logit Function
 #'
@@ -48,7 +48,6 @@ TruncatedCubic <- function(x, knot_location){
 
 #' One Hot Encoding
 #'
-#'
 #' @param s Numeric vector of interest containing category for each observation.
 #' @return Numeric vectors with the corresponding one hot encoding.
 OneHotEncoding <- function(s){
@@ -63,7 +62,26 @@ OneHotEncoding <- function(s){
   return(one_hot_encoding)
 }
 
+#' Basis of Interaction Terms
+#'
+#' @param X Numeric vector of interest containing category for each observation.
+#' @return Numeric vectors with the corresponding one hot encoding.
+InteractionBasis <- function(X){
 
+  basis <- X
+
+  p <- length(X[1,])
+
+  for (j in 2:p){
+    basis <- cbind(basis, X[,1] * X[,j])
+  }
+
+  for (j in 3:p){
+    basis <- cbind(basis, X[,2] * X[,j])
+  }
+
+  return(basis)
+}
 
 
 
