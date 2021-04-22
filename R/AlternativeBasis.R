@@ -10,7 +10,7 @@
 #' @return Matrix containing basis.
 #'
 
-AltenativeBasis <- function(X, S, num_knots, basis_type = 'interact'){
+AlternativeBasis <- function(X, S, num_knots, basis_type = 'interact'){
 
   if (basis.type == 'interact'){
 
