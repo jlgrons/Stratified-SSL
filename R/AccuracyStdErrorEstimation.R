@@ -21,32 +21,30 @@ AccuracyStdErrorEstimation <- function(basis_labeled, basis_unlabeled,
                                        resids_beta_imp, inverse_information,
                                        num_resamples = 500, threshold = 0.5){
 
-  resamp_weight <- sapply(num_resamples, function(kk) 4*rbeta(n.t, 0.5, 1.5))
+  n_labeled <- length(y)
+  resamp_weight <- sapply(num_resamples, function(kk) 4*rbeta(n_labeled, 0.5, 1.5))
 
-  resids.beta.sl.p <- ((resamp_weight-1)*resids.beta.sl)
-  resids.gamma.p <- ((resamp_weight-1)*resids.gamma)
-  resids.beta.dr.p <- (resamp_weight-1)*resids.beta.dr
-  proj.dr.p <- t(proj.dr) %*% (resamp_weight-1)
+  resids_beta_sl_weighted <- ((resamp_weight - 1) * resids_beta_sl)
+  resids_beta_imp_weighted <- ((resamp_weight - 1) * resids_beta_imp)
 
-  Xt.1 <- cbind(1, Xt)
-  T_1.p <- A %*% t(Xt.1)%*%resids.gamma.p/n.t;
-  T_2.p <- A %*% t(Xt.1)%*%resids.beta.sl.p/n.t;
+  # Note: double check correctness of this.
+  X_labeled_intercept <- cbind(1, X_labeled)
+  IF_beta_imp <- inverse_information %*% t(
+    X_labeled_intercept) %*% resids_beta_imp_weighted / n_labeled
+  IF_beta_sl <- inverse_information %*% t(
+    X_labeled_intercept) %*% resids_beta_sl_weighted / n_labeled
 
-  T_1.dr.p <- A %*% t(Xt.1) %*% resids.beta.dr.p / n.t
-  T_2.dr.p <- A %*% proj.dr.p / n.t
 
-  beta.ssl.w.p <- beta.ssl.w + diag(W[,1]) %*% T_1.p + diag(W[,2]) %*% T_2.p;
-  beta.sl.p <- beta.sl + T_2.p
-  beta.dr.p <- beta.dr + T_1.dr.p - T_2.dr.p
+  beta_ssl_pert <- beta_ssl + diag(min_var_weight[,1]) %*% IF_beta_sl + diag(
+    min_var_weight[,2]) %*% IF_beta_imp
+  beta_sl_pert <- beta_sl + IF_beta_imp
 
-  ind.lab <- 1:n.t;
-
-  gamma.p <- sapply(num_resamples, function(kk){
+  beta_imp_pert <- sapply(num_resamples, function(kk){
     my.ridge(basis.x[ind.lab, ], Yt, weights = resamp_weight[,kk]/samp.prob/mean(resamp_weight[,kk]/samp.prob),
-             lambda = log(ncol(basis.x))/(n.t^1.5))
+             lambda = log(ncol(basis_labeled))/(n_labeled^1.5))
   })
 
-  perts <- lapply(num_resamples, function(kk){model.eval.ap(Yt, beta.sl.p[,kk], beta.ssl.w.p[,kk], gamma.p[,kk],
+  perts <- lapply(num_resamples, function(kk){model.eval.ap(Yt, beta.sl.p[,kk], beta_ssl_pert[,kk], beta_imp_pert[,kk],
                                                  beta.dr.p[,kk], Xt, Xv, basis.x, samp.prob, V = resamp_weight[,kk])})
 
   ssl.pert.mse <- sapply(perts, "[[", 1);
@@ -61,7 +59,7 @@ AccuracyStdErrorEstimation <- function(basis_labeled, basis_unlabeled,
   return(list(ssl.pert.mse = ssl.pert.mse, sl.pert.mse = sl.pert.mse,
               dr.pert.mse = dr.pert.mse, ssl.pert.ae = ssl.pert.ae,
               sl.pert.ae = sl.pert.ae, dr.pert.ae = dr.pert.ae,
-              gamma.p = gamma.p, beta.ssl.w.p = beta.ssl.w.p,
-              beta.sl.p = beta.sl.p, beta.dr.p = beta.dr.p))
+              beta_imp_pert = beta_imp_pert, beta_ssl_pert = beta_ssl_pert,
+              beta_sl_pert= beta.sl.p, beta.dr.p = beta.dr.p))
 
 }
