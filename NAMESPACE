@@ -3,6 +3,7 @@
 export(ARoneCovMat)
 export(AlternativeBasis)
 export(CovariateGen)
+export(CrossValResids)
 export(DataGeneration)
 export(DensityRatioRegression)
 export(NaturalSplineBasis)
