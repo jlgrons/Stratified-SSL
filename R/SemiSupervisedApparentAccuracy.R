@@ -8,18 +8,17 @@
 #' @param X_unlabeled Covariate matrix for unlabeled data set.
 #' @param y Numeric outcome vector.
 #' @param samp_prob Numeric vector of weights.
-#' @param lambda Penalization parameter for initial ridge estimator.
+#' @param weight Numeric vector of resampling weights.
+#' @param threshold Threshold for overall misclassification rate.
 #' @export
 #' @return Vector containing regression coefficients.
 #'
 
-# computes the apparent estimates for model evaluation parameters
+
 SemiSupervisedApparentAccuracy <- function(basis_labeled, basis_unlabeled,
-                                           X_labeled, X_unlabaled,
-                                           y, beta_SL, beta_SSL, beta_imp,
-                                           beta_DR
-                                           Yt, beta.sl, beta.ssl, gamma, beta.dr,
-                                           Xt, Xv, basis.x, samp.prob, V = NULL, c = 0.5){
+                                           X_labeled, X_unlabaled, y, beta_SSL,
+                                           beta_imp, samp_prob, weight = NULL,
+                                           threshold = 0.5){
 
   ## beta.sl: supervised beta
   ## beta.ssl: semi-supervised beta
@@ -57,14 +56,6 @@ SemiSupervisedApparentAccuracy <- function(basis_labeled, basis_unlabeled,
   mse.ssl = mean(imps.pe1 + (lp.v.ssl - 2*imps.pe1)*lp.v.ssl)
   ae.ssl = mean(imps.pe2 + (lp.v.ssl.ind - 2*imps.pe2)*lp.v.ssl.ind)
 
-  mse.sl = mean((Yt - lp.t.ssl)^2 * weight)
-  ae.sl = mean(abs(Yt - lp.t.ssl.ind) * weight)
-
-  mse.naive = mean((Yt - lp.t.ssl)^2)
-  ae.naive = mean(abs(Yt - lp.t.ssl.ind))
-
-  mse.dr = mean((Yt - lp.t.dr)^2 * weight)
-  ae.dr = mean(abs(Yt - lp.t.dr.ind) * weight)
 
   return(list(mse.ssl = mse.ssl, ae.ssl = ae.ssl,
               mse.sl = mse.sl, ae.sl = ae.sl, mse.dr = mse.dr,
