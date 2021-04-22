@@ -2,7 +2,7 @@
 % Please edit documentation in R/SemiSupervisedAccuracy.R
 \name{SemiSupervisedAccuracy}
 \alias{SemiSupervisedAccuracy}
-\title{Semi-supervised error from a regression model.}
+\title{Semi-supervised accuracy estimation.}
 \usage{
 SemiSupervisedAccuracy(
   basis_labeled,
@@ -23,7 +23,11 @@ SemiSupervisedAccuracy(
 
 \item{y}{Numeric outcome vector.}
 
-\item{weight}{Numeric vector of resampling weights.}
+\item{beta_SSL}{Numeric vector of regression coefficients.}
+
+\item{beta_imp}{Numeric vector of regression coefficients for imputation.}
+
+\item{weight}{Numeric vector of observation weights.}
 
 \item{threshold}{Threshold for overall misclassification rate.}
 
@@ -32,8 +36,8 @@ SemiSupervisedAccuracy(
 \item{X_unlabeled}{Covariate matrix for unlabeled data set.}
 }
 \value{
-resamp_weightector containing regression coefficients.
+Semi-supervised accuracy.
 }
 \description{
-Semi-supervised error from a regression model.
+Semi-supervised accuracy estimation.
 }

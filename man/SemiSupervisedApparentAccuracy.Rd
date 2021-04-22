@@ -2,7 +2,7 @@
 % Please edit documentation in R/SemiSupervisedApparentAccuracy.R
 \name{SemiSupervisedApparentAccuracy}
 \alias{SemiSupervisedApparentAccuracy}
-\title{Apparent estimates for brier score and overall misclassification rate.}
+\title{Apparent estimates for brier score (MSE) and misclassification rate (OMR).}
 \usage{
 SemiSupervisedApparentAccuracy(
   basis_labeled,
@@ -24,6 +24,10 @@ SemiSupervisedApparentAccuracy(
 
 \item{y}{Numeric outcome vector.}
 
+\item{beta_SSL}{Numeric vector of regression coefficients.}
+
+\item{beta_imp}{Numeric vector of regression coefficients for imputation.}
+
 \item{samp_prob}{Numeric vector of weights.}
 
 \item{resamp_weight}{Numeric vector of resampling weights.}
@@ -35,8 +39,8 @@ SemiSupervisedApparentAccuracy(
 \item{X_unlabeled}{Covariate matrix for unlabeled data set.}
 }
 \value{
-resamp_weightector containing regression coefficients.
+Semi-supervised MSE and OMR.
 }
 \description{
-Apparent estimates for brier score and overall misclassification rate.
+Apparent estimates for brier score (MSE) and misclassification rate (OMR).
 }
