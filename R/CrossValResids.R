@@ -1,27 +1,41 @@
-#need to change to dg.logit!
+# Updated: 2021-04-22
 
-# Computes cross-validated (CV) residuals based on supervised and SS ests of the regression parameter
-# as well as the regression parameter from the imputation model
-resids.cv = function(basis.x, Xt, Xv, Yt, samp.prob, K.fold, lambda0 = NULL){
+#' Apparent estimates for brier score (MSE) and misclassification rate (OMR).
+#'
+#' @param basis_labeled Basis matrix for labeled data set.
+#' @param bais_unlabeled Basis matrix for unlabeled data set.
+#' @param X_labeled Covariate matrix for labeled data set.
+#' @param X_unlabeled Covariate matrix for unlabeled data set.
+#' @param y Numeric outcome vector.
+#' @param samp_prob Numeric vector of weights.
+#' @param num_folds Number of folds for cross-validation.
+#' @param lambda Regularization parameter for the imputation model.
+#' @export
+#' @return Cross-validated residuals.
+#'
 
-  ## basis.x: basis matrix with first n.t rows corr to labeled data and unlabeled rows n.t+1 to n.t+n.v
-  ## Xt: covariates for labeled
-  ## Xv: covariates for unlabeled
-  ## Yt: labels
-  ## samp.prob: vector of sampling weights
-  ## K.fold: # of folds for CV
-  ## lambda0: ridge parameter for SS estimator
+CrossValResids <- function(basis_labeled, basis_unlabeled, X_labeled,
+                           X_unlabeled, y, samp_prob, num_folds, lambda = NULL){
 
-  n.t = nrow(Xt); ind.cv = split(1:n.t, sample(rep(1:K.fold, floor(n.t/K.fold))));
-  qq = length(ind.cv); ind.lab = 1:n.t; pp = ncol(basis.x);
+  n_labeled <- nrow(X_labeled)
+  p_basis <- ncol(basis_labeled)
+  ind_cv <- split(1:n_labeled, sample(rep(1:num_folds,
+                                          floor(n_labeled / num_folds))))
 
-  if(is.null(lambda0)){lambda0 = log(pp)/(floor((K.fold-1)*n.t/K.fold))^1.5};
+  if(is.null(lambda)){
+    lambda <- log(p_basis) / (floor((num_folds - 1) * n_labeled/num_folds))^1.5
+    }
 
   # K estimates of supervised and SS beta & gamma with kth fold removed
-  cv.ests = lapply(1:qq, function(kk) {inds.t = as.vector(unlist(ind.cv[-kk]));
-  Yt.t = Yt[inds.t]; samp.prob.t = samp.prob[inds.t];
-  basis.cv = rbind(basis.x[inds.t,], basis.x[-ind.lab,]);
-  glm.fit.SS(basis.cv,  Xt[inds.t,], Xv, Yt.t, samp.prob.t, lambda0 = lambda0)});
+  cv.ests <- lapply(1:num_folds, function(kk) {
+    inds_fold <- as.vector(unlist(ind_cv[-kk]))
+    y_fold <- y[inds_fold]
+    samp_prob_fold <- samp_prob[inds_fold]
+    SemiSupervisedRegression(basis_labeled[inds_fold,], basis_unlabeled,
+                             X_labeled[inds_fold,], X_unlabeled, y_fold,
+                             samp_prob_fold, lambda = lambda)
+  })
+
 
   beta.ssl.cv = sapply(cv.ests, "[[", 1);
   beta.sl.cv = sapply(cv.ests, "[[", 2);
@@ -32,22 +46,22 @@ resids.cv = function(basis.x, Xt, Xv, Yt, samp.prob, K.fold, lambda0 = NULL){
   basis.lab = basis.x[ind.lab, ];
 
   # K sets of residuals based on the kth fold and the beta with the kth fold removed
-  res.cv = lapply(1:qq,function(kk){inds.v = as.vector(unlist(ind.cv[kk]));
+  res.cv = lapply(1:num_folds,function(kk){inds.v = as.vector(unlist(ind_cv[kk]));
   beta.ssl.cv.tmp = beta.ssl.cv[,kk]; beta.sl.cv.tmp = beta.sl.cv[,kk];
   gamma.cv.tmp = gamma.cv[,kk]; beta.dr.cv.tmp = beta.dr.cv[,kk];
   samp.prob.v = samp.prob[inds.v];
-  Yt.v = Yt[inds.v]; Xt.v = Xt[inds.v,]; basis.v = basis.lab[inds.v, ];
-  pred.b.ssl = g.logit(cbind(1, Xt.v) %*% beta.ssl.cv.tmp);
-  pred.b.sl = g.logit(cbind(1, Xt.v) %*% beta.sl.cv.tmp);
+  Yt.v = Yt[inds.v]; X_labeled.v = X_labeled[inds.v,]; basis.v = basis.lab[inds.v, ];
+  pred.b.ssl = g.logit(cbind(1, X_labeled.v) %*% beta.ssl.cv.tmp);
+  pred.b.sl = g.logit(cbind(1, X_labeled.v) %*% beta.sl.cv.tmp);
   pred.gamma = g.logit(cbind(1, basis.v) %*% gamma.cv.tmp);
-  pred.b.dr = g.logit(cbind(1, Xt.v) %*% beta.dr.cv.tmp);
+  pred.b.dr = g.logit(cbind(1, X_labeled.v) %*% beta.dr.cv.tmp);
   resids = list(beta.ssl = (Yt.v - pred.b.ssl)*(1/samp.prob.v),
                 beta.sl = (Yt.v - pred.b.sl)*(1/samp.prob.v),
                 gamma = (Yt.v - pred.gamma)*(1/samp.prob.v),
                 beta.dr = (Yt.v - pred.b.dr)*(1/samp.prob.v))
   })
 
-  inds.ord = order(unlist(ind.cv)); wgt = mean(1/samp.prob);
+  inds.ord = order(unlist(ind_cv)); wgt = mean(1/samp.prob);
 
   # Reorder the residuals and divide by the mean of the weights
   resids.beta.ssl = c(unlist(sapply(res.cv, "[[", 1)))[inds.ord]/wgt;
