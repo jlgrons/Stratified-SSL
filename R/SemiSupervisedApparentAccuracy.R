@@ -14,7 +14,6 @@
 #' @return resamp_weightector containing regression coefficients.
 #'
 
-
 SemiSupervisedApparentAccuracy <- function(basis_labeled, basis_unlabeled,
                                            X_labeled, X_unlabaled, y, beta_SSL,
                                            beta_imp, samp_prob,
@@ -23,31 +22,24 @@ SemiSupervisedApparentAccuracy <- function(basis_labeled, basis_unlabeled,
 
   if(is.null(resamp_weight)){resamp_weight <- rep(1, length(y))}
   weight <- resamp_weight/samp.prob/mean(resamp_weight/samp.prob)
-  X_all <- rbind(Xt, Xv);
+  X_all <- rbind(X_labeled, X_unlabeled)
 
-  lp.v.ssl <- g.logit(cbind(1,X_all)%*%beta.ssl);
-  lp.v.ssl.ind <- I(lp.v.ssl > c);
+  pred_prob_SSL_all <- Logit(cbind(1,X_all) %*% beta_ssl)
+  classification_SSL_all <- I(pred_prob_SSL_all > c)
 
-  lp.t.ssl <- g.logit(cbind(1,Xt)%*%beta.sl);
-  lp.t.ssl.ind <- I(lp.t.ssl > c);
+  # Note: Used to be a typo here for beta SL.
+  pred_prob_SSL_labeled <- Logit(cbind(1,X_labeled) %*% beta_ssl)
+  classification_SSL_labeled <- I(pred_prob_SSL_labeled > c)
 
-  lp.t.dr <- g.logit(cbind(1,Xt)%*%beta.dr);
+  imps_labeled <- cbind(1, basis_labeled)%*%beta_imp
 
-  lp.t.dr.ind <- I(lp.t.dr > c);
+  refit_MSE <- glm(Yt~cbind(lp.t.ssl), offset = imps.t, family = 'binomial', weights = weight)$coeff
+  imps_MSE <- g.logit(cbind(1,pred_prob_SSL_all)%*%refit.p1 +  cbind(1, basis.x)%*%gamma)
+  MSE_SSL <- mean(imps.pe1 + (pred_prob_SSL_all - 2*imps.pe1)*pred_prob_SSL_all)
 
-  n.t <- length(Yt); ind.l <- (1:n.t);
-  imps.t <- cbind(1, basis.x[ind.l,])%*%gamma
+  refit_OMR <- glm(Yt~cbind(lp.t.ssl.ind), offset = imps.t, family = 'binomial', weights = weight)$coeff
+  imps_OMR <- g.logit(cbind(1,classification_SSL_all)%*%refit.p2 +  cbind(1, basis.x)%*%gamma)
+  OMR_SSL <- mean(imps.pe2 + (classification_SSL_all - 2*imps.pe2)*classification_SSL_all)
 
-
-  refit.p1 <- glm(Yt~cbind(lp.t.ssl), offset = imps.t, family = 'binomial', weights = weight)$coeff;
-  refit.p2 <- glm(Yt~cbind(lp.t.ssl.ind), offset = imps.t, family = 'binomial', weights = weight)$coeff;
-  imps.pe1 <- g.logit(cbind(1,lp.v.ssl)%*%refit.p1 +  cbind(1, basis.x)%*%gamma);
-  imps.pe2 <- g.logit(cbind(1,lp.v.ssl.ind)%*%refit.p2 +  cbind(1, basis.x)%*%gamma);
-
-  mse.ssl <- mean(imps.pe1 + (lp.v.ssl - 2*imps.pe1)*lp.v.ssl)
-  ae.ssl <- mean(imps.pe2 + (lp.v.ssl.ind - 2*imps.pe2)*lp.v.ssl.ind)
-
-  return(list(mse.ssl = mse.ssl, ae.ssl = ae.ssl,
-              mse.sl = mse.sl, ae.sl = ae.sl, mse.dr = mse.dr,
-              ae.dr = ae.dr, mse.naive = mse.naive, ae.naive = ae.naive))
+  return(list(mse_ssl = SSL_MSE, omr_sl = OMR_SSL))
 }
