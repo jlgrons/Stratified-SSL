@@ -80,13 +80,13 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
   ## Gaussian mixture
 
   # Total data size.
-  N = n_lab + n_unlab
+  N <- n_lab + n_unlab
 
   # Regression parameter.
-  signal = c(signal, rep(0, p - length(signal)))
+  signal <- c(signal, rep(0, p - length(signal)))
 
   # Covariance for covariates.
-  sigma = 3*ARoneCovMat(p = p, rho = rho)
+  sigma <- 3*ARoneCovMat(p = p, rho = rho)
 
   # Covariates.
   covariates = CovariateGen(N, mu = rep(0, p), sigma)
