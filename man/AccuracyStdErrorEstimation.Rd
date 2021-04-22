@@ -12,9 +12,9 @@ AccuracyStdErrorEstimation(
   y,
   samp_prob,
   min_var_weight,
-  beta_sl,
-  beta_ssl,
-  resids_beta_sl,
+  beta_SL,
+  beta_SSL,
+  resids_beta_SL,
   resids_beta_imp,
   inverse_information,
   num_resamples = 500,
@@ -22,22 +22,38 @@ AccuracyStdErrorEstimation(
 )
 }
 \arguments{
+\item{basis_labeled}{Basis matrix for labeled data set.}
+
 \item{X_labeled}{Covariate matrix for labeled data set.}
 
 \item{X_unlabeled}{Covariate matrix for unlabeled data set.}
 
-\item{beta_SSL}{Semi-supervised regression coefficient vector.}
+\item{y}{Numeric outcome vector.}
+
+\item{samp_prob}{Numeric vector of weights.}
+
+\item{min_var_weight}{Minimum variance weight for semi-supervised estimate.}
 
 \item{beta_SL}{Supervised regression coefficient vector.}
 
-\item{resids_imp}{Residuals from the imputation model.}
+\item{beta_SSL}{Semi-supervised regression coefficient vector.}
 
 \item{resids_beta_SL}{Residuals from the supervised regression model.}
 
-\item{epsilon}{Small offset to help with numerical stability.}
+\item{resids_beta_imp}{Residuals from the imputation model.}
+
+\item{inverse_information}{Inverse information  matric.}
+
+\item{num_resamples}{Number of resamples.}
+
+\item{threshold}{Threshold for over misclassification rate.}
+
+\item{bais_unlabeled}{Basis matrix for unlabeled data set.}
+
+\item{resids_beta_SSL}{Residuals from the semi-supervised regression model.}
 }
 \value{
-List with parameter and SE est as well as estimated min_var_weights.
+Pertrubed estimates.
 }
 \description{
 Component-wise minimum variance semi-supervised regression.
