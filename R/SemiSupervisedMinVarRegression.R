@@ -66,12 +66,13 @@ SemiSupervisedMinVarRegression <- function(beta_SSL, beta_SL, resids_imp,
     beta_SL_mv_weight %*% t(X_labeled_int*c(resids_beta_SL))
   scaled_resids_mv_weight <- resids_mv_weight / n_labeled
 
-  se.beta.w <- sqrt(diag(
+  se_beta_weight <- sqrt(diag(
     SSL_mv_scaled_info_matrix %*%
       (scaled_resids_mv_weight %*% t(scaled_resids_mv_weight)) %*%
       SSL_mv_scaled_info_matrix))
 
   return(list(beta_SSL_min_var = beta_SSL_min_var,
-              min_var_weight = min_var_weight, se.est = se.beta.w))
+              min_var_weight = min_var_weight,
+              se_beta_weight = se_beta_weight))
 }
 
