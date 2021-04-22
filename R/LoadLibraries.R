@@ -1,4 +1,3 @@
-# Necessary packages
 
 library(matrixStats)
 library(stepPlr)
