@@ -120,13 +120,18 @@ MeanSquaredError <- function(X, beta, y, weight = NULL){
 #' @param X Numeric matrix.
 #' @param beta Numeric vector of regression coefficients.
 #' @param weight Optional vector of observation weights.
+#' @param threshold Threshold to derive classifications.
 #' @return Absolute error.
 #'
-AbsoluteError <- function(X, beta, y, weight = NULL){
+AbsoluteError <- function(X, beta, y, weight = NULL, threshold = NULL){
 
   if(is.null(weight)){weight <- rep(1, length(y))}
 
-  pred_prob <- Logit(cbind(1, X) %*% beta)
+  if(is.null(threshold)){
+    pred_prob <- Logit(cbind(1, X) %*% beta)}
+  else{
+    pred_prob <- I(Logit(cbind(1, X) %*% beta) > threshold)}
+  }
 
   return(mean(abs(y - pred_prob)))
 }
