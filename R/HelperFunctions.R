@@ -99,3 +99,36 @@ TwoWayInteractionBasis <- function(X, S){
   return(basis)
 }
 
+#' Mean squared error from fitted regression model
+#'
+#' @param X Numeric matrix.
+#' @param beta Numeric vector of regression coefficients.
+#' @param weight Optional vector of observation weights.
+#' @return Mean squared error.
+#'
+MeanSquaredError <- function(X, beta, y, weight = NULL){
+
+  if(is.null(weight)){weight <- rep(1, length(y))}
+
+  pred_prob <- Logit(cbind(1, X) %*% beta)
+
+  return(mean((y - pred_prob)^2))
+}
+
+#' Absolute error from fitted regression model
+#'
+#' @param X Numeric matrix.
+#' @param beta Numeric vector of regression coefficients.
+#' @param weight Optional vector of observation weights.
+#' @return Absolute error.
+#'
+AbsoluteError <- function(X, beta, y, weight = NULL){
+
+  if(is.null(weight)){weight <- rep(1, length(y))}
+
+  pred_prob <- Logit(cbind(1, X) %*% beta)
+
+  return(mean(abs(y - pred_prob)))
+}
+
+
