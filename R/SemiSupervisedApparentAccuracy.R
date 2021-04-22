@@ -1,17 +1,19 @@
 # Updated: 2021-04-22
 
-#' Apparent estimates for brier score and overall misclassification rate.
+#' Apparent estimates for brier score (MSE) and misclassification rate (OMR).
 #'
 #' @param basis_labeled Basis matrix for labeled data set.
 #' @param bais_unlabeled Basis matrix for unlabeled data set.
 #' @param X_labeled Covariate matrix for labeled data set.
 #' @param X_unlabeled Covariate matrix for unlabeled data set.
 #' @param y Numeric outcome vector.
+#' @param beta_SSL Numeric vector of regression coefficients.
+#' @param beta_imp Numeric vector of regression coefficients for imputation.
 #' @param samp_prob Numeric vector of weights.
 #' @param resamp_weight Numeric vector of resampling weights.
 #' @param threshold Threshold for overall misclassification rate.
 #' @export
-#' @return resamp_weightector containing regression coefficients.
+#' @return Semi-supervised MSE and OMR.
 #'
 
 SemiSupervisedApparentAccuracy <- function(basis_labeled, basis_unlabeled,

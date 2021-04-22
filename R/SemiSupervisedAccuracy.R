@@ -1,22 +1,23 @@
 # Updated: 2021-04-22
 
-#' Semi-supervised error from a regression model.
+#' Semi-supervised accuracy estimation.
 #'
 #' @param basis_labeled Basis matrix for labeled data set.
 #' @param bais_unlabeled Basis matrix for unlabeled data set.
 #' @param X_labeled Covariate matrix for labeled data set.
 #' @param X_unlabeled Covariate matrix for unlabeled data set.
 #' @param y Numeric outcome vector.
-#' @param weight Numeric vector of resampling weights.
+#' @param beta_SSL Numeric vector of regression coefficients.
+#' @param beta_imp Numeric vector of regression coefficients for imputation.
+#' @param weight Numeric vector of observation weights.
 #' @param threshold Threshold for overall misclassification rate.
 #' @export
-#' @return resamp_weightector containing regression coefficients.
+#' @return Semi-supervised accuracy.
 #'
 
 SemiSupervisedAccuracy <- function(basis_labeled, basis_unlabeled,
-                                           X_labeled, X_unlabaled, y, beta_SSL,
-                                           beta_imp, weight = NULL,
-                                           threshold = NULL){
+                                   X_labeled, X_unlabaled, y, beta_SSL,
+                                   beta_imp, weight = NULL, threshold = NULL){
 
   if(is.null(weight)){weight <- rep(1, length(y))}
 
