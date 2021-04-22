@@ -130,8 +130,8 @@ AbsoluteError <- function(X, beta, y, weight = NULL, threshold = NULL){
 
   if(is.null(threshold)){
     pred_prob <- Logit(cbind(1, X) %*% beta)
-  else{
-    pred_prob <- I(Logit(cbind(1, X) %*% beta) > threshold)}
+  }else{
+    pred_prob <- I(Logit(cbind(1, X) %*% beta) > threshold)
   }
 
   return(mean(abs(y - pred_prob)))
