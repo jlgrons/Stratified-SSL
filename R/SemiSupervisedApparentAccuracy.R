@@ -1,10 +1,25 @@
-###########################################################################
-####### Apparent estimator of the model accuracy parameter (BS and OMR) ###
-###########################################################################
+# Updated: 2021-04-22
+
+#' Apparent estimates for brier score and overall misclassification rate.
+#'
+#' @param basis_labeled Basis matrix for labeled data set.
+#' @param bais_unlabeled Basis matrix for unlabeled data set.
+#' @param X_labeled Covariate matrix for labeled data set.
+#' @param X_unlabeled Covariate matrix for unlabeled data set.
+#' @param y Numeric outcome vector.
+#' @param samp_prob Numeric vector of weights.
+#' @param lambda Penalization parameter for initial ridge estimator.
+#' @export
+#' @return Vector containing regression coefficients.
+#'
 
 # computes the apparent estimates for model evaluation parameters
-model.eval.ap = function(Yt, beta.sl, beta.ssl, gamma, beta.dr,
-                         Xt, Xv, basis.x, samp.prob, V = NULL, c = 0.5){
+SemiSupervisedApparentAccuracy <- function(basis_labeled, basis_unlabeled,
+                                           X_labeled, X_unlabaled,
+                                           y, beta_SL, beta_SSL, beta_imp,
+                                           beta_DR
+                                           Yt, beta.sl, beta.ssl, gamma, beta.dr,
+                                           Xt, Xv, basis.x, samp.prob, V = NULL, c = 0.5){
 
   ## beta.sl: supervised beta
   ## beta.ssl: semi-supervised beta
