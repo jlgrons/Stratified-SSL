@@ -1,20 +1,26 @@
 ########################################################
 ######### Evaluate out-of-sampe AUC, BS, OMR ###########
-#### Used for the comparison in Section S5  #############
+#### Used for the comparison in Section S5  ############
 ########################################################
 
-logit_pred <- function(X.test, beta.fit){
-  pred_mean <- g.logit(cbind(1, X.test) %*% beta.fit)
-  pred_mean[which(is.na(pred_mean))] <- ifelse(cbind(1, X.test) %*% beta.fit > 0, 1, 0)
-  return(list(class = ifelse(pred_mean > 0.5, 1, 0), pred = pred_mean))
+pred_prob <- function(X_test, beta, threshold = 0.5){
+  pred_mean <- Expit(cbind(1, X_test) %*% beta)
+
+  # Ask Molei about this.
+  pred_mean[which(is.na(pred_mean))] <- ifelse(cbind(1, X_test) %*% beta > 0, 1, 0)
+
+  return(list(class = ifelse(pred_mean > threshold, 1, 0),
+              pred = pred_mean))
 }
 
-Eva_class <- function(Y.test, results, weight = rep(1 / length(Y.test),
-                                                    length(Y.test))){
 
-  auc <- auc(Y.test, results$class)
-  mse <- sum((Y.test - results$pred)^2 * weight)
-  ae <- sum(abs(Y.test - results$class) * weight)
+classification_evaluation <- function(y_test, results,
+                                      weight = rep(1 / length(y_test),
+                                                   length(y_test))){
+
+  auc <- auc(y_test, results$class)
+  mse <- sum((y_test - results$pred)^2 * weight)
+  ae <- sum(abs(y_test - results$class) * weight)
 
   return(list(auc = auc, mse = mse, ae = ae))
 }
