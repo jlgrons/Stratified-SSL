@@ -36,8 +36,9 @@ ARoneCovMat <- function(p, rho){
 #' @export
 #' @return A stratification variable
 StratificationVar <- function(covariates, num_strata = 2){
-  strat_var_1 <- I(covariates[,1] + rnorm(N) < 0.5)
-  strat_var_3 <- I(covariates[,3] + rnorm(N) < 0.5)
+  N <- length(covariates[ ,1])
+  strat_var_1 <- I(covariates[ ,1] + rnorm(N) < 0.5)
+  strat_var_3 <- I(covariates[ ,3] + rnorm(N) < 0.5)
 
   if (num_strata == 2){
     strat_var <- ifelse(strat_var_1, 1, 0)
