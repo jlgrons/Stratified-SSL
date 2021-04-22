@@ -26,7 +26,7 @@ CrossValResids <- function(basis_labeled, basis_unlabeled, X_labeled,
     lambda <- log(p_basis) / (floor((num_folds - 1) * n_labeled/num_folds))^1.5
     }
 
-  # K estimates of supervised and SS beta & gamma with kth fold removed
+  # Regression estimates with the kth fold removed.
   cv.ests <- lapply(1:num_folds, function(kk) {
     inds_fold <- as.vector(unlist(ind_cv[-kk]))
     y_fold <- y[inds_fold]
@@ -36,44 +36,51 @@ CrossValResids <- function(basis_labeled, basis_unlabeled, X_labeled,
                              samp_prob_fold, lambda = lambda)
   })
 
+  beta_ssl_cv <- sapply(cv.ests, "[[", 1)
+  beta_sl_cv <- sapply(cv.ests, "[[", 2)
+  beta_imp_cv <- sapply(cv.ests, "[[", 3)
+  beta_dr_cv <- sapply(cv.ests, "[[", 4) # Note: add back in DR - this is unweighted SL
 
-  beta.ssl.cv = sapply(cv.ests, "[[", 1);
-  beta.sl.cv = sapply(cv.ests, "[[", 2);
-  gamma.cv = sapply(cv.ests, "[[", 3);
-  beta.dr.cv = sapply(cv.ests, "[[", 4);
-
-  # Basis corresponding to the labeled set
-  basis.lab = basis.x[ind.lab, ];
-
-  # K sets of residuals based on the kth fold and the beta with the kth fold removed
-  res.cv = lapply(1:num_folds,function(kk){inds.v = as.vector(unlist(ind_cv[kk]));
-  beta.ssl.cv.tmp = beta.ssl.cv[,kk]; beta.sl.cv.tmp = beta.sl.cv[,kk];
-  gamma.cv.tmp = gamma.cv[,kk]; beta.dr.cv.tmp = beta.dr.cv[,kk];
-  samp.prob.v = samp.prob[inds.v];
-  Yt.v = Yt[inds.v]; X_labeled.v = X_labeled[inds.v,]; basis.v = basis.lab[inds.v, ];
-  pred.b.ssl = g.logit(cbind(1, X_labeled.v) %*% beta.ssl.cv.tmp);
-  pred.b.sl = g.logit(cbind(1, X_labeled.v) %*% beta.sl.cv.tmp);
-  pred.gamma = g.logit(cbind(1, basis.v) %*% gamma.cv.tmp);
-  pred.b.dr = g.logit(cbind(1, X_labeled.v) %*% beta.dr.cv.tmp);
-  resids = list(beta.ssl = (Yt.v - pred.b.ssl)*(1/samp.prob.v),
-                beta.sl = (Yt.v - pred.b.sl)*(1/samp.prob.v),
-                gamma = (Yt.v - pred.gamma)*(1/samp.prob.v),
-                beta.dr = (Yt.v - pred.b.dr)*(1/samp.prob.v))
+  # Residuals based on the kth fold and the beta with the kth fold removed.
+  res_cv <- lapply(1:num_folds, function(kk){
+    inds_fold <- as.vector(unlist(ind_cv[kk]))
+    beta_ssl_fold <- beta_ssl_cv[,kk]
+    beta_sl_fold <- beta_sl_cv[,kk]
+    beta_imp_fold <- beta_imp_cv[,kk]
+    beta_dr_fold <- beta_dr_cv[,kk]
+    samp_prob_fold <- samp_prob[inds_fold]
+    y_fold <- y[inds_fold]
+    pred_prob_ssl <- Logit(cbind(1, X_labeled[inds_fold, ]) %*% beta_ssl_fold)
+    pred_prob_sl <- Logit(cbind(1, X_labeled[inds_fold, ]) %*% beta_sl_fold)
+    pred_imp <- Logit(cbind(1, basis[inds_fold, ]) %*% beta_imp_fold)
+    pred_prob_dr <- Logit(cbind(1, X_labeled[inds_fold, ]) %*% beta_dr_fold)
+    resids <- list(beta_ssl = (y_fold - pred_prob_ssl) * (1 / samp_prob_fold),
+                beta_sl = (y_fold - pred_prob_sl) * (1 / samp_prob_fold),
+                beta_imp = (y_fold - pred_imp) * (1 / samp_prob_fold),
+                beta_dr = (y_fold - pred_prob_dr) * (1 / samp_prob_fold))
   })
 
-  inds.ord = order(unlist(ind_cv)); wgt = mean(1/samp.prob);
+  inds_cv_ordered <- order(unlist(ind_cv))
+  mean_weight <- mean(1/samp.prob);
 
-  # Reorder the residuals and divide by the mean of the weights
-  resids.beta.ssl = c(unlist(sapply(res.cv, "[[", 1)))[inds.ord]/wgt;
-  resids.beta.sl = c(unlist(sapply(res.cv, "[[", 2)))[inds.ord]/wgt;
-  resids.gamma = c(unlist(sapply(res.cv, "[[", 3)))[inds.ord]/wgt;
-  resids.beta.dr = c(unlist(sapply(res.cv, "[[", 4)))[inds.ord]/wgt;
+  # Reorder the residuals and divide by the mean of the weights.
+  resids_beta_ssl <- c(unlist(sapply(res_cv,
+                                     "[[", 1)))[inds_cv_ordered] / mean_weight
+  resids_beta_sl <- c(unlist(sapply(res_cv,
+                                    "[[", 2)))[inds_cv_ordered] / mean_weight
+  resids_beta_imp <- c(unlist(sapply(res_cv,
+                                     "[[", 3)))[inds_cv_ordered] / mean_weight
+  resids_beta_dr <- c(unlist(sapply(res_cv,
+                                    "[[", 4)))[inds_cv_ordered] / mean_weight
 
-
-  return(list(resids.beta.ssl = resids.beta.ssl, resids.beta.sl = resids.beta.sl,
-              resids.gamma = resids.gamma, resids.beta.dr = resids.beta.dr,
-              beta.ssl.cv = beta.ssl.cv, beta.sl.cv = beta.sl.cv,
-              gamma.cv = gamma.cv, beta.dr.cv = beta.dr.cv))
+  return(list(resids_beta_ssl = resids_beta_ssl,
+              resids_beta_sl = resids_beta_sl,
+              resids_beta_imp = resids_beta_imp,
+              resids_beta_dr = resids_beta_dr,
+              beta_ssl_cv = beta_ssl_cv,
+              beta_sl_cv = beta_sl_cv,
+              beta_imp_cv = beta_imp_cv,
+              beta_dr_cv = beta_dr_cv))
 }
 
 
