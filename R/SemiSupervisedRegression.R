@@ -27,7 +27,8 @@ SemiSupervisedRegression <- function(basis_labeled, basis_unlabeled, X_labeled,
   weights <- 1/samp_prob/mean(1/samp_prob)
 
   # Step 1: Basis function regression for imputation.
-  beta_imp <- my.ridge(basis_labeled, y, weights = weights, lambda = lambda)
+  beta_imp <- RidgeRegression(basis_labeled, y, weights = weights,
+                              lambda = lambda)
 
   # Step 2: Semi-supervised regression using the imputations from Step 1.
   basis_all <- rbind(basis_labeled, basis_unlabeled)
