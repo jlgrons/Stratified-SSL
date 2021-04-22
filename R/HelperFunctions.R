@@ -1,4 +1,5 @@
-# Updated: 2021-04-19
+# Updated: 2021-04-22
+# Note: This now has to many functions and needs to be split up.
 
 #' Logit Function
 #'
@@ -128,12 +129,11 @@ AbsoluteError <- function(X, beta, y, weight = NULL, threshold = NULL){
   if(is.null(weight)){weight <- rep(1, length(y))}
 
   if(is.null(threshold)){
-    pred_prob <- Logit(cbind(1, X) %*% beta)}
+    pred_prob <- Logit(cbind(1, X) %*% beta)
   else{
     pred_prob <- I(Logit(cbind(1, X) %*% beta) > threshold)}
   }
 
   return(mean(abs(y - pred_prob)))
 }
-
 
