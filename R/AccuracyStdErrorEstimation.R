@@ -47,26 +47,27 @@ AccuracyStdErrorEstimation <- function(basis_labeled, basis_unlabeled,
   beta_SL_pert <- beta_SL + IF_beta_imp
 
   beta_imp_pert <- sapply(num_resamples, function(kk){
-    my.ridge(basis.x[ind.lab, ], Yt, weights = resamp_weight[,kk]/samp.prob/mean(resamp_weight[,kk]/samp.prob),
-             lambda = log(ncol(basis_labeled))/(n_labeled^1.5))
+    RidgeRegression(basis_labeled, y,
+                    weights = resamp_weight[,kk] / samp_prob/mean(
+                      resamp_weight[,kk] / samp_prob),
+             lambda = log(ncol(basis_labeled)) / (n_labeled^1.5))
   })
 
-  perts <- lapply(num_resamples, function(kk){model.eval.ap(Yt, beta.sl.p[,kk], beta_SSL_pert[,kk], beta_imp_pert[,kk],
+  perturbations <- lapply(num_resamples, function(kk){model.eval.ap(Yt, beta.sl.p[,kk], beta_SSL_pert[,kk], beta_imp_pert[,kk],
                                                  beta.dr.p[,kk], Xt, Xv, basis.x, samp.prob, V = resamp_weight[,kk])})
 
-  ssl.pert.mse <- sapply(perts, "[[", 1);
-  ssl.pert.ae <- sapply(perts, "[[", 2);
+  ssl_pert_mse <- sapply(perturbations, "[[", 1);
+  ssl_pert_ae <- sapply(perturbations, "[[", 2);
 
-  sl.pert.mse <- sapply(perts, "[[", 3);
-  sl.pert.ae <- sapply(perts, "[[", 4);
+  sl_pert_mse <- sapply(perturbations, "[[", 3);
+  sl_pert_ae <- sapply(perturbations, "[[", 4);
 
-  dr.pert.mse <- sapply(perts, "[[", 5);
-  dr.pert.ae <- sapply(perts, "[[", 6);
-
-  return(list(ssl.pert.mse = ssl.pert.mse, sl.pert.mse = sl.pert.mse,
-              dr.pert.mse = dr.pert.mse, ssl.pert.ae = ssl.pert.ae,
-              sl.pert.ae = sl.pert.ae, dr.pert.ae = dr.pert.ae,
-              beta_imp_pert = beta_imp_pert, beta_SSL_pert = beta_SSL_pert,
-              beta_SL_pert= beta.sl.p, beta.dr.p = beta.dr.p))
+  return(list(ssl_pert_mse = ssl_pert_mse,
+              sl_pert_mse = sl_pert_mse,
+              ssl_pert_ae = ssl_pert_ae,
+              sl_pert_ae = sl_pert_ae,
+              beta_imp_pert = beta_imp_pert,
+              beta_SSL_pert = beta_SSL_pert,
+              beta_SL_pert= beta_SL_pert))
 
 }
