@@ -111,6 +111,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
                       rep(0, 8), - 0.5, rep(0, 4), -0.5)
       basis <- InteractionBasis(covariates, strat_var)
     }
+
     if (num_strata == 4){
       gamma_coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
                       -0.5, rep(0, 4), -0.5, 0, 0)
@@ -118,6 +119,22 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     }
 
     Y <- I(c(basis %*% gamma_coef) + rlogis(N) > 0)
+  }
+
+
+  if (model_specification == 'outcome_incorrect_imputation_correct_supp'){
+
+    strat_var_1 <- I(covariates[,1] + covariates[,2] + rnorm(N) > 1.5)
+    strat_var <- ifelse(strat_var_1, 1, 0)
+
+    gamma_coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
+                    -0.5, rep(0, 4), -0.5)
+    basis <- InteractionBasis(covariates, strat_var)
+
+    Y0 <- basis %*% gamma_coef * strat_var +
+      (0.8 * basis %*% gamma_coef - 5) * (1 - strat_var) + rlogis(N)
+    Y <- I(Y0 > 1)
+
   }
 
 
@@ -130,20 +147,6 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     Y <- I(Y0 > 0)
   }
 
-  if (model_specification == 'outcome_incorrect_imputation_correct_supp'){
-
-    strat_var_1 <- I(covariates[,1] + covariates[,2] + rnorm(N) > 1.5)
-    strat_var <- ifelse(strat_var_1, 1, 0)
-
-    gamma_coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
-                    -0.5, rep(0, 4), -0.5)
-    basis <- InteractionBasis(covariates, strat_var)
-
-    Y0 <- cbind(1, basis) %*% gamma_coef * strat_var +
-      (0.8 * cbind(1, basis) %*% gamma_coef - 5) * (1 - strat_var) + rlogis(N)
-    Y <- I(Y0 > 1)
-
-  }
 
   if (model_specification == 'outcome_incorrect_imputation_incorrect_supp'){
 
