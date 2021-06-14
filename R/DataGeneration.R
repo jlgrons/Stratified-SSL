@@ -29,12 +29,14 @@ ARoneCovMat <- function(p, rho){
 
 #' Generate Stratification Variable
 #'
-#' @param covariates Covariate matrix.
-#' @param num_strata Number of stratum.
+#' @param covariates Covariate matrix with < 2 columns.
+#' @param num_strata Number of stratum (2 or 4).
 #' @export
-#' @return A stratification variable
+#' @return A stratification variable.
 StratificationVar <- function(covariates, num_strata = 2){
+
   N <- length(covariates[ ,1])
+
   strat_var_1 <- I(covariates[ ,1] + rnorm(N) < 0.5)
   strat_var_3 <- I(covariates[ ,3] + rnorm(N) < 0.5)
 
@@ -53,13 +55,12 @@ StratificationVar <- function(covariates, num_strata = 2){
 }
 
 
-
-#' Generate AR-1 Covariance Matrix
+#' Generate Data for Simulation Studies
 #'
 #' @param n_lab Size of labeled data.
 #' @param n_unlab Size of unlabeled data.
 #' @param p Number of covariates.
-#' @param rho Covariance parameter for AR-1 covariance structure for covariates.
+#' @param rho Covariance parameter for AR-1 covariance structure.
 #' @param signal Values of nonzero regression parameters.
 #' @param model_specification Choice of model specification.
 #' @param num_strata Number of strata for stratified sampling.
@@ -88,10 +89,10 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
   sigma <- 3*ARoneCovMat(p = p, rho = rho)
 
   # Covariates.
-  covariates = CovariateGen(N, mu = rep(0, p), sigma)
+  covariates <- CovariateGen(N, mu = rep(0, p), sigma)
 
   # Linear predictor.
-  lin_pred = c(covariates %*% signal)
+  lin_pred <- c(covariates %*% signal)
 
   # Outcome and stratification variable.
   if (model_specification == 'outcome_correct_imputation_correct'){
@@ -116,7 +117,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
       basis <- ns.basis(covariates, strat_var, 3, basis_type = 'interact')
     }
 
-    Y = I(c(basis %*% gamma.coef) + rlogis(N) > 0)
+    Y <- I(c(basis %*% gamma.coef) + rlogis(N) > 0)
   }
 
 
@@ -150,10 +151,10 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     strat_var <- ifelse(strat_var_1, 1, 0)
 
     incorrect_signal = c(-2, rep(0,3), -3, -3, 0, 0, rep(0,2))
-    Y0 = (lin_pred + covariates[,1]^2 + covariates[,3]^2) * strat_var +
+    Y0 <- (lin_pred + covariates[,1]^2 + covariates[,3]^2) * strat_var +
       (0.8 * lin_pred - 5)* (1 - strat_var) +
       rgumbel(N, -2, 0.3)*exp(c(covariates%*% incorrect_signal))
-    Y = I(Y0 > 1)
+    Y <- I(Y0 > 1)
   }
 
 
@@ -167,16 +168,18 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
 
 
 
-    Y = rbinom(N, 1, 0.5)
-    covariates = matrix(0, N, p)
+    Y <- rbinom(N, 1, 0.5)
+    covariates <- matrix(0, N, p)
 
-    mu1 = rep(0, p)
-    sigma1 = autocorr.mat(p = p, rho = rho)
-    covariates[which(Y == 0), ] = CovariateGen(length(which(Y == 0)), mu1, sigma1)
+    mu1 <- rep(0, p)
+    sigma1 <- autocorr.mat(p = p, rho = rho)
+    covariates[which(Y == 0), ] <- CovariateGen(length(which(Y == 0)),
+                                                mu1, sigma1)
 
-    mu2 = mu1 + mu_diff
-    sigma2 = Sigma1 + Sigma_diff
-    covariates[which(Y == 1), ] <- CovariateGen(length(which(Y == 1)), mu2, sigma2)
+    mu2 <- mu1 + mu_diff
+    sigma2 <- Sigma1 + Sigma_diff
+    covariates[which(Y == 1), ] <- CovariateGen(length(which(Y == 1)),
+                                                mu2, sigma2)
 
 
     covariates[which(Y == 1), 3] <- covariates[which(Y == 1), 3] +
