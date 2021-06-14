@@ -209,19 +209,19 @@ data_gen <- function(n.t, n.v, p, rho, model.spec = 'CC', strata_num = 2){
     mu_diff <- c(0.2, -0.2, 0.2, -0.2, 0.2, -0.2, 0.1, -0.1, rep(0, p - 8))
     Sigma_diff <- autocorr.mat(p, rho = 0.3) - diag(rep(0.4, p)) + matrix(0.2, p, p)
 
-    S1 <- I(X0[,1] + rnorm(N, 0, 1) < B)
-    S3 <- I(X0[,3] + rnorm(N, 0, 1) < B)
+    #S1 <- I(X0[,1] + rnorm(N, 0, 1) < B)
+    #S3 <- I(X0[,3] + rnorm(N, 0, 1) < B)
 
-    if (strata_num == 2){
-      S <- ifelse(S1, 1, 0)
-    }
+    #if (strata_num == 2){
+    #  S <- ifelse(S1, 1, 0)
+   # }
 
-    if (strata_num == 4){
-      S <- rep(0, N)
-      S[intersect(which(S1 == 1), which(S3 == 1))] <- 1
-      S[intersect(which(S1 == 1), which(S3 == 0))] <- 2
-      S[intersect(which(S1 == 0), which(S3 == 1))] <- 3
-    }
+    #if (strata_num == 4){
+    #  S <- rep(0, N)
+    #  S[intersect(which(S1 == 1), which(S3 == 1))] <- 1
+    #  S[intersect(which(S1 == 1), which(S3 == 0))] <- 2
+    #  S[intersect(which(S1 == 0), which(S3 == 1))] <- 3
+    #}
 
     Y = rbinom(N, 1, 0.5)
     X0 = matrix(0, N, p)

@@ -164,14 +164,13 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
   if (model_specification == 'gaussian_mixture'){
 
     mu_diff <- c(0.2, -0.2, 0.2, -0.2, 0.2, -0.2, 0.1, -0.1, rep(0, p - 8))
-    sigma_diff <- autocorr.mat(p, rho = 0.3) - diag(rep(0.4, p)) +
-      matrix(0.2, p, p)
+    sigma_diff <- ARoneCovMat(p, rho = 0.3) - diag(rep(0.4, p)) + matrix(0.2, p, p)
 
     Y <- rbinom(N, 1, 0.5)
     covariates <- matrix(0, N, p)
 
     mu1 <- rep(0, p)
-    sigma1 <- autocorr.mat(p = p, rho = rho)
+    sigma1 <- ARoneCovMat(p = p, rho = rho)
     covariates[which(Y == 0), ] <- CovariateGen(length(which(Y == 0)),
                                                 mu1, sigma1)
 
