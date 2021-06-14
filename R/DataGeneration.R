@@ -163,13 +163,9 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
 
   if (model_specification == 'gaussian_mixture'){
 
-    strat_var <- StratificationVar(covariates, num_strata = num_strata)
-
     mu_diff <- c(0.2, -0.2, 0.2, -0.2, 0.2, -0.2, 0.1, -0.1, rep(0, p - 8))
     sigma_diff <- autocorr.mat(p, rho = 0.3) - diag(rep(0.4, p)) +
       matrix(0.2, p, p)
-
-
 
     Y <- rbinom(N, 1, 0.5)
     covariates <- matrix(0, N, p)
@@ -184,6 +180,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     covariates[which(Y == 1), ] <- CovariateGen(length(which(Y == 1)),
                                                 mu2, sigma2)
 
+    strat_var <- StratificationVar(covariates, num_strata = num_strata)
 
     covariates[which(Y == 1), 3] <- covariates[which(Y == 1), 3] +
       0.12 * covariates[which(Y == 1), 3]^3
@@ -194,6 +191,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
       0.12 * covariates[which(Y == 1), 7]^3
     covariates[which(Y == 1), 8] <- covariates[which(Y == 1), 8] +
       0.12 * covariates[which(Y == 1), 8]^3
+
 
   }
 
