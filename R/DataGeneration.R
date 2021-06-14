@@ -180,7 +180,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
                                                 mu1, sigma1)
 
     mu2 <- mu1 + mu_diff
-    sigma2 <- Sigma1 + Sigma_diff
+    sigma2 <- sigma1 + sigma_diff
     covariates[which(Y == 1), ] <- CovariateGen(length(which(Y == 1)),
                                                 mu2, sigma2)
 
