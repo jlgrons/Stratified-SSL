@@ -1,5 +1,3 @@
-library(MASS)
-
 #' Generate data from a multivariate normal
 #'
 #' @param n Size of data set.
@@ -7,9 +5,10 @@ library(MASS)
 #' @param Sigma Covariance matrix.
 #' @export
 #' @return A matrix of multivariate normal data.
-CovariateGen <- function(n, mu, sigma){
+CovariateGen <- function(n, mu, Sigma){
 
-  return(mvrnorm(n, mu, sigma))
+  return(MASS::mvrnorm(n, mu, Sigma))
+
 }
 
 
@@ -26,7 +25,6 @@ ARoneCovMat <- function(p, rho){
 
   return(ar_one_matrix)
 }
-
 
 
 #' Generate Stratification Variable
