@@ -1,3 +1,4 @@
+source('Testing_Functions.R')
 ## Simulations for the Main Manuscript ##
 
 ## CC: Correct Prediction and Imputation Model
@@ -32,24 +33,9 @@ new_data <- DataGeneration(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
                            model_specification = 'outcome_correct_imputation_correct',
                            num_strata = num_strata)
 
-# Test to see if they output same data
-all.equal(old_data$b0, new_data$signal)
+run_data_gen_test(old_data, new_data)
 
-all.equal(old_data$X0, new_data$covariates)
-all.equal(old_data$Xt, new_data$covariates_lab)
-all.equal(old_data$Xv, new_data$covariates_unlab)
-all.equal(old_data$Xr, new_data$covariates_random_samp)
-all.equal(old_data$Xvr, new_data$covariates_unlab_random_samp)
 
-all.equal(old_data$Yt, new_data$Y_lab)
-all.equal(old_data$Y, new_data$Y)
-all.equal(old_data$Yr, new_data$Y_random_samp)
-
-all.equal(old_data$St, new_data$S_lab)
-all.equal(old_data$Sv, new_data$S_unlab)
-all.equal(old_data$Sr, new_data$S_random_samp)
-all.equal(old_data$S, new_data$strat_var)
-all.equal(old_data$samp.prob, new_data$samp_prob)
 
 ## IC
 
