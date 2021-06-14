@@ -137,7 +137,7 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
 
     gamma_coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
                     -0.5, rep(0, 4), -0.5)
-    basis <- ns.basis(covariates, strat_var, 3, basis_type = 'interact')
+    basis <- InteractionBasis(covariates, strat_var)
 
     Y0 <- cbind(1, basis) %*% gamma_coef * strat_var +
       (0.8 * cbind(1, basis) %*% gamma_coef - 5) * (1 - strat_var) + rlogis(N)
