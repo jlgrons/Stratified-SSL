@@ -107,17 +107,17 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     strat_var <- StratificationVar(covariates, num_strata = num_strata)
 
     if (num_strata == 2){
-      gamma.coef <- c(signal, c(0.5, 0, 0, 0.5),
-                      rep(0, 8), - 0.5,rep(0, 4), -0.5)
-      basis <- ns.basis(covariates, strat_var, 3, basis_type = 'interact')
+      gamma_coef <- c(signal, c(0.5, 0, 0, 0.5),
+                      rep(0, 8), - 0.5, rep(0, 4), -0.5)
+      basis <- InteractionBasis(covariates)
     }
     if (num_strata == 4){
-      gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
+      gamma_coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
                       -0.5, rep(0, 4), -0.5, 0, 0)
-      basis <- ns.basis(covariates, strat_var, 3, basis_type = 'interact')
+      basis <- InteractionBasis(covariates)
     }
 
-    Y <- I(c(basis %*% gamma.coef) + rlogis(N) > 0)
+    Y <- I(c(basis %*% gamma_coef) + rlogis(N) > 0)
   }
 
 
@@ -135,12 +135,12 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     strat_var_1 <- I(covariates[,1] + covariates[,2] + rnorm(N) > 1.5)
     strat_var <- ifelse(strat_var_1, 1, 0)
 
-    gamma.coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
+    gamma_coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
                     -0.5, rep(0, 4), -0.5)
     basis <- ns.basis(covariates, strat_var, 3, basis_type = 'interact')
 
-    Y0 <- cbind(1, basis) %*% gamma.coef * strat_var +
-      (0.8 * cbind(1, basis) %*% gamma.coef - 5) * (1 - strat_var) + rlogis(N)
+    Y0 <- cbind(1, basis) %*% gamma_coef * strat_var +
+      (0.8 * cbind(1, basis) %*% gamma_coef - 5) * (1 - strat_var) + rlogis(N)
     Y <- I(Y0 > 1)
 
   }

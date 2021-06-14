@@ -1,6 +1,6 @@
 run_data_gen_test <- function(old_data, new_data){
 
-  signal_test <- all.equal(old_data$b0, new_data$signal)
+  signal_test <- all.equal(old_data$b0[-1], new_data$signal)
 
   cov_test <- all.equal(old_data$X0, new_data$covariates)
   lab_cov_test <- all.equal(old_data$Xt, new_data$covariates_lab)
