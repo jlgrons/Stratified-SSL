@@ -109,12 +109,12 @@ DataGeneration <- function(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
     if (num_strata == 2){
       gamma_coef <- c(signal, c(0.5, 0, 0, 0.5),
                       rep(0, 8), - 0.5, rep(0, 4), -0.5)
-      basis <- InteractionBasis(covariates)
+      basis <- InteractionBasis(covariates, strat_var)
     }
     if (num_strata == 4){
       gamma_coef <- c(signal, c(0.5, 0, 0, 0.5), rep(0, 8),
                       -0.5, rep(0, 4), -0.5, 0, 0)
-      basis <- InteractionBasis(covariates)
+      basis <- InteractionBasis(covariates, strat_var)
     }
 
     Y <- I(c(basis %*% gamma_coef) + rlogis(N) > 0)

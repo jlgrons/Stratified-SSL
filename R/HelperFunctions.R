@@ -66,8 +66,9 @@ OneHotEncoding <- function(s){
 #' Basis of Interaction Terms
 #'
 #' @param X Numeric matrix.
+#' @param S Numeric matrix.
 #' @return Numeric matrix with basis containing interaction terms.
-InteractionBasis <- function(X){
+InteractionBasis <- function(X, S){
 
   basis <- X
 
@@ -81,6 +82,10 @@ InteractionBasis <- function(X){
     basis <- cbind(basis, X[,2] * X[,j])
   }
 
+  # One hot encoding of stratification variable.
+  basis.S <- OneHotEncoding(S)
+
+  basis <- cbind(basis, basis.S)
   return(basis)
 }
 
