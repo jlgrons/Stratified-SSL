@@ -1,24 +1,10 @@
-num_sims <- 2
+num_sims <- 500
+
 set.seed(92047)
 setwd('~/Desktop/Stratified-SSL/R/Original Code')
 source('function.R')
 source('function_response.R')
 # Outcome model is wrong and imputation model is correct (Section 7 (ii))
-
-# Data generation:
-
-# Sample size of label data
-n.t <- 400
-
-# Matrix correlation
-rho <- 0.4
-
-# Sample size of unlabel data
-N <- 20000
-p <- 10
-
-# Number of stratum
-strata.num <- 2
 
 beta.true.all <- c()
 beta.sl.all <- c()
@@ -66,6 +52,16 @@ for(i in 1:num_sims){
   beta.ssl.all <- rbind(beta.ssl.all, beta.ssl)
   beta.ssl.2.all <- rbind(beta.ssl.2.all, beta.ssl.2)
 }
+
+setwd('~/Desktop')
+write.table(beta.true.all, paste0(n.t, "-beta_true.csv"),
+            sep=";", col.names=FALSE, quote=FALSE, row.names=FALSE)
+write.table(beta.sl.all, paste0(n.t, "-beta_sl.csv"),
+            sep=";", col.names=FALSE, quote=FALSE, row.names=FALSE)
+write.table(beta.ssl.all, paste0(n.t, "-beta_ssl.csv"),
+            sep=";", col.names=FALSE, quote=FALSE, row.names=FALSE)
+write.table(beta.ssl.2.all, paste0(n.t, "-beta_ssl2.csv"),
+            sep=";", col.names=FALSE, quote=FALSE, row.names=FALSE)
 
 
 
