@@ -62,5 +62,10 @@ write.table(beta.ssl.2.all, paste0(n.t, "-beta_ssl2.csv"),
             sep=";", col.names=FALSE, quote=FALSE, row.names=FALSE)
 
 
+my_beta_true_200 <- read.table( paste0(n.t, "-beta_true.csv"))
+my_beta_sl_200 <- read.table( paste0(n.t, "-beta_sl.csv"))
+my_beta_ssl_200 <- read.table( paste0(n.t, "-beta_ssl.csv"))
+my_beta_ssl2_200 <- read.table( paste0(n.t, "-beta_ssl2.csv"))
+
 
 
