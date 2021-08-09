@@ -1,3 +1,5 @@
+num_sims <- 2
+
 setwd('~/Desktop/Stratified-SSL/R/Original Code')
 # Run with 200.
 

@@ -1,5 +1,3 @@
-num_sims <- 500
-
 set.seed(92047)
 setwd('~/Desktop/Stratified-SSL/R/Original Code')
 source('function.R')
