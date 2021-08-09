@@ -53,19 +53,14 @@ for(i in 1:num_sims){
 
 setwd('~/Desktop')
 write.table(beta.true.all, paste0(n.t, "-beta_true.csv"),
-            sep=";", col.names=FALSE, quote=FALSE, row.names=FALSE)
+           col.names=FALSE, quote=FALSE, row.names=FALSE)
 write.table(beta.sl.all, paste0(n.t, "-beta_sl.csv"),
-            sep=";", col.names=FALSE, quote=FALSE, row.names=FALSE)
+           col.names=FALSE, quote=FALSE, row.names=FALSE)
 write.table(beta.ssl.all, paste0(n.t, "-beta_ssl.csv"),
-            sep=";", col.names=FALSE, quote=FALSE, row.names=FALSE)
+           col.names=FALSE, quote=FALSE, row.names=FALSE)
 write.table(beta.ssl.2.all, paste0(n.t, "-beta_ssl2.csv"),
-            sep=";", col.names=FALSE, quote=FALSE, row.names=FALSE)
+           col.names=FALSE, quote=FALSE, row.names=FALSE)
 
-
-my_beta_true_200 <- read.table( paste0(n.t, "-beta_true.csv"))
-my_beta_sl_200 <- read.table( paste0(n.t, "-beta_sl.csv"))
-my_beta_ssl_200 <- read.table( paste0(n.t, "-beta_ssl.csv"))
-my_beta_ssl2_200 <- read.table( paste0(n.t, "-beta_ssl2.csv"))
 
 
 
