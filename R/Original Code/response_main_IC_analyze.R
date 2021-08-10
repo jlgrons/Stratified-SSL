@@ -99,10 +99,10 @@ round(bias_400_S4,4)
 
 # create the table
 options("scipen" = 100, "digits" = 5)
-bias_table <- cbind(round(bias_200_S2[, 3]  - bias_200_S2[, 2], 4),
-      round(bias_400_S2[, 3]  - bias_400_S2[, 2], 4),
-      round(bias_200_S4[, 3]  - bias_200_S4[, 2], 4),
-      round(bias_400_S4[, 3]  - bias_400_S4[, 2], 4)
+bias_table <- cbind(round(abs(bias_200_S2[, 3]  - bias_200_S2[, 2]), 4),
+      round(abs(bias_400_S2[, 3]  - bias_400_S2[, 2]), 4),
+      round(abs(bias_200_S4[, 3]  - bias_200_S4[, 2]), 4),
+      round(abs(bias_400_S4[, 3]  - bias_400_S4[, 2]), 4)
 )
 colnames(bias_table) <- rep(c('$n = 100$', '$n = 100$'), 2)
 rownames(bias_table) <- paste0('$\\theta_', 0:10, '$')
