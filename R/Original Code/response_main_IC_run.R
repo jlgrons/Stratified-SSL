@@ -1,4 +1,4 @@
-num_sims <- 2
+num_sims <- 500
 
 setwd('~/Desktop/Stratified-SSL/R/Original Code')
 # Run with 200.
@@ -14,7 +14,7 @@ N <- 20000
 p <- 10
 basis.type <- 'interact'
 # Number of stratum
-strata.num <- 2
+strata.num <- 4
 
 source('response_main_IC.R')
 
@@ -32,6 +32,6 @@ N <- 20000
 p <- 10
 basis.type <- 'interact'
 # Number of stratum
-strata.num <- 2
+strata.num <- 4
 
 source('response_main_IC.R')
