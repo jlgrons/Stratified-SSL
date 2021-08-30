@@ -94,4 +94,11 @@ acc_cv <- CrossValAccuracy(basis_labeled, basis_unlabeled,
                            num_folds = num_folds, reps = reps,
                            theshold = my_threshold, lambda0 = NULL)
 
+# Ensemble of apparent and CV estimator (Section 4)
+w <- K.fold / (2 * K.fold - 1)
+w * ap.ae + (1 - w) * cv.ae
+w * ap.mse + (1 - w) * cv.mse
+################################################################################
+# Perturbation for standard error estimates for accuracy estimates.
+
 
