@@ -14,6 +14,8 @@
 ~%2FDesktop%2FStratified-SSL%2FstratifiedSSL%2FR%2FDensityRatioAccuracy.R="BB2B65B8"
 ~%2FDesktop%2FStratified-SSL%2FstratifiedSSL%2FR%2FDensityRatioRegression.R="F8E4F66C"
 ~%2FDesktop%2FStratified-SSL%2FstratifiedSSL%2FR%2FHelperFunctions.R="EC584CBC"
+~%2FDesktop%2FStratified-SSL%2FstratifiedSSL%2FR%2FIntrinsicEffAccuracy.R="4F6D0683"
+~%2FDesktop%2FStratified-SSL%2FstratifiedSSL%2FR%2FIntrinsicEffRegression.R="7D761C89"
 ~%2FDesktop%2FStratified-SSL%2FstratifiedSSL%2FR%2FLoadLibraries.R="5B8CB387"
 ~%2FDesktop%2FStratified-SSL%2FstratifiedSSL%2FR%2FNewtonGlmnet.R="FE93F710"
 ~%2FDesktop%2FStratified-SSL%2FstratifiedSSL%2FR%2FRidgeRegression.R="AA606ED7"
