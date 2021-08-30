@@ -73,18 +73,24 @@ beta_minvar <- SemiSupervisedMinVarRegression(beta_ssl, beta_sl,
 
 ################################################################################
 # Apparent accuracy estimates.
+my_threshold <- 0.5
 acc_sl <- SupervisedApparentAccuracy(X_labeled, y, beta_sl, samp_prob,
                                        resamp_weight = NULL,
-                                       threshold = 0.5)
+                                       threshold = my_threshold)
 
 acc_ssl <- SemiSupervisedApparentAccuracy(basis_labeled, basis_unlabeled,
                                           X_labeled, X_unlabaled,
                                           y, beta_ssl, beta_imp, samp_prob,
-                                          resamp_weight = NULL, threshold = 0.5)
+                                          resamp_weight = NULL,
+                                          threshold = my_threshold)
 
 ################################################################################
 # Cross-validated accuracy estimates.
-reps <- 2
+reps <- 1
 # Note: Function still needs to be formatted.
+acc_cv <- CrossValAccuracy(basis_labeled, basis_unlabeled,
+                            X_labeled, X_unlabeled, y, samp_prob,
+                            min_var_weight, num_folds = num_folds, reps = reps,
+                            theshold = my_threshold, lambda0 = NULL)
 
 

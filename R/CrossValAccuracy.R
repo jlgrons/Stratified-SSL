@@ -18,7 +18,7 @@
 #'
 
 # computes the CV estimates for model evaluation parameters
-CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
+CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
                               X_labeled, X_unlabeled, y, samp_prob,
                               min_var_weight, num_folds = 3, reps = 10,
                               theshold = 0.5, lambda0 = NULL){
