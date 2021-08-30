@@ -52,9 +52,9 @@ beta_naive <- regression_result$beta_SL_unweighted
 # Gamma from imputation.
 gamma <- regression_result$gamma
 # Beta from density ratio method.
-beta_dr <- regression_result$beta_DR$beta_dr
+beta_dr <- regression_result$beta_DR
 # DR projection.
-proj_dr <- regression_result$beta_DR$proj_dr
+proj_dr <- regression_result$proj_DR
 
 ################################################################################
 # Cross-validated residuals.
@@ -64,16 +64,17 @@ cv_residuals <- CrossValResids(basis_labeled, basis_unlabeled, X_labeled,
 
 # Save the CV residuals.
 resids_sl <- cv_residuals$resids_beta_sl
-resids_ssl <- cv_residuals$resids_beta_sl
-resids_dr <- cv_residuals$resids_beta_sl
-resids_gamma <- cv_residuals$resids_beta_sl
+resids_ssl <- cv_residuals$resids_beta_ssl
+resids_dr <- cv_residuals$resids_beta_dr
+resids_gamma <- cv_residuals$resids_gamma
 
 # Standard error estimates for supervised and SS estimates.
 beta_sl_se_obj <- StdErrorEstimation(X_labeled, X_unlabeled, y,
-                                 beta_sl, cv_residuals$beta_sl_cv)
+                                 beta_sl, resids_sl)
 beta_ssl_se_obj <- StdErrorEstimation(X_labeled, X_unlabeled, y,
-                                  beta_ssl, cv_residuals$beta_ssl_cv)
-
+                                  beta_ssl, resids_ssl)
+beta_dr_se_obj <- StdErrorEstimationDR(X_labeled, X_unlabeled, y,
+                                       beta_dr, resids_dr, proj_dr)
 
 # Supervised SE and inverse info.
 beta_sl_se <- beta_sl_se_obj$std_error
@@ -81,15 +82,23 @@ beta_sl_inv_info <- beta_sl_se_obj$inverse_information
 # Semi-supervised SE and inverse info.
 beta_ssl_se <- beta_ssl_se_obj$std_error
 beta_ssl_inv_info <- beta_ssl_se_obj$inverse_information
+# Semi-supervised SE and inverse info.
+beta_dr_se <- beta_dr_se_obj
 
 # Minimum Variance Estimator (here the component-wise optimal estimator).
 beta_minvar <- SemiSupervisedMinVarRegression(beta_ssl, beta_sl,
-                                              beta_ssl_se$std_error,
-                                              beta_sl_se$std_error,
-                                              cv_residuals$resids_beta_imp,
-                                              cv_residuals$resids_beta_sl,
+                                              beta_ssl_se,
+                                              beta_sl_se,
+                                              resids_gamma,
+                                              resids_sl,
                                               X_labeled,
-                                              X_unlabeled, epsilon = NULL)
+                                              X_unlabeled,
+                                              epsilon = NULL)
+
+# Save result.
+beta_mv <- beta_minvar$beta_SSL_min_var
+mv_weight <- beta_minvar$min_var_weight
+beta_mv_se <- beta_minvar$se_beta_weight
 
 ################################################################################
 # Apparent accuracy estimates.

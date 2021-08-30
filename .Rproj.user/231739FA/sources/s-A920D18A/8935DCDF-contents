@@ -20,7 +20,7 @@ StdErrorEstimation <- function(X_labeled, X_unlabeled, y, beta, residual){
   n_labeled <- nrow(X_labeled_intercept)
 
   score <-  t(X_labeled_intercept) %*% (
-    X_labeled_intercept * residual^2) / n_labeled
+    X_labeled_intercept * rowSums(residual)^2) / n_labeled
 
   expit_deriv <- c(ExpitDerivative(X_all_intercept %*% beta))
   # Ask Molei about this.
