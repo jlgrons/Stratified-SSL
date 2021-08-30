@@ -48,8 +48,12 @@ SemiSupervisedRegression <- function(basis_labeled, basis_unlabeled, X_labeled,
   beta_SL_unweighted <- tryCatch(glm(y ~ X_labeled, family = 'binomial')$coeff,
                         error = function(e) rep(NA, p_X+1))
 
+  # Fit the density ratio estimate for comparison.
+  beta_DR <- DensityRatioRegression(basis_labeled, basis_unlabeled, X_labeled,
+                                    X_unlabeled, y, samp_prob, lambda = NULL)
 
   return(list(beta_SSL = beta_SSL, beta_SL = beta_SL,
               beta_SL_unweighted = beta_SL_unweighted,
-              beta_imp = beta_imp, lambda = lambda))
+              beta_DR = beta_DR,  beta_imp = beta_imp,
+              lambda = lambda))
 }
