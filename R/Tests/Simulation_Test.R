@@ -64,6 +64,8 @@ beta_ssl_se <- StdErrorEstimation(X_labeled, X_unlabeled, y,
 my_epsilon <- (n_labeled*(beta_sl_se$std_error^2 +
                             beta_ssl_se$std_error^2))/(2*n_labeled^0.6)
 beta_minvar <- SemiSupervisedMinVarRegression(beta_ssl, beta_sl,
+                                              beta_ssl_se$std_error,
+                                              beta_sl_se$std_error,
                                               cv_residuals$resids_beta_imp,
                                               cv_residuals$resids_beta_sl,
                                               X_labeled,
