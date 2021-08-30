@@ -1,18 +1,16 @@
 {
-    "id": "C845B8A8",
-    "path": "~/Desktop/Stratified-SSL/Other Files/Original Code/main_CC.R",
-    "project_path": "Other Files/Original Code/main_CC.R",
+    "id": "372DA822",
+    "path": "~/Desktop/Stratified-SSL/stratifiedSSL/R/AccuracyStdErrorEstimation.R",
+    "project_path": "stratifiedSSL/R/AccuracyStdErrorEstimation.R",
     "type": "r_source",
     "hash": "0",
     "contents": "",
     "dirty": false,
-    "created": 1630355768830.0,
+    "created": 1630360566546.0,
     "source_on_save": false,
-    "relative_order": 3,
+    "relative_order": 5,
     "properties": {
-        "source_window_id": "w3to9t8xfkqwm",
-        "cursorPosition": "183,30",
-        "scrollLine": "163"
+        "source_window_id": "w9ttcdi0zqgqb"
     },
     "folds": "",
     "lastKnownWriteTime": 1630348173,

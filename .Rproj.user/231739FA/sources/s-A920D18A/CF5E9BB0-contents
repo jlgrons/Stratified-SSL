@@ -176,12 +176,12 @@ acc_pert <- AccuracyStdErrorEstimation(basis_labeled, basis_unlabeled,
                                        num_resamples = num_perts,
                                        threshold = my_threshold)
 
-ssl.pert.mse <- acc_pert$ssl.pert.mse
-sl.pert.mse <- acc_pert$sl.pert.mse
-dr.pert.mse <- acc_pert$dr.pert.mse
+ssl_pert_mse <- acc_pert$ssl_pert_mse
+sl_pert_mse <- acc_pert$sl_pert_mse
+dr_pert_mse <- acc_pert$dr_pert_mse
 
-ssl.pert.ae <- acc_pert$ssl.pert.ae
-sl.pert.ae <- acc_pert$sl.pert.ae
-dr.pert.ae <- acc_pert$dr.pert.ae
+ssl_pert_omr <- acc_pert$ssl_pert_omr
+sl_pert_omr <- acc_pert$sl_pert_omr
+dr_pert_omr <- acc_pert$dr_pert_omr
 
 
