@@ -1,3 +1,4 @@
+################################################################################
 # Simulation setting test
 library('stratifiedSSL')
 set.seed(92047)
@@ -94,11 +95,21 @@ acc_cv <- CrossValAccuracy(basis_labeled, basis_unlabeled,
                            num_folds = num_folds, reps = reps,
                            theshold = my_threshold, lambda0 = NULL)
 
-# Ensemble of apparent and CV estimator (Section 4)
+# Ensemble of apparent and CV estimator.
 w <- K.fold / (2 * K.fold - 1)
 w * ap.ae + (1 - w) * cv.ae
 w * ap.mse + (1 - w) * cv.mse
+
 ################################################################################
 # Perturbation for standard error estimates for accuracy estimates.
-
+num_perts <- 2
+acc_pert <- AccuracyStdErrorEstimation(basis_labeled, basis_unlabeled,
+                                       X_labeled, X_unlabeled, y,
+                                       samp_prob, beta_minvar$min_var_weight[,1],
+                                       beta_sl, beta_ssl,
+                                       cv_residuals$resids_beta_sl,
+                                       cv_residuals$resids_beta_imp,
+                                       beta_ssl_se$inverse_information,
+                                       num_resamples = num_perts,
+                                       threshold = my_threshold)
 

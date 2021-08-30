@@ -42,8 +42,8 @@ AccuracyStdErrorEstimation <- function(basis_labeled, basis_unlabeled,
     X_labeled_intercept) %*% resids_beta_SL_weighted / n_labeled
 
 
-  beta_SSL_pert <- beta_SSL + diag(min_var_weight[,1]) %*% IF_beta_SL + diag(
-    min_var_weight[,2]) %*% IF_beta_imp
+  beta_SSL_pert <- beta_SSL + diag(min_var_weight) %*% IF_beta_SL + diag(
+    1-min_var_weight) %*% IF_beta_imp
   beta_SL_pert <- beta_SL + IF_beta_imp
 
   beta_imp_pert <- sapply(num_resamples, function(kk){
