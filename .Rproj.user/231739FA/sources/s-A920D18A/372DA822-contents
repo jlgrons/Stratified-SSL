@@ -26,7 +26,8 @@
 AccuracyStdErrorEstimation <- function(basis_labeled, basis_unlabeled,
                                        X_labeled, X_unlabeled, y,
                                        samp_prob, min_var_weight,
-                                       beta_SL, beta_MV, resids_beta_SL,
+                                       beta_SL, beta_MV, beta_DR,
+                                       resids_beta_SL,
                                        resids_beta_imp, resids_beta_dr,
                                        proj_dr, inverse_information,
                                        num_resamples = 500, threshold = 0.5){
@@ -38,7 +39,7 @@ AccuracyStdErrorEstimation <- function(basis_labeled, basis_unlabeled,
   resids_beta_SL_weighted <- ((resamp_weight - 1) * resids_beta_SL)
   resids_beta_imp_weighted <- ((resamp_weight - 1) * resids_beta_imp)
   resids_beta_dr_weighted <- ((resamp_weight - 1) * resids_beta_dr)
-  proj_dr_pert <- t(proj.dr) %*% (resamp_weight - 1)
+  proj_dr_pert <- t(proj_dr) %*% (resamp_weight - 1)
 
   # Note: double check correctness of this.
   X_labeled_intercept <- cbind(1, X_labeled)

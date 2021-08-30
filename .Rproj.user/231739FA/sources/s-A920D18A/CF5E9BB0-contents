@@ -13,7 +13,7 @@ num_strata <- 2
 # Generate data.
 new_data <- DataGeneration(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
                            model_specification =
-                             'outcome_incorrect_imputation_correct',
+                             'outcome_correct_imputation_correct',
                            num_strata = num_strata)
 
 # Format data.
@@ -58,7 +58,7 @@ proj_dr <- regression_result$proj_DR
 
 # Save all the betas.
 beta_all <- cbind(beta_ssl, beta_sl, beta_dr, beta_naive)
-
+gamma_all <- gamma
 ################################################################################
 # Cross-validated residuals.
 num_folds <- 3
@@ -119,7 +119,7 @@ acc_sl <- SupervisedApparentAccuracy(X_labeled, y, beta_sl, samp_prob,
 
 acc_ssl <- SemiSupervisedApparentAccuracy(basis_labeled, basis_unlabeled,
                                           X_labeled, X_unlabaled,
-                                          y, beta_ssl, gamma, samp_prob,
+                                          y, beta_mv, gamma, samp_prob,
                                           resamp_weight = NULL,
                                           threshold = my_threshold)
 
@@ -169,13 +169,15 @@ num_perts <- 2
 acc_pert <- AccuracyStdErrorEstimation(basis_labeled, basis_unlabeled,
                                        X_labeled, X_unlabeled, y,
                                        samp_prob, mv_weight[,1],
-                                       beta_sl, beta_ssl,
+                                       beta_sl, beta_mv, beta_dr,
                                        resids_sl,
                                        resids_gamma,
+                                       resids_dr,
+                                       proj_dr,
                                        beta_ssl_inv_info,
                                        num_resamples = num_perts,
                                        threshold = my_threshold)
-
+# Save results.
 ssl_pert_mse <- acc_pert$ssl_pert_mse
 sl_pert_mse <- acc_pert$sl_pert_mse
 dr_pert_mse <- acc_pert$dr_pert_mse
@@ -184,4 +186,26 @@ ssl_pert_omr <- acc_pert$ssl_pert_omr
 sl_pert_omr <- acc_pert$sl_pert_omr
 dr_pert_omr <- acc_pert$dr_pert_omr
 
+# Save all the results.
+pert_mse_all <- cbind(ssl_pert_mse, sl_pert_mse, dr_pert_mse)
+pert_omr_all <- cbind(ssl_pert_omr, sl_pert_omr, dr_pert_omr)
 
+
+################################################################################
+# Compare results to old code.
+
+setwd('~/Desktop/Stratified-SSL/Other Files/Original Code')
+source('main_CC.R')
+
+# Check betas - note DR code has been updated so it wont be the same as previous.
+beta_all == beta_all_og
+
+# Check gamma.
+gamma_all == gamma_og
+
+# Check apparent estimators.
+acc_ap_omr == ap_omr_og
+acc_ap_mse == ap_mse_og
+
+acc_cv_omr == cv_omr_og
+acc_cv_mse == cv_mse_og
