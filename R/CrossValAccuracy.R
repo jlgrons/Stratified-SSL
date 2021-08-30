@@ -10,7 +10,7 @@
 #' @param samp_prob Numeric vector of weights.
 #' @param min_var_weight Numeric vector of minimum variance weights.
 #' @param num_folds Scalar indicating number of folds for CV.
-#'@param reps Scalar indicating number of repitions for CV.
+#' @param reps Scalar indicating number of repitions for CV.
 #' @param threshold Threshold for overall misclassification rate.
 #' @param lambda0 Initial lambda for imputation model.
 #' @export

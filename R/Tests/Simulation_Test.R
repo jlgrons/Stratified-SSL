@@ -62,15 +62,13 @@ beta_ssl_se <- StdErrorEstimation(X_labeled, X_unlabeled, y,
                                   beta_ssl, cv_residuals$beta_ssl_cv)
 
 # Minimum Variance Estimator (here the component-wise optimal estimator).
-my_epsilon <- (n_labeled*(beta_sl_se$std_error^2 +
-                            beta_ssl_se$std_error^2))/(2*n_labeled^0.6)
 beta_minvar <- SemiSupervisedMinVarRegression(beta_ssl, beta_sl,
                                               beta_ssl_se$std_error,
                                               beta_sl_se$std_error,
                                               cv_residuals$resids_beta_imp,
                                               cv_residuals$resids_beta_sl,
                                               X_labeled,
-                                              X_unlabeled, epsilon = my_epsilon)
+                                              X_unlabeled, epsilon = NULL)
 
 ################################################################################
 # Apparent accuracy estimates.
@@ -96,9 +94,9 @@ acc_cv <- CrossValAccuracy(basis_labeled, basis_unlabeled,
                            theshold = my_threshold, lambda0 = NULL)
 
 # Ensemble of apparent and CV estimator.
-w <- K.fold / (2 * K.fold - 1)
-w * ap.ae + (1 - w) * cv.ae
-w * ap.mse + (1 - w) * cv.mse
+#w <- K.fold / (2 * K.fold - 1)
+#w * ap.ae + (1 - w) * cv.ae
+#w * ap.mse + (1 - w) * cv.mse
 
 ################################################################################
 # Perturbation for standard error estimates for accuracy estimates.
