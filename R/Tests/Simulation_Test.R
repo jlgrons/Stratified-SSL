@@ -82,9 +82,10 @@ acc_ssl <- SemiSupervisedApparentAccuracy(basis_labeled, basis_unlabeled,
 
 ################################################################################
 # Cross-validated accuracy estimates.
-reps <- 20
+reps <- 2
 # Note: Function still needs to be formatted.
 acc_cv <- model.eval.cv(rbind(basis_labeled, basis_unlabeled),
-                        X_unlabled, X_labeled, samp_prob, w.beta[,1],
+                        X_unlabeled, X_labeled, samp_prob,
+                        beta_minvar$min_var_weight[ ,1],
                         num_folds, reps, c = 0.5, lambda0 = NULL)
 
