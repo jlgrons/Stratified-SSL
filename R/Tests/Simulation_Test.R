@@ -89,8 +89,9 @@ acc_ssl <- SemiSupervisedApparentAccuracy(basis_labeled, basis_unlabeled,
 reps <- 1
 # Note: Function still needs to be formatted.
 acc_cv <- CrossValAccuracy(basis_labeled, basis_unlabeled,
-                            X_labeled, X_unlabeled, y, samp_prob,
-                            min_var_weight, num_folds = num_folds, reps = reps,
-                            theshold = my_threshold, lambda0 = NULL)
+                           X_labeled, X_unlabeled, y, samp_prob,
+                           beta_minvar$min_var_weight[,1],
+                           num_folds = num_folds, reps = reps,
+                           theshold = my_threshold, lambda0 = NULL)
 
 

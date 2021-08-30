@@ -10,7 +10,7 @@
 #' @param samp_prob Numeric vector of weights.
 #' @param min_var_weight Numeric vector of minimum variance weights.
 #' @param num_folds Scalar indicating number of folds for CV.
-#' @param num_folds Scalar indicating number of repitions for CV.
+#'@param reps Scalar indicating number of repitions for CV.
 #' @param threshold Threshold for overall misclassification rate.
 #' @param lambda0 Initial lambda for imputation model.
 #' @export
@@ -25,7 +25,6 @@ CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
 
   pp <- ncol(basis_labeled)
   n_labeled <- nrow(X_labeled)
-  data.all <- rbind(X_labeled,X_unlabeled)
 
   mse_cv_ssl <- matrix(NA, nrow = num_folds, ncol = reps)
   ae_cv_ssl <- matrix(NA, nrow = num_folds, ncol = reps)
@@ -51,18 +50,18 @@ CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
     for(i in 1:num_folds){
 
       inds_val <- as.vector(unlist(ind.cv[i]))
-      inds_tr <- as.vector(setdiff(as_valector(unlist(ind.cv)), inds_val))
+      inds_tr <- as.vector(setdiff(as.vector(unlist(ind.cv)), inds_val))
 
       wg_val <- samp_prob[inds_val]
       wg_tr <- samp_prob[inds_tr]
 
       y_val <- y[inds_val]
       X_labeled_val <- X_labeled[inds_val,]
-      basis_val <- basis.x[inds_val, ]
+      basis_val <- basis_labeled[inds_val, ]
 
       y_tr <- y[inds_tr]
       X_labeled_tr <- X_labeled[inds_tr,]
-      basis_tr <- basis.x[inds_tr, ]
+      basis_tr <- basis_labeled[inds_tr, ]
 
       beta_tr <- SemiSupervisedRegression(basis_tr, basis_unlabeled,
                                           X_labeled_tr, X_unlabeled,
@@ -73,17 +72,17 @@ CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
       gamma_tr <-  beta_tr$beta_imp
       beta_ssl_mv_tr <- min_var_weight*beta_ssl_tr +
         (1-min_var_weight)*beta_sl_tr
-      #beta_dr_tr <- beta_trmp$beta_SL_unweighted
-      beta_naive_tr <- beta_trmp$beta_SL_unweighted
+      #beta_dr_tr <- beta_tr$beta_SL_unweighted
+      beta_naive_tr <- beta_tr$beta_SL_unweighted
 
       # Supervised estimates.
       acc_sl_val <- SupervisedApparentAccuracy(X_labeled_val, y_val,
                                                beta_sl_tr, wg_val,
                                                resamp_weight = NULL,
-                                               threshold = threshold)
+                                               threshold)
 
       mse_cv_sl[i,j] <- acc_sl_val$mse_sl
-      ae_cv_sl[i,j] <- acc_sl_val$ae_sl
+      ae_cv_sl[i,j] <- acc_sl_val$omr_sl
 
       # Semi-supervised estimates.
       acc_ssl_val <- SemiSupervisedApparentAccuracy(basis_val,
@@ -92,10 +91,10 @@ CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
                                                     y_val, beta_ssl_tr,
                                                     gamma_tr, wg_val,
                                                     resamp_weight = NULL,
-                                                    threshold = threshold)
+                                                    threshold)
 
-      mse_cv_sl[i,j] <- acc_ssl_val$mse_ssl
-      ae_cv_sl[i,j] <- acc_ssl_val$ae_ssl
+      mse_cv_ssl[i,j] <- acc_ssl_val$mse_ssl
+      ae_cv_ssl[i,j] <- acc_ssl_val$omr_ssl
 
       # Naive supervised estimates.
       acc_naive_val <- SupervisedApparentAccuracy(X_labeled_val, y_val,
@@ -105,7 +104,7 @@ CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
                                                threshold = threshold)
 
       mse_cv_naive[i,j] <- acc_naive_val$mse_sl
-      ae_cv_naive[i,j] <- acc_naive_val$ae_sl
+      ae_cv_naive[i,j] <- acc_naive_val$omr_sl
 
       # Need to add in the DR method.
       #mse_cv_dr[i,j] = mean((y_val  - lp_val.dr)^2 * 1 / wg_val) / mean(1 / wg_val)
