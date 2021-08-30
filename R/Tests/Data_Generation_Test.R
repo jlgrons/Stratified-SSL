@@ -1,3 +1,4 @@
+setwd('~/Desktop/Stratified-SSL/R/Tests')
 source('Testing_Functions.R')
 
 ## Simulations for the Main Manuscript ##

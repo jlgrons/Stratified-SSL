@@ -38,8 +38,8 @@ CrossValResids <- function(basis_labeled, basis_unlabeled, X_labeled,
 
   beta_ssl_cv <- sapply(cv.ests, "[[", 1)
   beta_sl_cv <- sapply(cv.ests, "[[", 2)
-  beta_imp_cv <- sapply(cv.ests, "[[", 3)
-  beta_dr_cv <- sapply(cv.ests, "[[", 4) # Note: add back in DR - this is unweighted SL
+  beta_imp_cv <- sapply(cv.ests, "[[", 4)
+  beta_dr_cv <- sapply(cv.ests, "[[", 3) # Note: add back in DR - this is unweighted SL
 
   # Residuals based on the kth fold and the beta with the kth fold removed.
   res_cv <- lapply(1:num_folds, function(kk){
@@ -50,10 +50,10 @@ CrossValResids <- function(basis_labeled, basis_unlabeled, X_labeled,
     beta_dr_fold <- beta_dr_cv[,kk]
     samp_prob_fold <- samp_prob[inds_fold]
     y_fold <- y[inds_fold]
-    pred_prob_ssl <- Logit(cbind(1, X_labeled[inds_fold, ]) %*% beta_ssl_fold)
-    pred_prob_sl <- Logit(cbind(1, X_labeled[inds_fold, ]) %*% beta_sl_fold)
-    pred_imp <- Logit(cbind(1, basis[inds_fold, ]) %*% beta_imp_fold)
-    pred_prob_dr <- Logit(cbind(1, X_labeled[inds_fold, ]) %*% beta_dr_fold)
+    pred_prob_ssl <- Expit(cbind(1, X_labeled[inds_fold, ]) %*% beta_ssl_fold)
+    pred_prob_sl <- Expit(cbind(1, X_labeled[inds_fold, ]) %*% beta_sl_fold)
+    pred_imp <- Expit(cbind(1, basis_labeled[inds_fold, ]) %*% beta_imp_fold)
+    pred_prob_dr <- Expit(cbind(1, X_labeled[inds_fold, ]) %*% beta_dr_fold)
     resids <- list(beta_ssl = (y_fold - pred_prob_ssl) * (1 / samp_prob_fold),
                 beta_sl = (y_fold - pred_prob_sl) * (1 / samp_prob_fold),
                 beta_imp = (y_fold - pred_imp) * (1 / samp_prob_fold),
@@ -61,7 +61,7 @@ CrossValResids <- function(basis_labeled, basis_unlabeled, X_labeled,
   })
 
   inds_cv_ordered <- order(unlist(ind_cv))
-  mean_weight <- mean(1/samp.prob);
+  mean_weight <- mean(1/samp_prob);
 
   # Reorder the residuals and divide by the mean of the weights.
   resids_beta_ssl <- c(unlist(sapply(res_cv,

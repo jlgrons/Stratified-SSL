@@ -44,7 +44,7 @@ NaturalSplineBasis <- function(X, S, num_knots){
   basis.S <- OneHotEncoding(S)
 
   # Return basis including everything.
-  basis <- cbind(basis, basis.S)
+  basis <- cbind(basis.X, basis.S)
 
   return(basis)
 }
