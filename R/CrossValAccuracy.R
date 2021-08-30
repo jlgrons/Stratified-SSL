@@ -46,7 +46,7 @@ CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
   for(j in 1:reps){
     set.seed(j)
     ind.cv <- split(1:n_labeled,
-                    sample(reps(1:num_folds, floor(n_labeled/num_folds))))
+                    sample(rep(1:num_folds, floor(n_labeled/num_folds))))
 
     for(i in 1:num_folds){
 
