@@ -69,10 +69,10 @@ CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
 
       beta_ssl_tr <- beta_tr$beta_SSL
       beta_sl_tr <- beta_tr$beta_SL
-      gamma_tr <-  beta_tr$beta_imp
+      gamma_tr <-  beta_tr$gamma
       beta_ssl_mv_tr <- min_var_weight*beta_ssl_tr +
         (1-min_var_weight)*beta_sl_tr
-      #beta_dr_tr <- beta_tr$beta_SL_unweighted
+      beta_dr_tr <- beta_tr$beta_dr
       beta_naive_tr <- beta_tr$beta_SL_unweighted
 
       # Supervised estimates.
@@ -106,10 +106,15 @@ CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
       mse_cv_naive[i,j] <- acc_naive_val$mse_sl
       ae_cv_naive[i,j] <- acc_naive_val$omr_sl
 
-      # Need to add in the DR method.
-      #mse_cv_dr[i,j] = mean((y_val  - lp_val.dr)^2 * 1 / wg_val) / mean(1 / wg_val)
-      #ae_cv_dr[i,j] = mean(abs(y_val - lp_val.dr.ind) * 1 / wg_val) / mean(1 / wg_val)
+      # DR estimates.
+      acc_dr_val <- SupervisedApparentAccuracy(X_labeled_val, y_val,
+                                               beta_dr,
+                                               wg_val,
+                                               resamp_weight = NULL,
+                                               threshold = threshold)
 
+      mse_cv_dr[i,j] = acc_dr$mse_sl
+      ae_cv_dr[i,j] = acc_dr$omr_sl
     }
   }
 
