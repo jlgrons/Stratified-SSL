@@ -74,11 +74,17 @@ beta_minvar <- SemiSupervisedMinVarRegression(beta_ssl, beta_sl,
 acc_sl <- SupervisedApparentAccuracy(X_labeled, y, beta_sl, samp_prob,
                                        resamp_weight = NULL,
                                        threshold = 0.5)
+
 acc_ssl <- SemiSupervisedApparentAccuracy(basis_labeled, basis_unlabeled,
                                           X_labeled, X_unlabaled,
                                           y, beta_ssl, beta_imp, samp_prob,
                                           resamp_weight = NULL, threshold = 0.5)
 
-
-
+################################################################################
+# Cross-validated accuracy estimates.
+reps <- 20
+# Note: Function still needs to be formatted.
+acc_cv <- model.eval.cv(rbind(basis_labeled, basis_unlabeled),
+                        X_unlabled, X_labeled, samp_prob, w.beta[,1],
+                        num_folds, reps, c = 0.5, lambda0 = NULL)
 
