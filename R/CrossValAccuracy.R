@@ -40,71 +40,80 @@ CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
   ae_cv_dr <- matrix(NA, nrow = num_folds, ncol = reps)
 
 
-  if(is.null(lambda0)){lambda0 = log(pp)/(floor((num_folds-1)*n_labeled/num_folds))^1.5}
+  if(is.null(lambda0)){lambda0 = log(pp) /
+    (floor((num_folds-1)*n_labeled/num_folds))^1.5}
 
   for(j in 1:reps){
     set.seed(j)
-    ind.cv = split(1:n_labeled, sample(reps(1:num_folds, floor(n_labeled/num_folds))))
+    ind.cv <- split(1:n_labeled,
+                    sample(reps(1:num_folds, floor(n_labeled/num_folds))))
 
     for(i in 1:num_folds){
 
-      inds.v = as.vector(unlist(ind.cv[i]))
-      inds.t = as.vector(setdiff(as.vector(unlist(ind.cv)), inds.v))
+      inds_val <- as_valector(unlist(ind.cv[i]))
+      inds_tr <- as_valector(setdiff(as_valector(unlist(ind.cv)), inds_val))
 
-      wg.v = samp.prob[inds.v] wg.t = samp.prob[inds.t]
+      wg_val <- samp_prob[inds_val]
+      wg_tr <- samp_prob[inds_tr]
 
-      Yt.v = Yt[inds.v] X_labeled.v = X_labeled[inds.v,] basis.v = basis.x[inds.v, ]
-      Yt.t = Yt[inds.t] X_labeled.t = X_labeled[inds.t,] basis.t = basis.x[inds.t, ]
+      y_val <- y[inds_val]
+      X_labeled_val <- X_labeled[inds_val,]
+      basis_val <- basis.x[inds_val, ]
 
-      beta.tmp = glm.fit.SS(rbind(basis.t, basis.x[-ind.lab, ]),
-                            X_labeled.t, X_unlabeled, Yt.t, wg.t, lambda0)
+      y_tr <- y[inds_tr]
+      X_labeled_tr <- X_labeled[inds_tr,]
+      basis_tr <- basis.x[inds_tr, ]
 
-      beta.ssl.t =  beta.tmp$beta.ssl
-      beta.sl.t = beta.tmp$beta.sl
-      gamma.t =  beta.tmp$gamma
-      beta.ssl.w.t = W*beta.ssl.t + (1-W)*beta.sl.t
-      beta.dr.t = beta.tmp$beta.dr
+      beta_tr <- SemiSupervisedRegression(basis_tr, basis_unlabeled,
+                                          X_labeled_tr, X_unlabeled,
+                                          y_tr, wg_tr, lambda = lambda0)
 
-      lp.v = g.logit(cbind(1,X_labeled.v)%*%beta.ssl.w.t)
-      lp.v.ind = ifelse(I(lp.v > c), 1, 0)
+      beta_ssl_tr <- beta_trmp$beta_ssl
+      beta_sl_tr <- beta_trmp$beta_sl
+      gamma_tr <-  beta_trmp$gamma
+      beta_ssl_mv_tr <- W*beta_ssl_tr + (1-W)*beta_sl_tr
+      beta_dr_tr <- beta_trmp$beta.dr
 
-      imps.v = cbind(1, basis.v)%*%gamma.t
-      refit.pv.1 <- glm(Yt.v~cbind(lp.v), offset = imps.v,
-                        weights = 1/wg.v/mean(1/wg.v), family = 'binomial')$coeff
-      refit.pv.2 <-glm(Yt.v~cbind(lp.v.ind), offset = imps.v,
-                       weights = 1/wg.v/mean(1/wg.v), family = 'binomial')$coeff
+      lp_val = g.logit(cbind(1,X_labeled_val)%*%beta_ssl_mv_tr)
+      lp_val.ind = ifelse(I(lp_val > c), 1, 0)
 
-      lp.u = g.logit(cbind(1,data.all)%*%beta.ssl.w.t)
+      imps_val = cbind(1, basis_val)%*%gamma_tr
+      refit.pv.1 <- glm(y_val~cbind(lp_val), offset = imps_val,
+                        weights = 1/wg_val/mean(1/wg_val), family = 'binomial')$coeff
+      refit.pv.2 <-glm(y_val~cbind(lp_val.ind), offset = imps_val,
+                       weights = 1/wg_val/mean(1/wg_val), family = 'binomial')$coeff
+
+      lp.u = g.logit(cbind(1,data.all)%*%beta_ssl_mv_tr)
       lp.u.ind = I(lp.u > c)
 
-      imps.pe.1 = g.logit(cbind(1,lp.u)%*% refit.pv.1 + cbind(1, basis.x)%*%gamma.t)
-      imps.pe.2 = g.logit(cbind(1,lp.u.ind)%*% refit.pv.2 + cbind(1, basis.x)%*%gamma.t)
+      imps.pe.1 = g.logit(cbind(1,lp.u)%*% refit.pv.1 + cbind(1, basis.x)%*%gamma_tr)
+      imps.pe.2 = g.logit(cbind(1,lp.u.ind)%*% refit.pv.2 + cbind(1, basis.x)%*%gamma_tr)
 
       mse_cv_ssl[i,j] = mean(imps.pe.1 + (lp.u - 2*imps.pe.1)*lp.u)
       ae_cv_ssl[i,j] = mean(imps.pe.2 + (lp.u.ind - 2*imps.pe.2)*lp.u.ind)
 
-      lp.v.sl = g.logit(cbind(1,X_labeled.v) %*% beta.sl.t)
-      lp.v.sl.ind = I(lp.v.sl > c)
+      lp_val_sl = g.logit(cbind(1,X_labeled_val) %*% beta_sl_tr)
+      lp_val_sl.ind = I(lp_val_sl > c)
 
-      mse_cv_sl[i,j] = mean((Yt.v  - lp.v.sl)^2 * 1/wg.v)/mean(1/wg.v)
-      ae_cv_sl[i,j] = mean(abs(Yt.v - lp.v.sl.ind) * 1/wg.v)/mean(1/wg.v)
+      mse_cv_sl[i,j] = mean((y_val  - lp_val_sl)^2 * 1/wg_val)/mean(1/wg_val)
+      ae_cv_sl[i,j] = mean(abs(y_val - lp_val_sl.ind) * 1/wg_val)/mean(1/wg_val)
 
-      mse_cv_naive[i,j] = mean((Yt.v  - lp.v.sl)^2)
-      ae_cv_naive[i,j] = mean(abs(Yt.v - lp.v.sl.ind))
+      mse_cv_naive[i,j] = mean((y_val  - lp_val_sl)^2)
+      ae_cv_naive[i,j] = mean(abs(y_val - lp_val_sl.ind))
 
-      lp.v.dr = g.logit(cbind(1, X_labeled.v) %*% beta.dr.t)
-      lp.v.dr.ind = I(lp.v.dr > c)
+      lp_val.dr = g.logit(cbind(1, X_labeled_val) %*% beta_dr_tr)
+      lp_val.dr.ind = I(lp_val.dr > c)
 
-      mse_cv_dr[i,j] = mean((Yt.v  - lp.v.dr)^2 * 1 / wg.v) / mean(1 / wg.v)
-      ae_cv_dr[i,j] = mean(abs(Yt.v - lp.v.dr.ind) * 1 / wg.v) / mean(1 / wg.v)
+      mse_cv_dr[i,j] = mean((y_val  - lp_val.dr)^2 * 1 / wg_val) / mean(1 / wg_val)
+      ae_cv_dr[i,j] = mean(abs(y_val - lp_val.dr.ind) * 1 / wg_val) / mean(1 / wg_val)
 
     }
   }
 
-  return(list(mse.ssl = mean(mse_cv_ssl, na.rm = T),
-              ae.ssl = mean(ae_cv_ssl, na.rm = T),
-              mse.sl = mean(mse_cv_sl, na.rm = T),
-              ae.sl = mean(ae_cv_sl, na.rm = T),
+  return(list(mse_ssl = mean(mse_cv_ssl, na.rm = T),
+              ae_ssl = mean(ae_cv_ssl, na.rm = T),
+              mse_sl = mean(mse_cv_sl, na.rm = T),
+              ae_sl = mean(ae_cv_sl, na.rm = T),
               mse.dr = mean(mse_cv_dr, na.rm = T),
               ae.dr = mean(ae_cv_dr, na.rm = T),
               mse.naive = mean(mse_cv_naive, na.rm = T),
