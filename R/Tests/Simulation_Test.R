@@ -46,6 +46,8 @@ beta_sl <- regression_result$beta_SL
 beta_ssl <- regression_result$beta_SSL
 # Naive beta with no sampling probability.
 beta_naive <- regression_result$beta_SL_unweighted
+# Beta from imputation.
+beta_imp <- regression_result$beta_imp
 
 # Cross-validated residuals.
 num_folds <- 3
@@ -72,6 +74,10 @@ beta_minvar <- SemiSupervisedMinVarRegression(beta_ssl, beta_sl,
 acc_sl <- SupervisedApparentAccuracy(X_labeled, y, beta_sl, samp_prob,
                                        resamp_weight = NULL,
                                        threshold = 0.5)
+acc_ssl <- SemiSupervisedApparentAccuracy(basis_labeled, basis_unlabeled,
+                                          X_labeled, X_unlabaled,
+                                          y, beta_ssl, beta_imp, samp_prob,
+                                          resamp_weight = NULL, threshold = 0.5)
 
 
 
