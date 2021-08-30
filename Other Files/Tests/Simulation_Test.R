@@ -47,15 +47,24 @@ beta_sl <- regression_result$beta_SL
 beta_ssl <- regression_result$beta_SSL
 # Naive beta with no sampling probability.
 beta_naive <- regression_result$beta_SL_unweighted
-# Beta from imputation.
-beta_imp <- regression_result$beta_imp
+# Gamma from imputation.
+gamma <- regression_result$gamma
 # Beta from density ratio method.
 beta_dr <- regression_result$beta_DR$beta_dr
+# DR projection.
+proj_dr <- regression_result$beta_DR$proj_dr
 
 # Cross-validated residuals.
 num_folds <- 3
 cv_residuals <- CrossValResids(basis_labeled, basis_unlabeled, X_labeled,
                                X_unlabeled, y, samp_prob, num_folds)
+
+#Supervised CV resids.
+resids_sl <- cv_residuals$resids_beta_sl
+resids_ssl <- cv_residuals$resids_beta_sl
+resids_dr <- cv_residuals$resids_beta_sl
+resids_gamma <- cv_residuals$resids_beta_sl
+
 
 # Standard error estimates for supervised and SS estimates.
 beta_sl_se <- StdErrorEstimation(X_labeled, X_unlabeled, y,
