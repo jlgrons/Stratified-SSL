@@ -50,8 +50,8 @@ CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
 
     for(i in 1:num_folds){
 
-      inds_val <- as_valector(unlist(ind.cv[i]))
-      inds_tr <- as_valector(setdiff(as_valector(unlist(ind.cv)), inds_val))
+      inds_val <- as.vector(unlist(ind.cv[i]))
+      inds_tr <- as.vector(setdiff(as_valector(unlist(ind.cv)), inds_val))
 
       wg_val <- samp_prob[inds_val]
       wg_tr <- samp_prob[inds_tr]
