@@ -125,7 +125,7 @@ MeanSquaredError <- function(X, beta, y, weight = NULL){
 
   pred_prob <- Expit(cbind(1, X) %*% beta)
 
-  return(mean((y - pred_prob)^2) * weight)
+  return(mean(((y - pred_prob)^2) * weight))
 }
 
 # -----------------------------------------------------------------------------
@@ -147,6 +147,6 @@ AbsoluteError <- function(X, beta, y, weight = NULL, threshold = NULL){
     pred_prob <- I(Expit(cbind(1, X) %*% beta) > threshold)
   }
 
-  return(mean(abs(y - pred_prob)) * weight)
+  return(mean(abs(y - pred_prob) * weight))
 }
 
