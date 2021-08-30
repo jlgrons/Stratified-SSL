@@ -68,11 +68,10 @@ beta_minvar <- SemiSupervisedMinVarRegression(beta_ssl, beta_sl,
                                               X_unlabeled, epsilon = my_epsilon)
 
 ################################################################################
-
-
-
-
-# Run cross-validation.
+# Apparent accuracy estimates.
+acc_sl <- SupervisedApparentAccuracy(X_labeled, y, beta_sl, samp_prob,
+                                       resamp_weight = NULL,
+                                       threshold = 0.5)
 
 
 

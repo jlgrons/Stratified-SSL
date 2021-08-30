@@ -116,7 +116,7 @@ MeanSquaredError <- function(X, beta, y, weight = NULL){
 
   if(is.null(weight)){weight <- rep(1, length(y))}
 
-  pred_prob <- Logit(cbind(1, X) %*% beta)
+  pred_prob <- Expit(cbind(1, X) %*% beta)
 
   return(mean((y - pred_prob)^2))
 }
@@ -134,9 +134,9 @@ AbsoluteError <- function(X, beta, y, weight = NULL, threshold = NULL){
   if(is.null(weight)){weight <- rep(1, length(y))}
 
   if(is.null(threshold)){
-    pred_prob <- Logit(cbind(1, X) %*% beta)
+    pred_prob <- Expit(cbind(1, X) %*% beta)
   }else{
-    pred_prob <- I(Logit(cbind(1, X) %*% beta) > threshold)
+    pred_prob <- I(Expit(cbind(1, X) %*% beta) > threshold)
   }
 
   return(mean(abs(y - pred_prob)))
