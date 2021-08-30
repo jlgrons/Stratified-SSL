@@ -80,6 +80,11 @@ CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
                                                beta_sl_tr, wg_val,
                                                resamp_weight = NULL,
                                                threshold = threshold)
+
+      mse_cv_sl[i,j] <- acc_sl_val$mse_sl
+      mse_cv_sl[i,j] <- acc_sl_val$ae_sl
+      ae_cv_sl[i,j] = mean(abs(y_val - lp_val_sl.ind) * 1/wg_val)/mean(1/wg_val)
+
       # Semi-supervised estimates.
       acc_ssl_val <- SemiSupervisedApparentAccuracy(basis_val,
                                                     basis_unlabeled,
@@ -93,8 +98,7 @@ CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
       mse_cv_ssl[i,j] = mean(imps.pe.1 + (lp.u - 2*imps.pe.1)*lp.u)
       ae_cv_ssl[i,j] = mean(imps.pe.2 + (lp.u.ind - 2*imps.pe.2)*lp.u.ind)
 
-      mse_cv_sl[i,j] = mean((y_val  - lp_val_sl)^2 * 1/wg_val)/mean(1/wg_val)
-      ae_cv_sl[i,j] = mean(abs(y_val - lp_val_sl.ind) * 1/wg_val)/mean(1/wg_val)
+
 
       mse_cv_naive[i,j] = mean((y_val  - lp_val_sl)^2)
       ae_cv_naive[i,j] = mean(abs(y_val - lp_val_sl.ind))

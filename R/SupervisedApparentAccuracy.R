@@ -23,7 +23,7 @@ SupervisedApparentAccuracy <- function(X_labeled, y, beta_SL, samp_prob,
   OMR_SL <- AbsoluteError(X_labeled, beta_SL, y, weight = weight,
                           threshold = threshold)
 
-  return(list(mse_ssl = MSE_SL, omr_sl = OMR_SL))
+  return(list(mse_sl = MSE_SL, omr_sl = OMR_SL))
 }
 
 
