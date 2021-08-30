@@ -68,11 +68,16 @@ CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
                                           X_labeled_tr, X_unlabeled,
                                           y_tr, wg_tr, lambda = lambda0)
 
-      beta_ssl_tr <- beta_trmp$beta_ssl
-      beta_sl_tr <- beta_trmp$beta_sl
-      gamma_tr <-  beta_trmp$gamma
-      beta_ssl_mv_tr <- W*beta_ssl_tr + (1-W)*beta_sl_tr
-      beta_dr_tr <- beta_trmp$beta.dr
+      beta_ssl_tr <- beta_tr$beta_SSL
+      beta_sl_tr <- beta_tr$beta_SL
+      gamma_tr <-  beta_tr$beta_imp
+      beta_ssl_mv_tr <- min_var_weight*beta_ssl_tr +
+        (1-min_var_weight)*beta_sl_tr
+      beta_dr_tr <- beta_trmp$beta_SL_unweighted
+
+      # Supervised estimates.
+
+      # Semi-supervised estimates.
 
       lp_val = g.logit(cbind(1,X_labeled_val)%*%beta_ssl_mv_tr)
       lp_val.ind = ifelse(I(lp_val > c), 1, 0)
