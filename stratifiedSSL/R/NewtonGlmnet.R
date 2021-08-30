@@ -7,6 +7,7 @@
 #' @param y Numeric outcome vector.
 #' @param weights Numeric vector of weights.
 #' @param weights_mom Numeric vector of mom weights.
+#' @param idx_mom Numeric vector of indices.
 #' @param lambda0 Penalization parameter.
 #' @param max_iter Max number of iterations.
 #' @param tol Desired tolerance level.
