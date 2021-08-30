@@ -76,29 +76,22 @@ CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
       beta_dr_tr <- beta_trmp$beta_SL_unweighted
 
       # Supervised estimates.
-
+      acc_sl_val <- SupervisedApparentAccuracy(X_labeled_val, y_val,
+                                               beta_sl_tr, wg_val,
+                                               resamp_weight = NULL,
+                                               threshold = threshold)
       # Semi-supervised estimates.
+      acc_ssl_val <- SemiSupervisedApparentAccuracy(basis_val,
+                                                    basis_unlabeled,
+                                                    X_labeled_val, X_unlabaled,
+                                                    y_val, beta_ssl_tr,
+                                                    gamma_tr, wg_val,
+                                                    resamp_weight = NULL,
+                                                    threshold = threshold)
 
-      lp_val = g.logit(cbind(1,X_labeled_val)%*%beta_ssl_mv_tr)
-      lp_val.ind = ifelse(I(lp_val > c), 1, 0)
-
-      imps_val = cbind(1, basis_val)%*%gamma_tr
-      refit.pv.1 <- glm(y_val~cbind(lp_val), offset = imps_val,
-                        weights = 1/wg_val/mean(1/wg_val), family = 'binomial')$coeff
-      refit.pv.2 <-glm(y_val~cbind(lp_val.ind), offset = imps_val,
-                       weights = 1/wg_val/mean(1/wg_val), family = 'binomial')$coeff
-
-      lp.u = g.logit(cbind(1,data.all)%*%beta_ssl_mv_tr)
-      lp.u.ind = I(lp.u > c)
-
-      imps.pe.1 = g.logit(cbind(1,lp.u)%*% refit.pv.1 + cbind(1, basis.x)%*%gamma_tr)
-      imps.pe.2 = g.logit(cbind(1,lp.u.ind)%*% refit.pv.2 + cbind(1, basis.x)%*%gamma_tr)
-
+      # Save results.
       mse_cv_ssl[i,j] = mean(imps.pe.1 + (lp.u - 2*imps.pe.1)*lp.u)
       ae_cv_ssl[i,j] = mean(imps.pe.2 + (lp.u.ind - 2*imps.pe.2)*lp.u.ind)
-
-      lp_val_sl = g.logit(cbind(1,X_labeled_val) %*% beta_sl_tr)
-      lp_val_sl.ind = I(lp_val_sl > c)
 
       mse_cv_sl[i,j] = mean((y_val  - lp_val_sl)^2 * 1/wg_val)/mean(1/wg_val)
       ae_cv_sl[i,j] = mean(abs(y_val - lp_val_sl.ind) * 1/wg_val)/mean(1/wg_val)
@@ -106,11 +99,8 @@ CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
       mse_cv_naive[i,j] = mean((y_val  - lp_val_sl)^2)
       ae_cv_naive[i,j] = mean(abs(y_val - lp_val_sl.ind))
 
-      lp_val.dr = g.logit(cbind(1, X_labeled_val) %*% beta_dr_tr)
-      lp_val.dr.ind = I(lp_val.dr > c)
-
-      mse_cv_dr[i,j] = mean((y_val  - lp_val.dr)^2 * 1 / wg_val) / mean(1 / wg_val)
-      ae_cv_dr[i,j] = mean(abs(y_val - lp_val.dr.ind) * 1 / wg_val) / mean(1 / wg_val)
+      #mse_cv_dr[i,j] = mean((y_val  - lp_val.dr)^2 * 1 / wg_val) / mean(1 / wg_val)
+      #ae_cv_dr[i,j] = mean(abs(y_val - lp_val.dr.ind) * 1 / wg_val) / mean(1 / wg_val)
 
     }
   }
