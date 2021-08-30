@@ -12,7 +12,8 @@ num_strata <- 2
 ################################################################################
 # Generate data.
 new_data <- DataGeneration(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
-                           model_specification = 'outcome_incorrect_imputation_correct',
+                           model_specification =
+                             'outcome_incorrect_imputation_correct',
                            num_strata = num_strata)
 
 # Format data.
@@ -41,6 +42,7 @@ regression_result <- SemiSupervisedRegression(basis_labeled,
                                        y,
                                        samp_prob,
                                        lambda = NULL)
+
 # Supervised beta.
 beta_sl <- regression_result$beta_SL
 # Semi-supervised beta.
@@ -54,23 +56,31 @@ beta_dr <- regression_result$beta_DR$beta_dr
 # DR projection.
 proj_dr <- regression_result$beta_DR$proj_dr
 
+################################################################################
 # Cross-validated residuals.
 num_folds <- 3
 cv_residuals <- CrossValResids(basis_labeled, basis_unlabeled, X_labeled,
                                X_unlabeled, y, samp_prob, num_folds)
 
-#Supervised CV resids.
+# Save the CV residuals.
 resids_sl <- cv_residuals$resids_beta_sl
 resids_ssl <- cv_residuals$resids_beta_sl
 resids_dr <- cv_residuals$resids_beta_sl
 resids_gamma <- cv_residuals$resids_beta_sl
 
-
 # Standard error estimates for supervised and SS estimates.
-beta_sl_se <- StdErrorEstimation(X_labeled, X_unlabeled, y,
+beta_sl_se_obj <- StdErrorEstimation(X_labeled, X_unlabeled, y,
                                  beta_sl, cv_residuals$beta_sl_cv)
-beta_ssl_se <- StdErrorEstimation(X_labeled, X_unlabeled, y,
+beta_ssl_se_obj <- StdErrorEstimation(X_labeled, X_unlabeled, y,
                                   beta_ssl, cv_residuals$beta_ssl_cv)
+
+
+# Supervised SE and inverse info.
+beta_sl_se <- beta_sl_se_obj$std_error
+beta_sl_inv_info <- beta_sl_se_obj$inverse_information
+# Semi-supervised SE and inverse info.
+beta_ssl_se <- beta_ssl_se_obj$std_error
+beta_ssl_inv_info <- beta_ssl_se_obj$inverse_information
 
 # Minimum Variance Estimator (here the component-wise optimal estimator).
 beta_minvar <- SemiSupervisedMinVarRegression(beta_ssl, beta_sl,
