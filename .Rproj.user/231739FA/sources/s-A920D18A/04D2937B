@@ -1,18 +1,18 @@
 {
-    "id": "C845B8A8",
-    "path": "~/Desktop/Stratified-SSL/Other Files/Original Code/main_CC.R",
-    "project_path": "Other Files/Original Code/main_CC.R",
+    "id": "04D2937B",
+    "path": "~/Desktop/Stratified-SSL/Other Files/Original Code/function.R",
+    "project_path": "Other Files/Original Code/function.R",
     "type": "r_source",
     "hash": "0",
     "contents": "",
     "dirty": false,
-    "created": 1630355768830.0,
+    "created": 1630357970777.0,
     "source_on_save": false,
-    "relative_order": 3,
+    "relative_order": 5,
     "properties": {
-        "source_window_id": "w3to9t8xfkqwm",
-        "cursorPosition": "135,6",
-        "scrollLine": "107"
+        "source_window_id": "wuq37s4grrj6h",
+        "cursorPosition": "852,0",
+        "scrollLine": "848"
     },
     "folds": "",
     "lastKnownWriteTime": 1630348173,

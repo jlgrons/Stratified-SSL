@@ -103,16 +103,31 @@ beta_mv_se <- beta_minvar$se_beta_weight
 ################################################################################
 # Apparent accuracy estimates.
 my_threshold <- 0.5
+
 acc_sl <- SupervisedApparentAccuracy(X_labeled, y, beta_sl, samp_prob,
                                        resamp_weight = NULL,
                                        threshold = my_threshold)
 
 acc_ssl <- SemiSupervisedApparentAccuracy(basis_labeled, basis_unlabeled,
                                           X_labeled, X_unlabaled,
-                                          y, beta_ssl, beta_imp, samp_prob,
+                                          y, beta_ssl, gamma, samp_prob,
                                           resamp_weight = NULL,
                                           threshold = my_threshold)
 
+acc_dr <- SupervisedApparentAccuracy(X_labeled, y, beta_dr, samp_prob,
+                                     resamp_weight = NULL,
+                                     threshold = my_threshold)
+
+acc_naive <- SupervisedApparentAccuracy(X_labeled, y, beta_naive,
+                                        rep(1, length(y)),
+                                        resamp_weight = NULL,
+                                        threshold = my_threshold)
+
+acc_omr <- c(acc_ssl$omr_ssl, acc_sl$omr_sl,  acc_dr$omr_sl,  acc_naive$omr_sl)
+acc_mse <- c(acc_ssl$mse_ssl, acc_sl$mse_sl,  acc_dr$mse_sl,  acc_naive$mse_sl)
+
+acc_omr
+acc_mse
 ################################################################################
 # Cross-validated accuracy estimates.
 reps <- 1

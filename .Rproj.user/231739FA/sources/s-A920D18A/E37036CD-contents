@@ -28,6 +28,7 @@ SemiSupervisedAccuracy <- function(basis_labeled, basis_unlabeled,
     pred_prob_SSL_all <- Expit(cbind(1, X_all) %*% beta_SSL)
     pred_prob_SSL_labeled <- Expit(cbind(1, X_labeled) %*% beta_SSL)
   }else{
+    # Note: Used to be a typo here for beta SL.
     pred_prob_SSL_all <- I(Expit(cbind(1, X_all) %*% beta_SSL) > threshold)
     pred_prob_SSL_labeled <- I(Expit(cbind(1, X_labeled) %*% beta_SSL) > threshold)
   }
@@ -37,10 +38,8 @@ SemiSupervisedAccuracy <- function(basis_labeled, basis_unlabeled,
 
   beta_refit <- glm(y ~ cbind(pred_prob_SSL_labeled), offset = imps_labeled,
                    family = 'binomial', weights = weight)$coeff
-
   imps_refit <- ExpitDerivative(cbind(1, pred_prob_SSL_all) %*% beta_refit +
                           imps_all)
-
   accuracy_SSL <- mean(imps_refit +
                          (pred_prob_SSL_all - 2*imps_refit)*pred_prob_SSL_all)
 
