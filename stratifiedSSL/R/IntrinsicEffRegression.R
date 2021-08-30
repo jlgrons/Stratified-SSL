@@ -1,4 +1,4 @@
-#' Intrinisic efficiency regression.
+#' Intrinsic efficiency regression.
 #'
 #' @param basis_labeled Basis matrix for labeled data set.
 #' @param bais_unlabeled Basis matrix for unlabeled data set.
