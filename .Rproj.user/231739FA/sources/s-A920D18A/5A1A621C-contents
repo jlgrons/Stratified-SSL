@@ -30,7 +30,7 @@ Expit <- function(x) {
 #' @param x Numeric vector.
 #' @param na_correction Whether to convert NAs to zero.
 #' @return Numeric vector.
-ExpitDerivative <- function(x, na_correction = T) {
+ExpitDerivative <- function(x, na_correction = F) {
   expit_deriv <- exp(x)/(1+exp(x))^2
   if(na_correction){
     expit_deriv[which(is.na(expit_deriv))] = 0

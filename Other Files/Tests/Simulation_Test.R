@@ -1,5 +1,6 @@
 ################################################################################
 # Simulation setting test.
+# setwd('~/Desktop/Stratified-SSL/stratifiedSSL')
 library('stratifiedSSL')
 set.seed(92047)
 
@@ -56,9 +57,6 @@ beta_dr <- regression_result$beta_DR
 # DR projection.
 proj_dr <- regression_result$proj_DR
 
-# Save all the betas.
-beta_all <- cbind(beta_ssl, beta_sl, beta_dr, beta_naive)
-gamma_all <- gamma
 ################################################################################
 # Cross-validated residuals.
 num_folds <- 3
@@ -78,7 +76,7 @@ resids_all <- cbind(resids_ssl, resids_sl, resids_dr, resids_gamma)
 beta_sl_se_obj <- StdErrorEstimation(X_labeled, X_unlabeled, y,
                                  beta_sl, resids_sl)
 beta_ssl_se_obj <- StdErrorEstimation(X_labeled, X_unlabeled, y,
-                                  beta_ssl, resids_ssl)
+                                  beta_ssl, resids_gamma)
 beta_dr_se_obj <- StdErrorEstimationDR(X_labeled, X_unlabeled, y,
                                        beta_dr, resids_dr, proj_dr)
 
@@ -107,8 +105,11 @@ mv_weight <- beta_minvar$min_var_weight
 beta_mv_se <- beta_minvar$se_beta_weight
 
 # Save all the standard errors.
-se_all <- cbind(beta_ssl_se, beta_sl_se, beta_dr_se, beta_mv_se)
+se_all <- cbind(beta_ssl_se,  beta_mv_se, beta_sl_se, beta_dr_se)
 
+# Save all the betas.
+beta_all <- cbind(beta_ssl, beta_mv, beta_sl, beta_dr, beta_naive)
+gamma_all <- gamma
 ################################################################################
 # Apparent accuracy estimates.
 my_threshold <- 0.5
@@ -127,7 +128,7 @@ acc_dr <- SupervisedApparentAccuracy(X_labeled, y, beta_dr, samp_prob,
                                      resamp_weight = NULL,
                                      threshold = my_threshold)
 
-acc_naive <- SupervisedApparentAccuracy(X_labeled, y, beta_naive,
+acc_naive <- SupervisedApparentAccuracy(X_labeled, y, beta_sl,
                                         rep(1, length(y)),
                                         resamp_weight = NULL,
                                         threshold = my_threshold)
@@ -199,9 +200,13 @@ source('main_CC.R')
 
 # Check betas - note DR code has been updated so it wont be the same as previous.
 beta_all == beta_all_og
+se_all == se_all_og
 
 # Check gamma.
 gamma_all == gamma_og
+
+# Check residuals.
+colSums(resids_all == resids_all_og)
 
 # Check apparent estimators.
 acc_ap_omr == ap_omr_og

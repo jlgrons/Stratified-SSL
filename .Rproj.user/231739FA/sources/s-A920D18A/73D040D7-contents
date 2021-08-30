@@ -30,7 +30,7 @@ StdErrorEstimation <- function(X_labeled, X_unlabeled, y, beta, residual){
   inverse_information <- solve(information)
   variance_est <-  inverse_information %*% score %*% inverse_information
 
-  return(list(std_error = sqrt(diag(variance_est) / n_labeled),
+  return(list(std_error = sqrt(diag(inverse_information) / n_labeled),
               inverse_information = inverse_information))
 }
 

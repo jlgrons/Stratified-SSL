@@ -17,7 +17,7 @@
 #'
 
 SemiSupervisedApparentAccuracy <- function(basis_labeled, basis_unlabeled,
-                                           X_labeled, X_unlabeled, y, beta_SSL,
+                                           X_labeled, X_unlabaled, y, beta_SSL,
                                            beta_imp, samp_prob,
                                            resamp_weight = NULL,
                                            threshold = 0.5){
@@ -26,11 +26,11 @@ SemiSupervisedApparentAccuracy <- function(basis_labeled, basis_unlabeled,
   weight <- resamp_weight/samp_prob/mean(resamp_weight/samp_prob)
 
   MSE_SSL <- SemiSupervisedAccuracy(basis_labeled, basis_unlabeled,
-                                    X_labeled, X_unlabeled, y, beta_SSL,
+                                    X_labeled, X_unlabaled, y, beta_SSL,
                                     beta_imp, weight = weight, threshold = NULL)
 
   OMR_SSL <- SemiSupervisedAccuracy(basis_labeled, basis_unlabeled,
-                                    X_labeled, X_unlabeled, y, beta_SSL,
+                                    X_labeled, X_unlabaled, y, beta_SSL,
                                     beta_imp, weight = weight,
                                     threshold = threshold)
 

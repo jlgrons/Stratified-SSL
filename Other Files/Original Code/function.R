@@ -871,6 +871,10 @@ model.eval.ap = function(Yt, beta.sl, beta.ssl, gamma, beta.dr,
   lp.v.ssl = g.logit(cbind(1,dat.all)%*%beta.ssl);
   lp.v.ssl.ind = I(lp.v.ssl > c);
 
+  # Note: added this to make sure runs ok. 8/30
+  lp.t.ssl.fix = g.logit(cbind(1,Xt)%*%beta.ssl);
+  lp.t.ssl.ind.fix = I(lp.t.ssl.fix > c);
+
   lp.t.ssl = g.logit(cbind(1,Xt)%*%beta.sl);
   lp.t.ssl.ind = I(lp.t.ssl > c);
 
@@ -881,8 +885,8 @@ model.eval.ap = function(Yt, beta.sl, beta.ssl, gamma, beta.dr,
   n.t = length(Yt); ind.l = (1:n.t);
   imps.t = cbind(1, basis.x[ind.l,])%*%gamma
 
-  refit.p1 <- glm(Yt~cbind(lp.t.ssl), offset = imps.t, family = 'binomial', weights = weight)$coeff;
-  refit.p2 <- glm(Yt~cbind(lp.t.ssl.ind), offset = imps.t, family = 'binomial', weights = weight)$coeff;
+  refit.p1 <- glm(Yt~cbind(lp.t.ssl.fix), offset = imps.t, family = 'binomial', weights = weight)$coeff;
+  refit.p2 <- glm(Yt~cbind(lp.t.ssl.ind.fix), offset = imps.t, family = 'binomial', weights = weight)$coeff;
   imps.pe1 = g.logit(cbind(1,lp.v.ssl)%*%refit.p1 +  cbind(1, basis.x)%*%gamma);
   imps.pe2 = g.logit(cbind(1,lp.v.ssl.ind)%*%refit.p2 +  cbind(1, basis.x)%*%gamma);
 

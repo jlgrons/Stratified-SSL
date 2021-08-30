@@ -20,7 +20,7 @@ StdErrorEstimation <- function(X_labeled, X_unlabeled, y, beta, residual){
   n_labeled <- nrow(X_labeled_intercept)
 
   score <-  t(X_labeled_intercept) %*% (
-    X_labeled_intercept * c(residual)^2) / n_labeled
+    X_labeled_intercept * residual^2) / n_labeled
 
   expit_deriv <- c(ExpitDerivative(X_all_intercept %*% beta))
   # Ask Molei about this.
@@ -30,7 +30,7 @@ StdErrorEstimation <- function(X_labeled, X_unlabeled, y, beta, residual){
   inverse_information <- solve(information)
   variance_est <-  inverse_information %*% score %*% inverse_information
 
-  return(list(std_error = sqrt(diag(variance_est) / n_labeled),
+  return(list(std_error = sqrt(diag(inverse_information) / n_labeled),
               inverse_information = inverse_information))
 }
 

@@ -228,7 +228,9 @@ sd(ssl.pert.ae)*100
 
 # For comparison with new code.
 
-beta_all_og <- cbind(beta.ssl, beta.sl, beta.dr, beta.naive)
+beta_all_og <- cbind(beta.ssl, beta.ssl.w, beta.sl, beta.dr, beta.naive)
+se_all_og <- cbind(se.beta.ssl, se.beta.ssl.w, se.beta.sl,
+                   se.beta.dr)
 gamma_og <- gamma
 cv_omr_og <- cv.ae
 cv_mse_og <- cv.mse
@@ -236,4 +238,6 @@ ap_omr_og <- ap.ae
 ap_mse_og <- ap.mse
 pert_mse_all_og <- cbind(ssl.pert.mse, sl.pert.mse, dr.pert.mse)
 pert_omr_all_og <- cbind(ssl.pert.ae, sl.pert.ae, dr.pert.ae)
+resids_all_og <- cbind(resids.beta.ssl, resids.beta.sl, resids.beta.dr, resids.gamma)
+
 
