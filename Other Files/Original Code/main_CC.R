@@ -138,6 +138,7 @@ ap.mse
 
 
 # Cross-validated (CV) estimates of the model accuracy (BS and OMR):
+set.seed(50)
 cv.ob = model.eval.cv(basis.x, Xv, Xt, Yt, samp.prob,
                       w.beta[,1], K.fold = K.fold, rep = rep)
 

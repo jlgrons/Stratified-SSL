@@ -141,7 +141,8 @@ acc_ap_mse
 
 ################################################################################
 # Cross-validated accuracy estimates.
-reps <- 1
+set.seed(50)
+reps <- 2
 # Note: Function still needs to be formatted.
 acc_cv <- CrossValAccuracy(basis_labeled, basis_unlabeled,
                            X_labeled, X_unlabeled, y, samp_prob,
