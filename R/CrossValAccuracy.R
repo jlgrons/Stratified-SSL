@@ -73,7 +73,8 @@ CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
       gamma_tr <-  beta_tr$beta_imp
       beta_ssl_mv_tr <- min_var_weight*beta_ssl_tr +
         (1-min_var_weight)*beta_sl_tr
-      beta_dr_tr <- beta_trmp$beta_SL_unweighted
+      #beta_dr_tr <- beta_trmp$beta_SL_unweighted
+      beta_naive_tr <- beta_trmp$beta_SL_unweighted
 
       # Supervised estimates.
       acc_sl_val <- SupervisedApparentAccuracy(X_labeled_val, y_val,
@@ -82,8 +83,7 @@ CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
                                                threshold = threshold)
 
       mse_cv_sl[i,j] <- acc_sl_val$mse_sl
-      mse_cv_sl[i,j] <- acc_sl_val$ae_sl
-      ae_cv_sl[i,j] = mean(abs(y_val - lp_val_sl.ind) * 1/wg_val)/mean(1/wg_val)
+      ae_cv_sl[i,j] <- acc_sl_val$ae_sl
 
       # Semi-supervised estimates.
       acc_ssl_val <- SemiSupervisedApparentAccuracy(basis_val,
@@ -94,15 +94,20 @@ CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
                                                     resamp_weight = NULL,
                                                     threshold = threshold)
 
-      # Save results.
-      mse_cv_ssl[i,j] = mean(imps.pe.1 + (lp.u - 2*imps.pe.1)*lp.u)
-      ae_cv_ssl[i,j] = mean(imps.pe.2 + (lp.u.ind - 2*imps.pe.2)*lp.u.ind)
+      mse_cv_sl[i,j] <- acc_ssl_val$mse_ssl
+      ae_cv_sl[i,j] <- acc_ssl_val$ae_ssl
 
+      # Naive supervised estimates.
+      acc_naive_val <- SupervisedApparentAccuracy(X_labeled_val, y_val,
+                                               beta_naive_tr,
+                                               rep(1, length(y_val)),
+                                               resamp_weight = NULL,
+                                               threshold = threshold)
 
+      mse_cv_naive[i,j] <- acc_naive_val$mse_sl
+      ae_cv_naive[i,j] <- acc_naive_val$ae_sl
 
-      mse_cv_naive[i,j] = mean((y_val  - lp_val_sl)^2)
-      ae_cv_naive[i,j] = mean(abs(y_val - lp_val_sl.ind))
-
+      # Need to add in the DR method.
       #mse_cv_dr[i,j] = mean((y_val  - lp_val.dr)^2 * 1 / wg_val) / mean(1 / wg_val)
       #ae_cv_dr[i,j] = mean(abs(y_val - lp_val.dr.ind) * 1 / wg_val) / mean(1 / wg_val)
 
@@ -113,9 +118,9 @@ CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
               ae_ssl = mean(ae_cv_ssl, na.rm = T),
               mse_sl = mean(mse_cv_sl, na.rm = T),
               ae_sl = mean(ae_cv_sl, na.rm = T),
-              mse.dr = mean(mse_cv_dr, na.rm = T),
-              ae.dr = mean(ae_cv_dr, na.rm = T),
-              mse.naive = mean(mse_cv_naive, na.rm = T),
-              ae.naive = mean(ae_cv_naive, na.rm = T)))
+              mse_dr = mean(mse_cv_dr, na.rm = T),
+              ae_dr = mean(ae_cv_dr, na.rm = T),
+              mse_naive = mean(mse_cv_naive, na.rm = T),
+              ae_naive = mean(ae_cv_naive, na.rm = T)))
 
 }
