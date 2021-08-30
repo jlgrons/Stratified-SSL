@@ -52,29 +52,20 @@ num_folds <- 3
 cv_residuals <- CrossValResids(basis_labeled, basis_unlabeled, X_labeled,
                                X_unlabeled, y, samp_prob, num_folds)
 
-# Standard error estimates for supervised and SS estimates of regression parameter
-beta_SL_se <- StdErrorEstimation(X_labeled, X_unlabeled, y,
+# Standard error estimates for supervised and SS estimates.
+beta_sl_se <- StdErrorEstimation(X_labeled, X_unlabeled, y,
                                  beta_sl, cv_residuals$beta_sl_cv)
-beta_SSL_se <- StdErrorEstimation(X_labeled, X_unlabeled, y,
+beta_ssl_se <- StdErrorEstimation(X_labeled, X_unlabeled, y,
                                   beta_ssl, cv_residuals$beta_ssl_cv)
 
-# Minimum Variance Estimator (here the component-wise optimal estimator)
-# constant for stability due to high correlation between beta_SL and beta_SSL
-eps.s <- (n.t*(se.beta.sl^2 + se.beta.ssl^2))/(2*n.t^0.6)
-beta.ssl.w.ob <- min.var.est(beta.ssl, beta.sl, resids.gamma,
-                            resids.beta.sl, Xt, Xv, eps.s);
-
-# Our ensemble estimator (of the SL and SSL) for beta:
-beta.ssl.w = beta.ssl.w.ob$beta
-
-w.beta = beta.ssl.w.ob$weight
-se.beta.ssl.w = beta.ssl.w.ob$se.est
-
-# Estimated asymptotic standard error of the estimators (used for confidence interval construction):
-se.beta.sl
-se.beta.ssl
-se.beta.ssl.w
-se.beta.dr
+# Minimum Variance Estimator (here the component-wise optimal estimator).
+my_epsilon <- (n_labeled*(beta_sl_se$std_error^2 +
+                            beta_ssl_se$std_error^2))/(2*n_labeled^0.6)
+beta_minvar <- SemiSupervisedMinVarRegression(beta_ssl, beta_sl,
+                                              cv_residuals$resids_beta_imp,
+                                              cv_residuals$resids_beta_sl,
+                                              X_labeled,
+                                              X_unlabeled, epsilon = my_epsilon)
 
 ################################################################################
 
