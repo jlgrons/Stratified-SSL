@@ -1,18 +1,18 @@
 {
-    "id": "3C4A9478",
-    "path": "~/Desktop/Stratified-SSL/Other Files/Original Code/function.R",
-    "project_path": "Other Files/Original Code/function.R",
+    "id": "BDC9BEFC",
+    "path": "~/Desktop/Stratified-SSL/stratifiedSSL/R/CrossValAccuracy.R",
+    "project_path": "stratifiedSSL/R/CrossValAccuracy.R",
     "type": "r_source",
     "hash": "0",
     "contents": "",
     "dirty": false,
-    "created": 1630358291640.0,
+    "created": 1630358510426.0,
     "source_on_save": false,
-    "relative_order": 5,
+    "relative_order": 4,
     "properties": {
-        "source_window_id": "wgmn386cgilhs",
-        "cursorPosition": "852,0",
-        "scrollLine": "848"
+        "source_window_id": "w0bd4a8mzxsz5",
+        "cursorPosition": "92,4",
+        "scrollLine": "60"
     },
     "folds": "",
     "lastKnownWriteTime": 1630348173,

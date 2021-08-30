@@ -1,5 +1,5 @@
 ################################################################################
-# Simulation setting test
+# Simulation setting test.
 library('stratifiedSSL')
 set.seed(92047)
 
@@ -123,21 +123,29 @@ acc_naive <- SupervisedApparentAccuracy(X_labeled, y, beta_naive,
                                         resamp_weight = NULL,
                                         threshold = my_threshold)
 
-acc_omr <- c(acc_ssl$omr_ssl, acc_sl$omr_sl,  acc_dr$omr_sl,  acc_naive$omr_sl)
-acc_mse <- c(acc_ssl$mse_ssl, acc_sl$mse_sl,  acc_dr$mse_sl,  acc_naive$mse_sl)
+ap_acc_omr <- c(acc_ssl$omr_ssl, acc_sl$omr_sl, acc_dr$omr_sl, acc_naive$omr_sl)
+ap_acc_mse <- c(acc_ssl$mse_ssl, acc_sl$mse_sl, acc_dr$mse_sl, acc_naive$mse_sl)
 
-acc_omr
-acc_mse
+ap_acc_omr
+ap_acc_mse
+
 ################################################################################
 # Cross-validated accuracy estimates.
 reps <- 1
 # Note: Function still needs to be formatted.
 acc_cv <- CrossValAccuracy(basis_labeled, basis_unlabeled,
                            X_labeled, X_unlabeled, y, samp_prob,
-                           beta_minvar$min_var_weight[,1],
+                           mv_weight[,1],
                            num_folds = num_folds, reps = reps,
                            theshold = my_threshold, lambda0 = NULL)
 
+acc_omr <- c(acc_ssl$omr_ssl, acc_sl$omr_sl,  acc_dr$omr_sl,  acc_naive$omr_sl)
+acc_mse <- c(acc_ssl$mse_ssl, acc_sl$mse_sl,  acc_dr$mse_sl,  acc_naive$mse_sl)
+
+acc_omr
+acc_mse
+
+################################################################################
 # Ensemble of apparent and CV estimator.
 #w <- K.fold / (2 * K.fold - 1)
 #w * ap.ae + (1 - w) * cv.ae
