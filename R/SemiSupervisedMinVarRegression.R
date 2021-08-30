@@ -13,9 +13,11 @@
 #' @return List with parameter and SE est as well as estimated min_var_weights.
 #'
 
-SemiSupervisedMinVarRegression <- function(beta_SSL, beta_SL, resids_imp,
-                                           resids_beta_SL, X_labeled,
-                                           X_unlabeled, epsilon = NULL){
+SemiSupervisedMinVarRegression <- function(beta_SSL, beta_SL,
+                                           beta_SSL_se, beta_SL_se,
+                                           resids_imp, resids_beta_SL,
+                                           X_labeled, X_unlabeled,
+                                           epsilon = NULL){
 
   X_all <- cbind(1, rbind(X_labeled, X_unlabeled))
   X_labeled_int <- cbind(1, X_labeled)
@@ -26,7 +28,8 @@ SemiSupervisedMinVarRegression <- function(beta_SSL, beta_SL, resids_imp,
   p <- ncol(X_labeled)
   min_var_weight <- matrix(NA, p + 1, 2)
 
-  if(is.null(epsilon)){epsilon = rep(0, p + 1)}
+  if(is.null(epsilon)){epsilon <-  (n_labeled*(beta_SL_se^2 +
+                                                 beta_SSL_se^2))/(2*n_labeled^0.6)}
 
   # Compute the minimum variance estimator.
   # Note: The residuals have been divided by mean of min_var_weights.
