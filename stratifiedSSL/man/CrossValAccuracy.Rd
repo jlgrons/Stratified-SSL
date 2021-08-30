@@ -14,7 +14,7 @@ CrossValAccuracy(
   min_var_weight,
   num_folds = 3,
   reps = 10,
-  theshold = 0.5,
+  threshold = 0.5,
   lambda0 = NULL
 )
 }
@@ -35,11 +35,11 @@ CrossValAccuracy(
 
 \item{reps}{Scalar indicating number of repitions for CV.}
 
+\item{threshold}{Threshold for overall misclassification rate.}
+
 \item{lambda0}{Initial lambda for imputation model.}
 
 \item{bais_unlabeled}{Basis matrix for unlabeled data set.}
-
-\item{threshold}{Threshold for overall misclassification rate.}
 }
 \value{
 CV semi-supervised and supervised MSE and OMR.

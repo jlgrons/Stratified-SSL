@@ -13,9 +13,12 @@ AccuracyStdErrorEstimation(
   samp_prob,
   min_var_weight,
   beta_SL,
-  beta_SSL,
+  beta_MV,
+  beta_DR,
   resids_beta_SL,
   resids_beta_imp,
+  resids_beta_dr,
+  proj_dr,
   inverse_information,
   num_resamples = 500,
   threshold = 0.5
@@ -36,21 +39,25 @@ AccuracyStdErrorEstimation(
 
 \item{beta_SL}{Supervised regression coefficient vector.}
 
-\item{beta_SSL}{Semi-supervised regression coefficient vector.}
+\item{beta_MV}{MinVar Semi-supervised regression coefficient vector.}
+
+\item{beta_DR}{Density ratio regression coefficient vector.}
 
 \item{resids_beta_SL}{Residuals from the supervised regression model.}
 
 \item{resids_beta_imp}{Residuals from the imputation model.}
 
-\item{inverse_information}{Inverse information  matric.}
+\item{resids_beta_dr}{Residuals from the density ratio estimator.}
+
+\item{proj_dr}{Projection from density ratio estimator.}
+
+\item{inverse_information}{Inverse information  matrix.}
 
 \item{num_resamples}{Number of resamples.}
 
 \item{threshold}{Threshold for over misclassification rate.}
 
 \item{bais_unlabeled}{Basis matrix for unlabeled data set.}
-
-\item{resids_beta_SSL}{Residuals from the semi-supervised regression model.}
 }
 \value{
 Pertrubed estimates.

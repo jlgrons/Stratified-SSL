@@ -4,7 +4,7 @@
 \alias{ExpitDerivative}
 \title{Derivative of the Expit Function}
 \usage{
-ExpitDerivative(x, na_correction = F)
+ExpitDerivative(x, na_correction = T)
 }
 \arguments{
 \item{x}{Numeric vector.}

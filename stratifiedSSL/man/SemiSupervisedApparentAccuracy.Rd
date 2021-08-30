@@ -8,7 +8,7 @@ SemiSupervisedApparentAccuracy(
   basis_labeled,
   basis_unlabeled,
   X_labeled,
-  X_unlabaled,
+  X_unlabeled,
   y,
   beta_SSL,
   beta_imp,
@@ -21,6 +21,8 @@ SemiSupervisedApparentAccuracy(
 \item{basis_labeled}{Basis matrix for labeled data set.}
 
 \item{X_labeled}{Covariate matrix for labeled data set.}
+
+\item{X_unlabeled}{Covariate matrix for unlabeled data set.}
 
 \item{y}{Numeric outcome vector.}
 
@@ -35,8 +37,6 @@ SemiSupervisedApparentAccuracy(
 \item{threshold}{Threshold for overall misclassification rate.}
 
 \item{bais_unlabeled}{Basis matrix for unlabeled data set.}
-
-\item{X_unlabeled}{Covariate matrix for unlabeled data set.}
 }
 \value{
 Semi-supervised MSE and OMR.
