@@ -3,7 +3,7 @@
     "path": "~/Desktop/Stratified-SSL/Other Files/Tests/Simulation_Test.R",
     "project_path": "Other Files/Tests/Simulation_Test.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "239836831",
     "contents": "",
     "dirty": false,
     "created": 1630353622205.0,
@@ -11,15 +11,15 @@
     "relative_order": 1,
     "properties": {
         "source_window_id": "w3xdkt5d0mxot",
-        "cursorPosition": "12,16",
-        "scrollLine": "9"
+        "cursorPosition": "187,0",
+        "scrollLine": "163"
     },
     "folds": "",
-    "lastKnownWriteTime": 1630358588,
+    "lastKnownWriteTime": 1630360439,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1630358588063,
+    "last_content_update": 1630360439315,
     "read_only": false,
     "read_only_alternatives": []
 }

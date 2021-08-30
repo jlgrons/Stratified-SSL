@@ -56,6 +56,9 @@ beta_dr <- regression_result$beta_DR
 # DR projection.
 proj_dr <- regression_result$proj_DR
 
+# Save all the betas.
+beta_all <- cbind(beta_ssl, beta_sl, beta_dr, beta_naive)
+
 ################################################################################
 # Cross-validated residuals.
 num_folds <- 3
@@ -67,6 +70,9 @@ resids_sl <- cv_residuals$resids_beta_sl
 resids_ssl <- cv_residuals$resids_beta_ssl
 resids_dr <- cv_residuals$resids_beta_dr
 resids_gamma <- cv_residuals$resids_gamma
+
+# Save all the resids.
+resids_all <- cbind(resids_ssl, resids_sl, resids_dr, resids_gamma)
 
 # Standard error estimates for supervised and SS estimates.
 beta_sl_se_obj <- StdErrorEstimation(X_labeled, X_unlabeled, y,
@@ -100,6 +106,9 @@ beta_mv <- beta_minvar$beta_SSL_min_var
 mv_weight <- beta_minvar$min_var_weight
 beta_mv_se <- beta_minvar$se_beta_weight
 
+# Save all the standard errors.
+se_all <- cbind(beta_ssl_se, beta_sl_se, beta_dr_se, beta_mv_se)
+
 ################################################################################
 # Apparent accuracy estimates.
 my_threshold <- 0.5
@@ -123,11 +132,11 @@ acc_naive <- SupervisedApparentAccuracy(X_labeled, y, beta_naive,
                                         resamp_weight = NULL,
                                         threshold = my_threshold)
 
-ap_acc_omr <- c(acc_ssl$omr_ssl, acc_sl$omr_sl, acc_dr$omr_sl, acc_naive$omr_sl)
-ap_acc_mse <- c(acc_ssl$mse_ssl, acc_sl$mse_sl, acc_dr$mse_sl, acc_naive$mse_sl)
+acc_ap_omr <- c(acc_ssl$omr_ssl, acc_sl$omr_sl, acc_dr$omr_sl, acc_naive$omr_sl)
+acc_ap_mse <- c(acc_ssl$mse_ssl, acc_sl$mse_sl, acc_dr$mse_sl, acc_naive$mse_sl)
 
-ap_acc_omr
-ap_acc_mse
+acc_ap_omr
+acc_ap_mse
 
 ################################################################################
 # Cross-validated accuracy estimates.
@@ -136,31 +145,43 @@ reps <- 1
 acc_cv <- CrossValAccuracy(basis_labeled, basis_unlabeled,
                            X_labeled, X_unlabeled, y, samp_prob,
                            mv_weight[,1],
-                           num_folds = num_folds, reps = reps,
-                           theshold = my_threshold, lambda0 = NULL)
+                           num_folds, reps,
+                           my_threshold, lambda0 = NULL)
 
-acc_omr <- c(acc_ssl$omr_ssl, acc_sl$omr_sl,  acc_dr$omr_sl,  acc_naive$omr_sl)
-acc_mse <- c(acc_ssl$mse_ssl, acc_sl$mse_sl,  acc_dr$mse_sl,  acc_naive$mse_sl)
+acc_cv_omr <- c(acc_cv$omr_ssl, acc_cv$omr_sl, acc_cv$omr_dr, acc_cv$omr_naive)
+acc_cv_mse <- c(acc_cv$mse_ssl, acc_cv$mse_sl, acc_cv$mse_dr, acc_cv$mse_naive)
 
-acc_omr
-acc_mse
+acc_cv_omr
+acc_cv_mse
 
 ################################################################################
 # Ensemble of apparent and CV estimator.
-#w <- K.fold / (2 * K.fold - 1)
-#w * ap.ae + (1 - w) * cv.ae
-#w * ap.mse + (1 - w) * cv.mse
+cv_weight <- num_folds / (2 * num_folds - 1)
+acc_en_omr <- cv_weight * acc_ap_omr + ((1-cv_weight) * acc_cv_omr)
+acc_en_mse <- cv_weight * acc_ap_mse + ((1-cv_weight) * acc_cv_mse)
+
+acc_en_omr
+acc_en_mse
 
 ################################################################################
 # Perturbation for standard error estimates for accuracy estimates.
 num_perts <- 2
 acc_pert <- AccuracyStdErrorEstimation(basis_labeled, basis_unlabeled,
                                        X_labeled, X_unlabeled, y,
-                                       samp_prob, beta_minvar$min_var_weight[,1],
+                                       samp_prob, mv_weight[,1],
                                        beta_sl, beta_ssl,
-                                       cv_residuals$resids_beta_sl,
-                                       cv_residuals$resids_beta_imp,
-                                       beta_ssl_se$inverse_information,
+                                       resids_sl,
+                                       resids_gamma,
+                                       beta_ssl_inv_info,
                                        num_resamples = num_perts,
                                        threshold = my_threshold)
+
+ssl.pert.mse <- acc_pert$ssl.pert.mse
+sl.pert.mse <- acc_pert$sl.pert.mse
+dr.pert.mse <- acc_pert$dr.pert.mse
+
+ssl.pert.ae <- acc_pert$ssl.pert.ae
+sl.pert.ae <- acc_pert$sl.pert.ae
+dr.pert.ae <- acc_pert$dr.pert.ae
+
 
