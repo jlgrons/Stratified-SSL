@@ -29,7 +29,8 @@ AccuracyStdErrorEstimation <- function(basis_labeled, basis_unlabeled,
                                        num_resamples = 500, threshold = 0.5){
 
   n_labeled <- length(y)
-  resamp_weight <- sapply(num_resamples, function(kk) 4*rbeta(n_labeled, 0.5, 1.5))
+  resamp_weight <- sapply(1:num_resamples, function(kk) 4*rbeta(n_labeled,
+                                                              0.5, 1.5))
 
   resids_beta_SL_weighted <- ((resamp_weight - 1) * resids_beta_SL)
   resids_beta_imp_weighted <- ((resamp_weight - 1) * resids_beta_imp)
@@ -46,21 +47,31 @@ AccuracyStdErrorEstimation <- function(basis_labeled, basis_unlabeled,
     1-min_var_weight) %*% IF_beta_imp
   beta_SL_pert <- beta_SL + IF_beta_imp
 
-  beta_imp_pert <- sapply(num_resamples, function(kk){
+  beta_imp_pert <- sapply(1:num_resamples, function(kk){
     RidgeRegression(basis_labeled, y,
                     weights = resamp_weight[,kk] / samp_prob/mean(
                       resamp_weight[,kk] / samp_prob),
              lambda = log(ncol(basis_labeled)) / (n_labeled^1.5))
   })
 
-  perturbations <- lapply(num_resamples, function(kk){model.eval.ap(Yt, beta.sl.p[,kk], beta_SSL_pert[,kk], beta_imp_pert[,kk],
-                                                 beta.dr.p[,kk], Xt, Xv, basis.x, samp.prob, V = resamp_weight[,kk])})
+  perturbations_sl <- lapply(1:num_resamples, function(kk){
+    SupervisedApparentAccuracy(X_labeled, y, beta_SL_pert[,kk], samp_prob,
+                               resamp_weight = resamp_weight[ ,kk],
+                               threshold = my_threshold)})
 
-  ssl_pert_mse <- sapply(perturbations, "[[", 1);
-  ssl_pert_ae <- sapply(perturbations, "[[", 2);
+  perturbations_ssl <- lapply(1:num_resamples, function(kk){
+    SemiSupervisedApparentAccuracy(basis_labeled, basis_unlabeled,
+                                   X_labeled, X_unlabaled,
+                                   y, beta_SSL_pert[,kk],  beta_imp_pert[, kk],
+                                   samp_prob,
+                                   resamp_weight = resamp_weight[ ,kk],
+                                   threshold = my_threshold)})
 
-  sl_pert_mse <- sapply(perturbations, "[[", 3);
-  sl_pert_ae <- sapply(perturbations, "[[", 4);
+  ssl_pert_mse <- sapply(perturbations_ssl, "[[", 1);
+  ssl_pert_ae <- sapply(perturbations_ssl, "[[", 2);
+
+  sl_pert_mse <- sapply(perturbations_sl, "[[", 1);
+  sl_pert_ae <- sapply(perturbations_sl, "[[", 2);
 
   return(list(ssl_pert_mse = ssl_pert_mse,
               sl_pert_mse = sl_pert_mse,
