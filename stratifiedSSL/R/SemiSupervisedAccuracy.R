@@ -38,7 +38,7 @@ SemiSupervisedAccuracy <- function(basis_labeled, basis_unlabeled,
   beta_refit <- glm(y ~ cbind(pred_prob_SSL_labeled), offset = imps_labeled,
                    family = 'binomial', weights = weight)$coeff
 
-  imps_refit <- ExpitDerivative(cbind(1, pred_prob_SSL_all) %*% beta_refit +
+  imps_refit <- Expit(cbind(1, pred_prob_SSL_all) %*% beta_refit +
                           imps_all)
 
   accuracy_SSL <- mean(imps_refit +

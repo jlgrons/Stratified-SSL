@@ -1,16 +1,18 @@
 {
-    "id": "1A2B89A6",
-    "path": "~/Desktop/Stratified-SSL/stratifiedSSL/R/SemiSupervisedApparentAccuracy.R",
-    "project_path": "stratifiedSSL/R/SemiSupervisedApparentAccuracy.R",
+    "id": "3C4A9478",
+    "path": "~/Desktop/Stratified-SSL/Other Files/Original Code/function.R",
+    "project_path": "Other Files/Original Code/function.R",
     "type": "r_source",
     "hash": "0",
     "contents": "",
     "dirty": false,
-    "created": 1630358174398.0,
+    "created": 1630358291640.0,
     "source_on_save": false,
-    "relative_order": 7,
+    "relative_order": 5,
     "properties": {
-        "source_window_id": "wbzzr05olc3j0"
+        "source_window_id": "wgmn386cgilhs",
+        "cursorPosition": "852,0",
+        "scrollLine": "848"
     },
     "folds": "",
     "lastKnownWriteTime": 1630348173,
