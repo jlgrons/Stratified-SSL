@@ -1,21 +1,27 @@
-################################################################################
-##### Cross-validated estimator of the model accuracy parameter (BS and OMR) ###
-################################################################################
+# Updated: 2021-08-30
+
+#' CV estimates for brier score (MSE) and misclassification rate (OMR).
+#'
+#' @param basis_labeled Basis matrix for labeled data set.
+#' @param bais_unlabeled Basis matrix for unlabeled data set.
+#' @param X_labeled Covariate matrix for labeled data set.
+#' @param X_unlabeled Covariate matrix for unlabeled data set.
+#' @param y Numeric outcome vector.
+#' @param samp_prob Numeric vector of weights.
+#' @param min_var_weight Numeric vector of minimum variance weights.
+#' @param num_folds Scalar indicating number of folds for CV.
+#' @param num_folds Scalar indicating number of repitions for CV.
+#' @param threshold Threshold for overall misclassification rate.
+#' @param lambda0 Initial lambda for imputation model.
+#' @export
+#' @return CV semi-supervised and supervised MSE and OMR.
+#'
 
 # computes the CV estimates for model evaluation parameters
-model.eval.cv = function(basis.x, Xv, Xt, Yt, samp.prob,
-                         W, K.fold = 5, rep = 10, c = 0.5, lambda0 = NULL){
-
-  ## basis.x: basis exp matrix
-  ## Xt: covariates for labeled
-  ## Xv: covariates for unlabeled
-  ## Yt: labels
-  ## samp.prob: sampling probability
-  ## W: weight for the minimum variance estimator
-  ## K.fold: number of folds for CV
-  ## rep: number of reps for CV
-  ## c: cutoff for the overall misclassification rate
-  ## lambda0: ridge parameter for the imputation model
+CrossValAccuaracy <- function(basis_labeled, basis_unlabeled,
+                              X_labeled, X_unlabeled, y, samp_prob,
+                              min_var_weight, num_folds = 3, reps = 10,
+                              theshold = 0.5, lambda0 = NULL){
 
   pp = ncol(basis.x); n.t = nrow(Xt); ind.lab = 1:n.t;
   data.all = rbind(Xt,Xv);
