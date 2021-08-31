@@ -21,7 +21,7 @@ AlternativeBasis <- function(X, S, num_knots, basis_type = 'interact'){
   # Will change name later.
   if (basis_type == 'IC1'){
 
-    basis <- InteractionBasis(X, S)
+    basis <- InteractionBasis(X, S, S_interaction = TRUE)
   
   }
 

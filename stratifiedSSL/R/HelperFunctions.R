@@ -72,8 +72,9 @@ OneHotEncoding <- function(s){
 #'
 #' @param X Numeric matrix.
 #' @param S Numeric matrix.
+#' @param S_interaction Logical indicator of whether to include S interactions.
 #' @return Numeric matrix with basis containing interaction terms.
-InteractionBasis <- function(X, S){
+InteractionBasis <- function(X, S, S_interaction = FALSE){
 
   basis <- X
 
@@ -87,8 +88,21 @@ InteractionBasis <- function(X, S){
     basis <- cbind(basis, X[,2] * X[,j])
   }
 
-  # One hot encoding of stratification variable.
-  basis.S <- OneHotEncoding(S)
+
+  
+  if(S_interaction){
+    
+      basis.S <- S
+    for (k in 1:length(basis[1, ])) {
+      basis.S <- cbind(basis.S, S * basis[,k])
+      
+    }}else{
+      
+      # Check with Molei about this for IC supp.
+      basis.S <- OneHotEncoding(S)
+      
+    }
+  
 
   basis <- cbind(basis, basis.S)
   return(basis)
