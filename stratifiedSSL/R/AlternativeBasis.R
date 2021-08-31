@@ -14,10 +14,7 @@ AlternativeBasis <- function(X, S, num_knots, basis_type = 'interact'){
 
   if (basis_type == 'interact'){
 
-    basis.X <- InteractionBasis(X, S)
-    basis.S <- OneHotEncoding(S)
-
-    basis <- cbind(basis.X, basis.S)
+    basis <- InteractionBasis(X, S)
 
   }
 

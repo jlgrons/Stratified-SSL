@@ -2,7 +2,7 @@
 # Simulation setting test.
 #library('devtools')
 setwd('~/Desktop/Stratified-SSL/stratifiedSSL')
-build(); install()
+#build(); install()
 library('stratifiedSSL')
 set.seed(92047)
 
