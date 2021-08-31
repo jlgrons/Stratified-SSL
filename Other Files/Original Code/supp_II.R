@@ -12,7 +12,7 @@ n.t <- 400
 rho <- 0.4
 
 # Sample size of unlabel data
-N <- 30000 # ask molei about this
+N <- 20000 # ask molei about this
 p <- 10
 
 # Number of stratum
@@ -25,17 +25,17 @@ data <- data_gen(n.t, N, p, rho, model.spec = 'II1', strata_num = strata.num)
 basis.type <- 'II1'
 knots = 3
 
-# Generate the true regression parameters
-data.v <- data_gen(n.t, 100000-n.t, p, rho, model.spec = 'II1')
-X0.v <- data.v$X0
-Y.v <- data.v$Y
-beta.true = glm(Y.v~X0.v, family = 'binomial')$coeff
-
-# True Brier score (BS):
-true.mse = mean((Y.v - g.logit(cbind(1,X0.v) %*% beta.true))^2)
-
-# True overall misclassification rate (OMR)
-true.ae = mean(abs(Y.v - I(g.logit(cbind(1,X0.v) %*% beta.true) > 0.5) ))
+# # Generate the true regression parameters
+# data.v <- data_gen(n.t, 100000-n.t, p, rho, model.spec = 'II1')
+# X0.v <- data.v$X0
+# Y.v <- data.v$Y
+# beta.true = glm(Y.v~X0.v, family = 'binomial')$coeff
+# 
+# # True Brier score (BS):
+# true.mse = mean((Y.v - g.logit(cbind(1,X0.v) %*% beta.true))^2)
+# 
+# # True overall misclassification rate (OMR)
+# true.ae = mean(abs(Y.v - I(g.logit(cbind(1,X0.v) %*% beta.true) > 0.5) ))
 
 
 # Labled Data + Weights
@@ -92,7 +92,7 @@ beta.dr = glm.fit.ob$beta.dr
 proj.dr = glm.fit.ob$proj.dr
 
 
-K.fold = K.fold; rep = 20;
+K.fold = K.fold; rep = 2;
 # Cross-validated residuals
 resids.cv.ob = resids.cv(basis.x, Xt, Xv, Yt, samp.prob, K.fold)
 resids.beta.sl = resids.cv.ob$resids.beta.sl
@@ -184,7 +184,7 @@ w * ap.ae + (1 - w) * cv.ae
 w * ap.mse + (1 - w) * cv.mse
 
 # Standard error estimation for the estimators of BS and OMR (used for CI construction)
-b = 500;
+b = 2;
 pert.ob = model.eval.se(b, Yt, Xt, Xv, basis.x, samp.prob, w.beta,
                         beta.sl, beta.ssl.w, beta.dr, resids.beta.sl,
                         resids.gamma, resids.beta.dr, A, c = 0.5)
@@ -209,3 +209,16 @@ sd(sl.pert.ae)*100
 sd(ssl.pert.mse)*100
 sd(ssl.pert.ae)*100
 
+
+# For comparison with new code.
+beta_all_og <- cbind(beta.ssl, beta.ssl.w, beta.sl, beta.dr, beta.naive)
+se_all_og <- cbind(se.beta.ssl, se.beta.ssl.w, se.beta.sl,
+                   se.beta.dr)
+gamma_og <- gamma
+cv_omr_og <- cv.ae
+cv_mse_og <- cv.mse
+ap_omr_og <- ap.ae
+ap_mse_og <- ap.mse
+pert_mse_all_og <- cbind(ssl.pert.mse, sl.pert.mse, dr.pert.mse)
+pert_omr_all_og <- cbind(ssl.pert.ae, sl.pert.ae, dr.pert.ae)
+resids_all_og <- cbind(resids.beta.ssl, resids.beta.sl, resids.beta.dr, resids.gamma)
