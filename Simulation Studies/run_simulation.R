@@ -56,6 +56,7 @@ samp_prob <- new_data$samp_prob
 # outcome_incorrect_imputation_incorrect_supp: basis_type <- 'II1'
 
 num_knots <- 3
+basis_type <- 'NS_basis'
 if(basis_type == 'NS_basis'){
   
   my_basis <- NaturalSplineBasis(rbind(X_labeled, X_unlabeled),
@@ -235,36 +236,4 @@ dr_pert_omr <- acc_pert$dr_pert_omr
 # Save all the results.
 pert_mse_all <- cbind(ssl_pert_mse, sl_pert_mse, dr_pert_mse)
 pert_omr_all <- cbind(ssl_pert_omr, sl_pert_omr, dr_pert_omr)
-
-
-################################################################################
-# The intrinsic efficiency estimator (simulation in supplement) can be
-# implemented as follows.
-
-source('function')
-glm.fit.ob = glm.fit.SS(basis.x, Xt, Xv, Yt, samp.prob, lambda0 = 0)
-beta.ssl <- as.vector(glm.fit.ob$beta.ssl)
-
-# Intrinsic estimate for beta:
-
-# Index of the basis to be matched (i.e. X) in basis.x:
-indx_mom <- c(1:2)
-fit.result <- IntrinsicEfficientEstBeta(basis.x, Xt, Xv, Yt, samp.prob, 
-                                        indx_mom, lambda0 = 0, theta_prelim = beta.ssl)
-fit.result$theta
-
-
-# Intrinsic estimate for Brier score:
-
-est.bs <- IntrinsicEfficientEstBS(basis.x, Xt, Xv, Yt, samp.prob, indx_mom,
-                                  lambda0 = 0, theta_prelim = beta.ssl)
-est.bs$value
-
-
-# Intrinsic estimate for OMR:
-
-est.omr <- IntrinsicEfficientEstOMR(basis.x, Xt, Xv, Yt, samp.prob, indx_mom,
-                                    lambda0 = 0, theta_prelim = beta.ssl, c = 0.5, h = NULL)
-est.omr$value
-
 

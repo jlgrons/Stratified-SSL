@@ -12,6 +12,7 @@ SemiSupervisedAccuracy(
   y,
   beta_SSL,
   beta_imp,
+  ind_est,
   weight = NULL,
   threshold = NULL
 )
@@ -26,6 +27,8 @@ SemiSupervisedAccuracy(
 \item{beta_SSL}{Numeric vector of regression coefficients.}
 
 \item{beta_imp}{Numeric vector of regression coefficients for imputation.}
+
+\item{ind_est}{Numeric vector to indicate inds for refitting model.}
 
 \item{weight}{Numeric vector of observation weights.}
 

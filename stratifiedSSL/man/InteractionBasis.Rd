@@ -4,12 +4,14 @@
 \alias{InteractionBasis}
 \title{Basis of Interaction Terms}
 \usage{
-InteractionBasis(X, S)
+InteractionBasis(X, S, S_interaction = FALSE)
 }
 \arguments{
 \item{X}{Numeric matrix.}
 
 \item{S}{Numeric matrix.}
+
+\item{S_interaction}{Logical indicator of whether to include S interactions.}
 }
 \value{
 Numeric matrix with basis containing interaction terms.

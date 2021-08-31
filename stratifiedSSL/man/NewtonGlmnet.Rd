@@ -6,7 +6,7 @@
 with expit link under moment constraints.}
 \usage{
 NewtonGlmnet(
-  x,
+  X,
   y,
   weights,
   weights_mom,
@@ -14,10 +14,12 @@ NewtonGlmnet(
   lambda0 = 1e-04,
   max_iter = 100,
   tol = 1e-04,
-  initial = rep(0, 1 + ncol(x))
+  initial = rep(0, 1 + ncol(X))
 )
 }
 \arguments{
+\item{X}{Covariate matrix.}
+
 \item{y}{Numeric outcome vector.}
 
 \item{weights}{Numeric vector of weights.}
@@ -31,8 +33,6 @@ NewtonGlmnet(
 \item{tol}{Desired tolerance level.}
 
 \item{initial}{Numeric vector with an intial value.}
-
-\item{X}{Covariate matrix.}
 
 \item{idx_mom}{Numeric vector of indices.}
 }

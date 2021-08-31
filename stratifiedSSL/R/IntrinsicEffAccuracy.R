@@ -34,12 +34,12 @@ IntrinsicEfficientEstOMR <- function(basis_labeled, basis_unlabeled,
   # Use kernel smoothing to estimate the nuisance weights:
 
   z_prelim <- as.vector(cbind(1, dat_all) %*% theta_prelim)
-  A <- crossprod(cbind(1, dat_all), dg.logit(z_prelim) * cbind(1, dat_all))
+  A <- crossprod(cbind(1, dat_all), ExpitDerivative(z_prelim) * cbind(1, dat_all))
   A <- A / N
   A_inv <- solve(A)
   weights = 1 / samp_prob / mean(1 / samp_prob)
-  Kh <- 1 / sqrt(2 * pi) / h * exp(- (Expit(z_prelim[ind.lab]) - c)^2 / h^2 / 2)
-  Ddot <- colSums(weights * dg.logit(z_prelim[ind.lab]) * Kh * (1 - 2 * y) * cbind(1, X_labeled)) / n
+  Kh <- 1 / sqrt(2 * pi) / h * exp(- (Expit(z_prelim[ind.lab]) - threshold)^2 / h^2 / 2)
+  Ddot <- colSums(weights * ExpitDerivative(z_prelim[ind.lab]) * Kh * (1 - 2 * y) * cbind(1, X_labeled)) / n
 
   lp.all_prelim <- I(Expit(z_prelim) > threshold)
   basis_all <- cbind(basis_all, lp.all_prelim)
@@ -49,8 +49,8 @@ IntrinsicEfficientEstOMR <- function(basis_labeled, basis_unlabeled,
   w <- as.vector(w / mean(w))
 
   # step 1: basis function regression
-  gamma_init <- my.ridge(basis_all[ind.lab, ], y, weights = weights, lambda = lambda0)
-  gamma <- my.ridge.weight(basis_all[ind.lab, ], y, w, weights, indx_mom, lambda0 = lambda0,
+  gamma_init <- RidgeRegression(basis_all[ind.lab, ], y, weights = weights, lambda = lambda0)
+  gamma <- WeightedRidgeRegression(basis_all[ind.lab, ], y, w, weights, indx_mom, lambda0 = lambda0,
                            initial = gamma_init)
   gamma <- as.vector(gamma)
 
@@ -98,11 +98,11 @@ IntrinsicEfficientEstBS <- function(basis_labeled, basis_unlabeled,
   if(is.null(lambda0)){lambda0 = log(pp)/n^1.5}
 
   z_prelim <- as.vector(cbind(1, dat_all) %*% theta_prelim)
-  A <- crossprod(cbind(1, dat_all), dg.logit(z_prelim) * cbind(1, dat_all))
+  A <- crossprod(cbind(1, dat_all), ExpitDerivative(z_prelim) * cbind(1, dat_all))
   A <- A / N
   A_inv <- solve(A)
   weights = 1 / samp_prob / mean(1 / samp_prob)
-  Ddot <- colSums(- 2 * weights * dg.logit(z_prelim[ind.lab]) *
+  Ddot <- colSums(- 2 * weights * ExpitDerivative(z_prelim[ind.lab]) *
                     (y - Expit(z_prelim[ind.lab])) * cbind(1, X_labeled)) / n
 
   lp.all_prelim <- Expit(z_prelim)
@@ -113,8 +113,8 @@ IntrinsicEfficientEstBS <- function(basis_labeled, basis_unlabeled,
   w <- as.vector(w / mean(w))
 
   # step 1: basis function regression (for intrinsic estimator)
-  gamma_init <- my.ridge(basis_all[ind.lab, ], y, weights = weights, lambda = lambda0)
-  gamma <- my.ridge.weight(basis_all[ind.lab, ], y, w, weights, indx_mom, lambda0 = lambda0,
+  gamma_init <- RidgeRegression(basis_all[ind.lab, ], y, weights = weights, lambda = lambda0)
+  gamma <- WeightedRidgeRegression(basis_all[ind.lab, ], y, w, weights, indx_mom, lambda0 = lambda0,
                            initial = gamma_init)
   gamma <- as.vector(gamma)
 

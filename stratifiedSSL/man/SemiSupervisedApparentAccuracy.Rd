@@ -13,6 +13,7 @@ SemiSupervisedApparentAccuracy(
   beta_SSL,
   beta_imp,
   samp_prob,
+  ind_est = NULL,
   resamp_weight = NULL,
   threshold = 0.5
 )
@@ -31,6 +32,8 @@ SemiSupervisedApparentAccuracy(
 \item{beta_imp}{Numeric vector of regression coefficients for imputation.}
 
 \item{samp_prob}{Numeric vector of weights.}
+
+\item{ind_est}{Optional numeric vector to indicate inds for refitting model.}
 
 \item{resamp_weight}{Numeric vector of resampling weights.}
 

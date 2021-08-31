@@ -20,7 +20,7 @@ IntrinsicEffEstBeta <- function(basis_labeled, basis_unlabeled,
                                       lambda0 = NULL, theta_prelim){
 
   n_labeled <- length(y)
-  pp <- ncol(basis)
+  pp <- ncol(basis_labeled)
   p <- ncol(X_labeled)
 
   if(is.null(lambda0)){lambda0 = log(pp)/n_labeled^1.5}
@@ -29,7 +29,7 @@ IntrinsicEffEstBeta <- function(basis_labeled, basis_unlabeled,
   basis_all <- rbind(basis_labeled, basis_unlabeled)
 
   A <- crossprod(cbind(1, dat_all),
-                 as.vector(dg.logit(cbind(1, dat_all) %*% theta_prelim)) * cbind(1, dat_all))
+                 as.vector(ExpitDerivative(cbind(1, dat_all) %*% theta_prelim)) * cbind(1, dat_all))
   A <- A / nrow(dat_all)
   A_inv <- solve(A)
 
@@ -37,7 +37,8 @@ IntrinsicEffEstBeta <- function(basis_labeled, basis_unlabeled,
 
   d <- ncol(X_labeled)
   theta_est_vec <- rep(0, d + 1)
-  gamma_init <- my.ridge(basis_labeled, y, weights = weights, lambda = lambda0)
+  gamma_init <- RidgeRegression(basis_labeled, y, weights = weights, 
+                                lambda = lambda0)
 
   for (j in 1:(d + 1)){
     e <- rep(0, d + 1)
@@ -46,12 +47,12 @@ IntrinsicEffEstBeta <- function(basis_labeled, basis_unlabeled,
     w <- w / mean(w)
 
     # step 1: basis function regression
-    gamma <- my.ridge.weight(basis_labeled, y, w, weights, indx_mom,
+    gamma <- WeightedRidgeRegression(basis_labeled, y, w, weights, indx_mom,
                              lambda0 = lambda0,
                              initial = gamma_init)
 
     # step 2: fit the SS GLM
-    imps_basis = g.logit(cbind(1, basis.x) %*% as.vector(gamma))
+    imps_basis = Expit(cbind(1, basis_all) %*% as.vector(gamma))
     dat_all = rbind(X_labeled, X_unlabeled);
     beta.ssl = tryCatch(glm(imps_basis ~ dat_all,
                             family = 'binomial')$coeff, error = function(e) rep(NA, p+1))
