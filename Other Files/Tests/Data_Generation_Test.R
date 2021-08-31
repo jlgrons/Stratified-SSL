@@ -1,4 +1,4 @@
-setwd('~/Desktop/Stratified-SSL/R/Tests')
+setwd('~/Desktop/Stratified-SSL/Other Files/Tests')
 source('Testing_Functions.R')
 
 ## Simulations for the Main Manuscript ##
@@ -8,7 +8,7 @@ source('Testing_Functions.R')
 #################################################
 
 # OLD CODE
-setwd('~/Desktop/Stratified-SSL/R/Original Code')
+setwd('~/Desktop/Stratified-SSL/Other Files/Original Code')
 source('function.R')
 set.seed(92047)
 # Sample size of label data
@@ -25,7 +25,7 @@ strata.num <- 2
 old_data <- data_gen(n.t, N, p, rho, model.spec = 'CC', strata_num = strata.num)
 
 # NEW CODE
-setwd('~/Desktop/Stratified-SSL/R')
+setwd('~/Desktop/Stratified-SSL/stratifiedSSL/R')
 source('DataGeneration.R')
 set.seed(92047)
 n_lab <- 400
@@ -47,7 +47,7 @@ sum(unlist(test_result)) == length(test_result)
 ###########################################################
 
 # OLD CODE
-setwd('~/Desktop/Stratified-SSL/R/Original Code')
+setwd('~/Desktop/Stratified-SSL/Other Files/Original Code')
 source('function.R')
 set.seed(92047)
 # Sample size of label data
@@ -64,7 +64,7 @@ strata.num <- 2
 old_data <- data_gen(n.t, N, p, rho, model.spec = 'IC', strata_num = strata.num)
 
 # NEW CODE
-setwd('~/Desktop/Stratified-SSL/R')
+setwd('~/Desktop/Stratified-SSL/stratifiedSSL/R')
 source('DataGeneration.R')
 source('HelperFunctions.R')
 set.seed(92047)
@@ -88,7 +88,7 @@ sum(unlist(test_result)) == length(test_result)
 ###################################################
 
 # OLD CODE
-setwd('~/Desktop/Stratified-SSL/R/Original Code')
+setwd('~/Desktop/Stratified-SSL/Other Files/Original Code')
 source('function.R')
 set.seed(92047)
 # Sample size of label data
@@ -105,7 +105,7 @@ strata.num <- 2
 old_data <- data_gen(n.t, N, p, rho, model.spec = 'II', strata_num = strata.num)
 
 # NEW CODE
-setwd('~/Desktop/Stratified-SSL/R')
+setwd('~/Desktop/Stratified-SSL/stratifiedSSL/R')
 source('DataGeneration.R')
 source('HelperFunctions.R')
 set.seed(92047)
@@ -133,7 +133,7 @@ sum(unlist(test_result)) == length(test_result)
 ###########################################################
 
 # OLD CODE
-setwd('~/Desktop/Stratified-SSL/R/Original Code')
+setwd('~/Desktop/Stratified-SSL/Other Files/Original Code')
 source('function.R')
 set.seed(92047)
 # Sample size of label data
@@ -150,7 +150,7 @@ strata.num <- 2
 old_data <- data_gen(n.t, N, p, rho, model.spec = 'IC1', strata_num = strata.num)
 
 # NEW CODE
-setwd('~/Desktop/Stratified-SSL/R')
+setwd('~/Desktop/Stratified-SSL/stratifiedSSL/R')
 source('DataGeneration.R')
 source('HelperFunctions.R')
 set.seed(92047)
@@ -173,7 +173,7 @@ sum(unlist(test_result)) == length(test_result)
 ###################################################
 
 # OLD CODE
-setwd('~/Desktop/Stratified-SSL/R/Original Code')
+setwd('~/Desktop/Stratified-SSL/Other Files/Original Code')
 source('function.R')
 set.seed(92047)
 # Sample size of label data
@@ -190,7 +190,7 @@ strata.num <- 2
 old_data <- data_gen(n.t, N, p, rho, model.spec = 'II1', strata_num = strata.num)
 
 # NEW CODE
-setwd('~/Desktop/Stratified-SSL/R')
+setwd('~/Desktop/Stratified-SSL/stratifiedSSL/R')
 source('DataGeneration.R')
 source('HelperFunctions.R')
 set.seed(92047)
@@ -214,7 +214,7 @@ sum(unlist(test_result)) == length(test_result)
 ############################
 
 # OLD CODE
-setwd('~/Desktop/Stratified-SSL/R/Original Code')
+setwd('~/Desktop/Stratified-SSL/Other Files/Original Code')
 source('function.R')
 set.seed(92047)
 # Sample size of label data
@@ -231,7 +231,7 @@ strata.num <- 2
 old_data <- data_gen(n.t, N, p, rho, model.spec = 'GM', strata_num = strata.num)
 
 # NEW CODE
-setwd('~/Desktop/Stratified-SSL/R')
+setwd('~/Desktop/Stratified-SSL/stratifiedSSL/R')
 source('DataGeneration.R')
 source('HelperFunctions.R')
 set.seed(92047)
