@@ -1,3 +1,4 @@
+set.seed(92047)
 source('function.R')
 
 # Both models are wrong in Section S4
@@ -11,7 +12,7 @@ n.t <- 400
 rho <- 0.4
 
 # Sample size of unlabel data
-N <- 30000
+N <- 30000 # ask molei about this
 p <- 10
 
 # Number of stratum
