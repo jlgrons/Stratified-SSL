@@ -74,7 +74,7 @@ beta.dr = glm.fit.ob$beta.dr
 proj.dr = glm.fit.ob$proj.dr
 
 
-K.fold = K.fold; rep = 20;
+K.fold = K.fold; rep = 2;
 # Cross-validated residuals
 resids.cv.ob = resids.cv(basis.x, Xt, Xv, Yt, samp.prob, K.fold)
 resids.beta.sl = resids.cv.ob$resids.beta.sl
@@ -166,7 +166,7 @@ w * ap.ae + (1 - w) * cv.ae
 w * ap.mse + (1 - w) * cv.mse
 
 # Standard error estimation for the estimators of BS and OMR (used for CI construction)
-b = 500;
+b = 2;
 pert.ob = model.eval.se(b, Yt, Xt, Xv, basis.x, samp.prob, w.beta,
                         beta.sl, beta.ssl.w, beta.dr, resids.beta.sl,
                         resids.gamma, resids.beta.dr, A, c = 0.5)
