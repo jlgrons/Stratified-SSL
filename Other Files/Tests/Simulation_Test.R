@@ -167,6 +167,7 @@ acc_en_mse
 
 ################################################################################
 # Perturbation for standard error estimates for accuracy estimates.
+set.seed(34)
 num_perts <- 2
 acc_pert <- AccuracyStdErrorEstimation(basis_labeled, basis_unlabeled,
                                        X_labeled, X_unlabeled, y,
@@ -213,5 +214,10 @@ colSums(resids_all == resids_all_og)
 acc_ap_omr == ap_omr_og
 acc_ap_mse == ap_mse_og
 
+# Check CV estimators.
 acc_cv_omr == cv_omr_og
 acc_cv_mse == cv_mse_og
+
+# Check perturbations.
+pert_mse_all == pert_mse_all_og
+pert_omr_all == pert_omr_all_og

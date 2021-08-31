@@ -167,6 +167,7 @@ w * ap.ae + (1 - w) * cv.ae
 w * ap.mse + (1 - w) * cv.mse
 
 # Standard error estimation for the estimators of BS and OMR (used for CI construction)
+set.seed(34)
 b = 2;
 pert.ob = model.eval.se(b, Yt, Xt, Xv, basis.x, samp.prob, w.beta,
                         beta.sl, beta.ssl.w, beta.dr, resids.beta.sl,

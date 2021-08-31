@@ -87,9 +87,12 @@ CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
       # Semi-supervised estimates.
       acc_ssl_val <- SemiSupervisedApparentAccuracy(basis_val,
                                                     basis_unlabeled,
-                                                    X_labeled_val, X_unlabeled,
-                                                    y_val, beta_ssl_mv_tr,
-                                                    gamma_tr, wg_val,
+                                                    X_labeled_val,
+                                                    X_unlabeled,
+                                                    y_val,
+                                                    beta_ssl_mv_tr,
+                                                    gamma_tr,
+                                                    wg_val,
                                                     resamp_weight = NULL,
                                                     threshold)
 
