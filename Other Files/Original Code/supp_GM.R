@@ -1,6 +1,6 @@
 
 # Gaussian mixture (GM) setting in Section S5 = 'GM'
-
+set.seed(92047)
 source('function.R')
 
 ##### Both outcome and imputation models are correct (Section 7 (i)) #####
@@ -36,22 +36,22 @@ data.pca <- extract.pc(data.unsup$X0, out.num = out.num, basis.num = basis.num)
 V.first = data.pca$V.first
 V.second = data.pca$V.second
 
-# Generate the true parameters
-data.v <- data_gen(n.t, 100000 - n.t, p, rho, model.spec = 'GM', strata_num = strata.num)
-X0.v <- data.v$X0
-Y.v <- data.v$Y
-data.pca.v <- extract.pc(X0.v, out.num = out.num, basis.num = basis.num,
-                         V.first = V.first, V.second = V.second)
-X.v <- data.pca.v$x
-
-# True regression parameters:
-beta.true = glm(Y.v ~ X.v, family = 'binomial')$coeff
-
-# True Brier score (BS):
-mse.true = mean((Y.v - g.logit(cbind(1, X.v) %*% beta.true))^2)
-
-# True overall misclassification rate (OMR)
-ae.true = mean(abs(Y.v - I(g.logit(cbind(1, X.v) %*% beta.true) > 0.5)))
+# # Generate the true parameters
+# data.v <- data_gen(n.t, 100000 - n.t, p, rho, model.spec = 'GM', strata_num = strata.num)
+# X0.v <- data.v$X0
+# Y.v <- data.v$Y
+# data.pca.v <- extract.pc(X0.v, out.num = out.num, basis.num = basis.num,
+#                          V.first = V.first, V.second = V.second)
+# X.v <- data.pca.v$x
+# 
+# # True regression parameters:
+# beta.true = glm(Y.v ~ X.v, family = 'binomial')$coeff
+# 
+# # True Brier score (BS):
+# mse.true = mean((Y.v - g.logit(cbind(1, X.v) %*% beta.true))^2)
+# 
+# # True overall misclassification rate (OMR)
+# ae.true = mean(abs(Y.v - I(g.logit(cbind(1, X.v) %*% beta.true) > 0.5)))
 
 
 # Generate the data for training and in-sample model accuracy evaluation:
