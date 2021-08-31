@@ -128,7 +128,6 @@ se_all <- cbind(beta_ssl_se,  beta_mv_se, beta_sl_se, beta_dr_se)
 
 # Save all the betas.
 beta_all <- cbind(beta_ssl, beta_mv, beta_sl, beta_dr, beta_naive)
-gamma_all <- gamma
 ################################################################################
 # Apparent accuracy estimates.
 my_threshold <- 0.5
