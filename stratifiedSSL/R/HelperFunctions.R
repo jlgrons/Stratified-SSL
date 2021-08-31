@@ -102,7 +102,7 @@ InteractionBasis <- function(X, S){
 #' @return Numeric matrix with basis containing interaction terms.
 TwoWayInteractionBasis <- function(X, S){
 
-  basis <- S
+  basis <- c()
 
   for (k in 1:length(X[1, ])) {
     basis <- cbind(basis, S * X[,k])

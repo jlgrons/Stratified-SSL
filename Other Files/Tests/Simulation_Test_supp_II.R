@@ -2,7 +2,7 @@
 # Simulation setting test.
 #library('devtools')
 setwd('~/Desktop/Stratified-SSL/stratifiedSSL')
-# build(); install()
+build(); install()
 library('stratifiedSSL')
 set.seed(92047)
 
@@ -16,7 +16,7 @@ num_strata <- 2
 # Generate data.
 new_data <- DataGeneration(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
                            model_specification =
-                             'outcome_incorrect_imputation_incorrect',
+                             'outcome_incorrect_imputation_incorrect_supp',
                            num_strata = num_strata)
 
 # Format data.
@@ -29,9 +29,9 @@ samp_prob <- new_data$samp_prob
 
 ################################################################################
 # Get basis expansion.
-my_basis <- NaturalSplineBasis(rbind(X_labeled, X_unlabeled),
+my_basis <- AlternativeBasis(rbind(X_labeled, X_unlabeled),
                                c(S_labeled, S_unlabeled),
-                               num_knots = 3)
+                               num_knots = 3, basis_type = 'II1')
 
 basis_labeled <- my_basis[1:n_lab, ]
 basis_unlabeled <- my_basis[(n_lab+1):nrow(my_basis), ]

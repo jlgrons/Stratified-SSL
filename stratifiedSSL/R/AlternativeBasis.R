@@ -30,10 +30,10 @@ AlternativeBasis <- function(X, S, num_knots, basis_type = 'interact'){
   # Will change name later.
   if (basis_type == 'II1'){
 
-    natural_spline_basis <- NaturalSplineBasis(X)
+    natural_spline_basis <- NaturalSplineBasis(X, S, num_knots)
     interaction_basis <- TwoWayInteractionBasis(X, S)
 
-    basis <- cbind(natural_spline_basis, S)
+    basis <- cbind(natural_spline_basis, interaction_basis)
   }
 
 
