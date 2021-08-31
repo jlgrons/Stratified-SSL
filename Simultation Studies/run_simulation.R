@@ -27,7 +27,7 @@ num_strata <- 2
 # outcome_incorrect_imputation_incorrect_supp
 # gaussian_mixture
 
-# Note: The example file will for gaussian mixture will be added.  In the 
+# Note: The example file for the gaussian mixture setting will be added.  In the 
 # interim, you can run the supp_GM.R file in Other Files > Original Code.
 
 new_data <- DataGeneration(n_lab, n_unlab, p, rho, signal = c(1, 1, 0.5, 0.5),
@@ -46,9 +46,29 @@ samp_prob <- new_data$samp_prob
 ################################################################################
 # Get basis expansion. Uses the basis specification from the paper.
 
-my_basis <- NaturalSplineBasis(rbind(X_labeled, X_unlabeled),
+# Three 'model_specification' settings from the main text:
+# outcome_correct_imputation_correct: basis_type <- 'NS_basis'
+# outcome_incorrect_imputation_correct: basis_type <- 'interact'
+# outcome_incorrect_imputation_incorrect: basis_type <- 'NS_basis'
+
+# Three 'model_specification' settings from the supplement:
+# outcome_incorrect_imputation_correct_supp: basis_type <- 'IC1'
+# outcome_incorrect_imputation_incorrect_supp: basis_type <- 'II1'
+
+num_knots <- 3
+if(basis_type == 'NS_basis'){
+  
+  my_basis <- NaturalSplineBasis(rbind(X_labeled, X_unlabeled),
+                                 c(S_labeled, S_unlabeled),
+                                 num_knots = num_knots)
+  
+}else{
+  
+  my_basis <- AlternativeBasis(rbind(X_labeled, X_unlabeled),
                                c(S_labeled, S_unlabeled),
-                               num_knots = 3)
+                               num_knots = num_knots, basis_type = basis_type) 
+  
+}
 
 basis_labeled <- my_basis[1:n_lab, ]
 basis_unlabeled <- my_basis[(n_lab+1):nrow(my_basis), ]
