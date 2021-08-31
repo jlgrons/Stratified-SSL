@@ -839,7 +839,11 @@ model.eval.cv = function(basis.x, Xv, Xt, Yt, samp.prob,
               mse.dr = mean(mse.cv.dr, na.rm = T),
               ae.dr = mean(ae.cv.dr, na.rm = T),
               mse.naive = mean(mse.cv.naive, na.rm = T),
-              ae.naive = mean(ae.cv.naive, na.rm = T)))
+              ae.naive = mean(ae.cv.naive, na.rm = T),
+              mse.ssl.all = mse.cv.ssl,
+              ae.ssl.all = ae.cv.ssl
+              ))
+
 
 }
 
