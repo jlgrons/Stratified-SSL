@@ -929,7 +929,7 @@ model.eval.se = function(b, Yt, Xt, Xv, basis.x, samp.prob, W, beta.sl, beta.ssl
   ## resids.gamma: CV resids for imputation parameter
   ## A: information matrix based on semi-supervisd beta (minVar)
   ## c: cutoff for the overall misclassification rate
-  set.seed(55)
+  set.seed(34)
   wgt = sapply(1:b, function(kk) 4*rbeta(n.t, 0.5, 1.5))
 
   resids.beta.sl.p = ((wgt-1)*resids.beta.sl)

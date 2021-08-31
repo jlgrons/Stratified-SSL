@@ -167,12 +167,14 @@ acc_en_mse
 
 ################################################################################
 # Perturbation for standard error estimates for accuracy estimates.
-set.seed(34)
 num_perts <- 2
 acc_pert <- AccuracyStdErrorEstimation(basis_labeled, basis_unlabeled,
                                        X_labeled, X_unlabeled, y,
-                                       samp_prob, mv_weight[,1],
-                                       beta_sl, beta_mv, beta_dr,
+                                       samp_prob,
+                                       mv_weight[,1],
+                                       beta_sl,
+                                       beta_mv,
+                                       beta_dr,
                                        resids_sl,
                                        resids_gamma,
                                        resids_dr,
@@ -219,5 +221,5 @@ acc_cv_omr == cv_omr_og
 acc_cv_mse == cv_mse_og
 
 # Check perturbations.
-pert_mse_all == pert_mse_all_og
-pert_omr_all == pert_omr_all_og
+round(pert_mse_all, 5) == round(pert_mse_all_og, 5)
+round(pert_omr_all, 5) == round(pert_omr_all_og, 5)
