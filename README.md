@@ -8,7 +8,7 @@ This repo contains the following subfolders:
 
 * stratifiedSSL: R functions for the package implementing the methods proposed in the manuscript.
 * Simulation Studies: R code and directions to replicate the simulation studies in the paper. 
-* oldCode: Old versions of the R code for debugging purposes.
+* Other Files: Previous versions of the R code for debugging purposes and documentation.
 
 ## Installation
 
