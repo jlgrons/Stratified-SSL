@@ -24,20 +24,20 @@ data <- data_gen(n.t, N, p, rho, model.spec = 'IC', strata_num = strata.num)
 basis.type <- 'interact'
 knots = 3
 
-# Generate the true regression parameters
-data.v <- data_gen(n.t, 100000-n.t, p, rho, model.spec = 'IC')
-X0.v <- data.v$X0
-Y.v <- data.v$Y
-beta.true = glm(Y.v~X0.v, family = 'binomial')$coeff
-
-# True Brier score (BS):
-true.mse = mean((Y.v - g.logit(cbind(1,X0.v) %*% beta.true))^2)
-
-# True overall misclassification rate (OMR)
-true.ae = mean(abs(Y.v - I(g.logit(cbind(1,X0.v) %*% beta.true) > 0.5) ))
-
-
-# Labled Data + Weights
+# # Generate the true regression parameters
+# data.v <- data_gen(n.t, 100000-n.t, p, rho, model.spec = 'IC')
+# X0.v <- data.v$X0
+# Y.v <- data.v$Y
+# beta.true = glm(Y.v~X0.v, family = 'binomial')$coeff
+# 
+# # True Brier score (BS):
+# true.mse = mean((Y.v - g.logit(cbind(1,X0.v) %*% beta.true))^2)
+# 
+# # True overall misclassification rate (OMR)
+# true.ae = mean(abs(Y.v - I(g.logit(cbind(1,X0.v) %*% beta.true) > 0.5) ))
+# 
+# 
+# # Labled Data + Weights
 
 Xt <- data$Xt
 Yt <- data$Yt
@@ -196,32 +196,47 @@ sd(ssl.pert.ae)*100
 # Evaluate out-of-sample Classification and Prediction Performance (for results in Section S5)
 # Generate test data
 
-data.test <- data_gen(n.t = 1000, n.v = 9000, p, rho, model.spec = 'IC', strata_num = strata.num)
+# data.test <- data_gen(n.t = 1000, n.v = 9000, p, rho, model.spec = 'IC', strata_num = strata.num)
+# 
+# X.test <- data.test$X0
+# Y.test <- data.test$Y
+# S.test <- data.test$S
+# 
+# # Random Forest
+# 
+# rf_model <- RF_predict(Yt, Xt, St, X.test, S.test)
+# 
+# # AUC, BS and OMR.
+# eva.rf <- Eva_class(Y.test, rf_model)
+# eva.sl <- Eva_class(Y.test, logit_pred(X.test, beta.sl))
+# eva.ssl <- Eva_class(Y.test, logit_pred(X.test, beta.ssl))
+# eva.dr <- Eva_class(Y.test, logit_pred(X.test, beta.dr))
+# eva.ssl.w <- Eva_class(Y.test, logit_pred(X.test, beta.ssl.w))
+# 
+# auc.perform <- c(eva.rf$auc, eva.sl$auc,
+#                  eva.ssl$auc, eva.dr$auc, eva.ssl.w$auc)
+# 
+# ae.perform <- c(eva.rf$ae, eva.sl$ae,
+#                 eva.ssl$ae, eva.dr$ae, eva.ssl.w$ae)
+# 
+# mse.perform <- c(eva.rf$mse, eva.sl$mse,
+#                  eva.ssl$mse, eva.dr$mse, eva.ssl.w$mse)
+# auc.perform
+# ae.perform
+# mse.perform
 
-X.test <- data.test$X0
-Y.test <- data.test$Y
-S.test <- data.test$S
+# For comparison with new code.
 
-# Random Forest
+beta_all_og <- cbind(beta.ssl, beta.ssl.w, beta.sl, beta.dr, beta.naive)
+se_all_og <- cbind(se.beta.ssl, se.beta.ssl.w, se.beta.sl,
+                   se.beta.dr)
+gamma_og <- gamma
+cv_omr_og <- cv.ae
+cv_mse_og <- cv.mse
+ap_omr_og <- ap.ae
+ap_mse_og <- ap.mse
+pert_mse_all_og <- cbind(ssl.pert.mse, sl.pert.mse, dr.pert.mse)
+pert_omr_all_og <- cbind(ssl.pert.ae, sl.pert.ae, dr.pert.ae)
+resids_all_og <- cbind(resids.beta.ssl, resids.beta.sl, resids.beta.dr, resids.gamma)
 
-rf_model <- RF_predict(Yt, Xt, St, X.test, S.test)
-
-# AUC, BS and OMR.
-eva.rf <- Eva_class(Y.test, rf_model)
-eva.sl <- Eva_class(Y.test, logit_pred(X.test, beta.sl))
-eva.ssl <- Eva_class(Y.test, logit_pred(X.test, beta.ssl))
-eva.dr <- Eva_class(Y.test, logit_pred(X.test, beta.dr))
-eva.ssl.w <- Eva_class(Y.test, logit_pred(X.test, beta.ssl.w))
-
-auc.perform <- c(eva.rf$auc, eva.sl$auc,
-                 eva.ssl$auc, eva.dr$auc, eva.ssl.w$auc)
-
-ae.perform <- c(eva.rf$ae, eva.sl$ae,
-                eva.ssl$ae, eva.dr$ae, eva.ssl.w$ae)
-
-mse.perform <- c(eva.rf$mse, eva.sl$mse,
-                 eva.ssl$mse, eva.dr$mse, eva.ssl.w$mse)
-auc.perform
-ae.perform
-mse.perform
 
