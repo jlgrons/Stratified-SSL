@@ -238,5 +238,33 @@ pert_omr_all <- cbind(ssl_pert_omr, sl_pert_omr, dr_pert_omr)
 
 
 ################################################################################
-# Compare results to old code.
+# The intrinsic efficiency estimator (simulation in supplement) can be
+# implemented as follows.
+
+source('function')
+glm.fit.ob = glm.fit.SS(basis.x, Xt, Xv, Yt, samp.prob, lambda0 = 0)
+beta.ssl <- as.vector(glm.fit.ob$beta.ssl)
+
+# Intrinsic estimate for beta:
+
+# Index of the basis to be matched (i.e. X) in basis.x:
+indx_mom <- c(1:2)
+fit.result <- IntrinsicEfficientEstBeta(basis.x, Xt, Xv, Yt, samp.prob, 
+                                        indx_mom, lambda0 = 0, theta_prelim = beta.ssl)
+fit.result$theta
+
+
+# Intrinsic estimate for Brier score:
+
+est.bs <- IntrinsicEfficientEstBS(basis.x, Xt, Xv, Yt, samp.prob, indx_mom,
+                                  lambda0 = 0, theta_prelim = beta.ssl)
+est.bs$value
+
+
+# Intrinsic estimate for OMR:
+
+est.omr <- IntrinsicEfficientEstOMR(basis.x, Xt, Xv, Yt, samp.prob, indx_mom,
+                                    lambda0 = 0, theta_prelim = beta.ssl, c = 0.5, h = NULL)
+est.omr$value
+
 
