@@ -10,6 +10,7 @@
 #' @param beta_SSL Numeric vector of regression coefficients.
 #' @param beta_imp Numeric vector of regression coefficients for imputation.
 #' @param samp_prob Numeric vector of weights.
+#' @param ind_est Optional numeric vector to indicate inds for refitting model.
 #' @param resamp_weight Numeric vector of resampling weights.
 #' @param threshold Threshold for overall misclassification rate.
 #' @export
@@ -18,20 +19,26 @@
 
 SemiSupervisedApparentAccuracy <- function(basis_labeled, basis_unlabeled,
                                            X_labeled, X_unlabeled, y, beta_SSL,
-                                           beta_imp, samp_prob,
+                                           beta_imp, samp_prob, ind_est = NULL,
                                            resamp_weight = NULL,
                                            threshold = 0.5){
 
   if(is.null(resamp_weight)){resamp_weight <- rep(1, length(y))}
-  weight <- resamp_weight/samp_prob/mean(resamp_weight/samp_prob)
-
+  if(is.null(ind_est)){ind_est <- 1:length(y)}
+  
+  weight <- resamp_weight[ind_est] / samp_prob[ind_est] / mean(
+    resamp_weight[ind_est] / samp_prob[ind_est])
+  
   MSE_SSL <- SemiSupervisedAccuracy(basis_labeled, basis_unlabeled,
                                     X_labeled, X_unlabeled, y, beta_SSL,
-                                    beta_imp, weight = weight, threshold = NULL)
+                                    beta_imp, ind_est,
+                                    weight = weight,
+                                    threshold = NULL)
 
   OMR_SSL <- SemiSupervisedAccuracy(basis_labeled, basis_unlabeled,
                                     X_labeled, X_unlabeled, y, beta_SSL,
-                                    beta_imp, weight = weight,
+                                    beta_imp, ind_est,
+                                    weight = weight,
                                     threshold = threshold)
 
   return(list(mse_ssl = MSE_SSL, omr_ssl = OMR_SSL))

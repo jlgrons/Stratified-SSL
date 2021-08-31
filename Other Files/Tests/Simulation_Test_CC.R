@@ -202,7 +202,8 @@ pert_omr_all <- cbind(ssl_pert_omr, sl_pert_omr, dr_pert_omr)
 setwd('~/Desktop/Stratified-SSL/Other Files/Original Code')
 source('main_CC.R')
 
-# Check betas - note DR code has been updated so it wont be the same as previous.
+# Check betas - note DR code has been updated 
+# so it wont be the same as previous.
 beta_all == beta_all_og
 se_all == se_all_og
 

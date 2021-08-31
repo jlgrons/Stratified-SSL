@@ -84,15 +84,16 @@ CrossValAccuracy <- function(basis_labeled, basis_unlabeled,
       mse_cv_sl[i,j] <- acc_sl_val$mse_sl
       omr_cv_sl[i,j] <- acc_sl_val$omr_sl
 
-      # Semi-supervised estimates: note difference we project only to val+unlab.
-      acc_ssl_val <- SemiSupervisedApparentAccuracy(basis_val,
+      # Semi-supervised estimates.
+      acc_ssl_val <- SemiSupervisedApparentAccuracy(basis_labeled,
                                                     basis_unlabeled,
-                                                    X_labeled_val,
+                                                    X_labeled,
                                                     X_unlabeled,
-                                                    y_val,
+                                                    y,
                                                     beta_mv_tr,
                                                     gamma_tr,
-                                                    wg_val,
+                                                    samp_prob,
+                                                    inds_val,
                                                     resamp_weight = NULL,
                                                     threshold)
 
