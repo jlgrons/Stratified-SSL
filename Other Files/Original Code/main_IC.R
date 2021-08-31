@@ -1,3 +1,4 @@
+set.seed(92047)
 source('function.R')
 
 # Outcome model is wrong and imputation model is correct (Section 7 (ii))
