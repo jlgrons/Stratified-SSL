@@ -42,8 +42,8 @@ knots = 3
 # strate.ind = 'random' for random sample labelled data
 # strate.ind = 'stratify' for stratified sample labelled data
 
-strate.ind = 'random'
-#strate.ind = 'stratify'
+#strate.ind = 'random'
+strate.ind = 'stratify'
 
 if (strate.ind == 'random'){
   Xt <- data$Xr

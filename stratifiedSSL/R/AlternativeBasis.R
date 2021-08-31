@@ -21,13 +21,11 @@ AlternativeBasis <- function(X, S, num_knots, basis_type = 'interact'){
   # Will change name later.
   if (basis_type == 'IC1'){
 
-    basis.X <- InteractionBasis(X, S)
-    basis.S <- TwoWayInteractionBasis(basis.X, S)
-
-    basis <- cbind(basis.X, basis.S)
+    basis <- InteractionBasis(X, S)
+  
   }
 
-  # Will change name later.
+  # Supplemental basis generation.
   if (basis_type == 'II1'){
 
     natural_spline_basis <- NaturalSplineBasis(X, S, num_knots)
