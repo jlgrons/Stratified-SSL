@@ -10,6 +10,8 @@ This repo contains the following subfolders:
 * Simulation Studies: R code and directions to replicate the simulation studies in the paper. 
 * Other Files: Previous versions of the R code for debugging purposes and documentation.
 
+Code is maintained by Jessica Gronsbell and Molei Liu.
+
 ## Installation
 
 ```r
