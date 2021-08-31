@@ -12,7 +12,7 @@
 
 AlternativeBasis <- function(X, S, num_knots, basis_type = 'interact'){
 
-  if (basis.type == 'interact'){
+  if (basis_type == 'interact'){
 
     basis.X <- InteractionBasis(X)
     basis.S <- OneHotEncoding(S)
@@ -22,7 +22,7 @@ AlternativeBasis <- function(X, S, num_knots, basis_type = 'interact'){
   }
 
   # Will change name later.
-  if (basis.type == 'IC1'){
+  if (basis_type == 'IC1'){
 
     basis.X <- InteractionBasis(X)
     basis.S <- TwoWayInteractionBasis(basis.X, S)
@@ -31,7 +31,7 @@ AlternativeBasis <- function(X, S, num_knots, basis_type = 'interact'){
   }
 
   # Will change name later.
-  if (basis.type == 'II1'){
+  if (basis_type == 'II1'){
 
     natural_spline_basis <- NaturalSplineBasis(X)
     interaction_basis <- TwoWayInteractionBasis(X, S)

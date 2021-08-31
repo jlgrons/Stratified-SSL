@@ -29,9 +29,9 @@ samp_prob <- new_data$samp_prob
 
 ################################################################################
 # Get basis expansion.
-my_basis <- NaturalSplineBasis(rbind(X_labeled, X_unlabeled),
+my_basis <- AlternativeBasis(rbind(X_labeled, X_unlabeled),
                                c(S_labeled, S_unlabeled),
-                               num_knots = 3)
+                               num_knots = 3, basis_type = 'interact')
 
 basis_labeled <- my_basis[1:n_lab, ]
 basis_unlabeled <- my_basis[(n_lab+1):nrow(my_basis), ]
