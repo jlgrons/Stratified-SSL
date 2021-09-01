@@ -180,7 +180,6 @@ acc_ap_mse
 
 ################################################################################
 # Cross-validated accuracy estimates.
-set.seed(50)
 reps <- 2 
 # reps is set to be low to run quickly as an example. We recommend 10-20.
 
