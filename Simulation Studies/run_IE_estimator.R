@@ -4,6 +4,7 @@
 
 ### Generate data 
 set.seed(92047)
+library('stratifiedSSL')
 source('IE_helper_functions.R')
 n.t <- 400
 rho <- 0.4
