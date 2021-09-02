@@ -25,4 +25,4 @@ Required packages: MASS, evd, glmnet, matrixStats, methods, randomForest, stepPl
 
 ## Getting Started
 
-You can run an example in 'run_simulation.R' in the Simulation Studies folder.
+Install the package as above and then run an example with 'run_simulation.R' in the Simulation Studies folder.
