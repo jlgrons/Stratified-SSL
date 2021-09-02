@@ -7,7 +7,7 @@ R package and simulation studies for [Efficient Estimation and Evaluation of Pre
 This repo contains the following subfolders:
 
 * stratifiedSSL: R functions for the package implementing the methods proposed in the manuscript.
-* 
+
 * Simulation Studies: R code and directions to replicate the simulation studies in the paper. 
   * run_simulation.R: Primary file to run the simulations in the main text + supplement.
   * run_IE_simulation.R: File to run the simulation for the intrinsic efficient semi-supervised estimator.
