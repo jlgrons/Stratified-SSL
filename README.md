@@ -21,7 +21,7 @@ Code is maintained by Jessica Gronsbell and Molei Liu.
 # install.packages("remotes")
 remotes::install_github("jlgrons/Stratified-SSL/stratifiedSSL")
 ```
-Required packages: MASS, evd, glmnet, matrixStats, methods, randomForest, stepPlr
+Required packages: MASS, evd, glmnet, matrixStats, methods, randomForest, stepPlr.
 
 ## Getting Started
 
