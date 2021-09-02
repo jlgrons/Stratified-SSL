@@ -1,3 +1,4 @@
+library('MASS')
 # Generate data (and the imputation basis) for Simulation in Section S4
 
 # Setup (a) in Section S4:
