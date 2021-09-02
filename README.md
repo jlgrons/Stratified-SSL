@@ -10,7 +10,7 @@ This repo contains the following subfolders:
 * Simulation Studies: R code and directions to replicate the simulation studies in the paper. 
   * run_simulation.R: Primary file to run the simulations in the main text + supplement.
   * run_IE_estimator.R: File to run the simulation for the intrinsic efficient semi-supervised estimator.
-  * IE_helper_functions.R: File with helper functions for the intrinisc efficient simulations.
+  * IE_helper_functions.R: File with helper functions for the intrinisic efficient simulations.
 * Other Files: Previous versions of the R code for debugging purposes and documentation.
 
 Code is maintained by Jessica Gronsbell and Molei Liu.
