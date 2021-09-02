@@ -1,4 +1,4 @@
-# Stratified-SSL: Semi-supervised learning under stratified sampling
+# Stratified-SSL: Semi-supervised Learning under Stratified Sampling
 
 R package and simulation studies for [Efficient Estimation and Evaluation of Prediction Rules in Semi-Supervised Settings under Stratified Sampling](https://arxiv.org/abs/2010.09443) by Jessica Gronsbell, Molei Liu, Lu Tian, and Tianxi Cai.
 
