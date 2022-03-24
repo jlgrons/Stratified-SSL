@@ -1,15 +1,30 @@
 Package: stratifiedSSL
-Title: What the Package Does (One Line, Title Case)
+Title: Semi-supervised Learning under Stratified Sampling 
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+    person(given = "Jessica",
+           family = "Gronsbell",
+           role = c("aut"),
+           email = "j.gronsbell@utoronto.ca",
+           given = "Molei",
+           family = "Liu",
+           role = c("aut"),
+           email = "molei_liu@g.harvard.edu",
+           given = "Lu",
+           family = "Tian",
+           role = c("aut"),
+           email = "lutian@stanford.edu",
+            given = "Cai",
+           family = "Tianxi",
+           role = c("aut"),
+           email = "tcai@hsph.harvard.edu",
+            given = "Bonzel",
+           family = "Clara Lea",
+           role = c("aut"),
+           email = "clbonzel@hsph.harvard.edu",
+           )
+Description: Semi-supervised learning under stratified sampling. 
+License: `use_mit_license()`
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
