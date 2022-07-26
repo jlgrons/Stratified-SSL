@@ -3,12 +3,9 @@
 
 **Please use the new package [here](https://github.com/jlgrons/stratifiedSSL).**
 
-
-R package and simulation studies for [Efficient Estimation and Evaluation of Prediction Rules in Semi-Supervised Settings under Stratified Sampling](https://arxiv.org/abs/2010.09443) by Jessica Gronsbell, Molei Liu, Lu Tian, and Tianxi Cai.
-
 ## Overview 
 
-This repo contains the following subfolders:
+R package and simulation studies for [Efficient Estimation and Evaluation of Prediction Rules in Semi-Supervised Settings under Stratified Sampling](https://arxiv.org/abs/2010.09443) by Jessica Gronsbell, Molei Liu, Lu Tian, and Tianxi Cai. This repo contains the following subfolders:
 
 * stratifiedSSL: R functions for the package implementing the methods proposed in the manuscript.
 
