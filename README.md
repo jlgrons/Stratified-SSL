@@ -1,6 +1,8 @@
 # Stratified-SSL: Semi-supervised Learning under Stratified Sampling
 
 
+## Note!
+
 **Please use the new package [here](https://github.com/jlgrons/stratifiedSSL).**
 
 ## Overview 
